@@ -1529,6 +1529,14 @@ section {
 .footer-logo {
     width: 48px;
     height: 48px;
+    transition: transform 0.6s ease;
+    filter: drop-shadow(0 0 20px rgba(92, 225, 230, 0.8)) drop-shadow(0 0 10px rgba(92, 225, 230, 0.6));
+    -webkit-filter: drop-shadow(0 0 20px rgba(92, 225, 230, 0.8)) drop-shadow(0 0 10px rgba(92, 225, 230, 0.6));
+    cursor: pointer;
+}
+
+.footer-logo:hover {
+    animation: spin 2s linear infinite;
 }
 
 .footer-brand-name {
