@@ -1254,8 +1254,10 @@ section {
 }
 
 /* Remove expand button - using hover effects instead */
-.expand-btn {
-    display: none;
+.expand-btn,
+.stats-expandable .expand-btn,
+.expandable-card .expand-btn {
+    display: none !important;
 }
 
 /* Mobile: Smaller expand buttons with more space */
