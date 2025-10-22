@@ -178,8 +178,7 @@
 
 .toc {
     background: rgba(92, 225, 230, 0.05);
-    border-left: 3px solid var(--facilitair-teal);
-    padding: var(--space-6);
+    padding: var(--space-6) var(--space-6) var(--space-6) var(--space-10);
     border-radius: 8px;
     margin-bottom: var(--space-8);
 }
