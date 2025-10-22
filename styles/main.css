@@ -435,13 +435,13 @@ section {
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
     background: rgba(250, 250, 250, 0.15);
-    color: var(--facilitair-black);
+    color: var(--facilitair-white); /* Bright white for typed text */
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
 .email-input::placeholder {
-    color: rgba(250, 250, 250, 0.9);
+    color: rgba(217, 217, 217, 0.5); /* More grey/silver for placeholder */
 }
 
 .email-input:focus {
