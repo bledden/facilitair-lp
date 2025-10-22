@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tell Us About Yourself - FACILITAIR</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .survey-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-8);
+        }
+
+        .survey-card {
+            max-width: 50%;
+            width: 100%;
+            background: rgba(92, 225, 230, 0.03);
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            border-radius: 20px;
+            padding: var(--space-12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .survey-header {
+            text-align: center;
+            margin-bottom: var(--space-10);
+        }
+
+        .survey-header h1 {
+            color: var(--facilitair-teal);
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: var(--space-4);
+        }
+
+        .survey-header p {
+            color: rgba(250, 250, 250, 0.7);
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-8);
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--facilitair-teal);
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-3);
+        }
+
+        .form-group .optional {
+            color: rgba(250, 250, 250, 0.5);
+            font-size: 14px;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            background: rgba(92, 225, 230, 0.05);
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            border-radius: 8px;
+            padding: var(--space-4);
+            color: var(--text-primary);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--facilitair-teal);
+            background: rgba(92, 225, 230, 0.08);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group .hint {
+            color: rgba(250, 250, 250, 0.5);
+            font-size: 13px;
+            margin-top: var(--space-2);
+            line-height: 1.5;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%);
+            color: #100F0D;
+            border: none;
+            border-radius: 8px;
+            padding: var(--space-5);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: var(--space-6);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(92, 225, 230, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message,
+        .error-message {
+            padding: var(--space-5);
+            border-radius: 8px;
+            margin-bottom: var(--space-6);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .success-message {
+            background: rgba(92, 225, 230, 0.1);
+            border: 1px solid rgba(92, 225, 230, 0.3);
+            color: var(--facilitair-teal);
+        }
+
+        .error-message {
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            color: #FF5252;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: var(--space-6);
+            color: var(--facilitair-teal);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="survey-container">
+        <div class="survey-card">
+            <div class="survey-header">
+                <h1>Help Us Build FACILITAIR For You</h1>
+                <p>Your insights will directly shape our beta program. All fields are optional, but the more we know, the better we can serve you!</p>
+            </div>
+
+            <div id="message-container"></div>
+
+            <form id="survey-form">
+                <div class="form-group">
+                    <label for="planned-use">
+                        How do you plan to use FACILITAIR? <span class="optional">(Required)</span>
+                    </label>
+                    <textarea
+                        id="planned-use"
+                        name="plannedUse"
+                        required
+                        placeholder="e.g., Code generation, research tasks, data analysis, creative writing..."
+                    ></textarea>
+                    <div class="hint">Tell us about your specific use cases and what you hope to accomplish.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="anticipated-usage">
+                        Anticipated Usage <span class="optional">(Required)</span>
+                    </label>
+                    <select id="anticipated-usage" name="anticipatedUsage" required>
+                        <option value="">Select...</option>
+                        <option value="daily">Daily - Multiple times per day</option>
+                        <option value="weekly">Weekly - A few times per week</option>
+                        <option value="monthly">Monthly - Occasional use</option>
+                        <option value="project-based">Project-based - As needed for specific projects</option>
+                    </select>
+                    <div class="hint">How frequently do you expect to use FACILITAIR?</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="how-found">
+                        How did you find out about FACILITAIR? <span class="optional">(Required)</span>
+                    </label>
+                    <select id="how-found" name="howFound" required>
+                        <option value="">Select...</option>
+                        <option value="social-media">Social Media (Twitter, LinkedIn, etc.)</option>
+                        <option value="search-engine">Search Engine</option>
+                        <option value="recommendation">Friend/Colleague Recommendation</option>
+                        <option value="blog-article">Blog Post/Article</option>
+                        <option value="conference">Conference/Event</option>
+                        <option value="github">GitHub/Developer Community</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="background">
+                        Your Background <span class="optional">(Optional)</span>
+                    </label>
+                    <textarea
+                        id="background"
+                        name="background"
+                        placeholder="e.g., Software engineer at a startup, researcher in AI/ML, product manager, student..."
+                    ></textarea>
+                    <div class="hint">Share your professional background or areas of expertise if you're comfortable.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="additional-info">
+                        Anything Else? <span class="optional">(Optional)</span>
+                    </label>
+                    <textarea
+                        id="additional-info"
+                        name="additionalInfo"
+                        placeholder="Feature requests, questions, concerns, or just say hi!"
+                    ></textarea>
+                    <div class="hint">Any other thoughts or feedback you'd like to share with us.</div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn">Submit Survey</button>
+            </form>
+
+            <a href="/" class="back-link">← Return to homepage</a>
+        </div>
+    </div>
+
+    <script>
+        // Get token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        const form = document.getElementById('survey-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const messageContainer = document.getElementById('message-container');
+
+        // Check if token exists
+        if (!token) {
+            messageContainer.innerHTML = '<div class="error-message">Invalid survey link. Please use the link from your email.</div>';
+            form.style.display = 'none';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Clear previous messages
+            messageContainer.innerHTML = '';
+
+            // Get form data
+            const formData = {
+                token: token,
+                plannedUse: document.getElementById('planned-use').value,
+                anticipatedUsage: document.getElementById('anticipated-usage').value,
+                howFound: document.getElementById('how-found').value,
+                background: document.getElementById('background').value,
+                additionalInfo: document.getElementById('additional-info').value
+            };
+
+            try {
+                const response = await fetch('/api/survey', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    messageContainer.innerHTML = `
+                        <div class="success-message">
+                            <strong>Thank you!</strong><br>
+                            Your responses have been recorded. We'll be in touch as we prepare for the beta launch!
+                        </div>
+                    `;
+                    form.style.display = 'none';
+
+                    // Redirect to homepage after 5 seconds
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 5000);
+                } else {
+                    messageContainer.innerHTML = `
+                        <div class="error-message">${data.message}</div>
+                    `;
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Survey';
+                }
+            } catch (error) {
+                console.error('Survey submission error:', error);
+                messageContainer.innerHTML = `
+                    <div class="error-message">
+                        Network error. Please check your connection and try again.
+                    </div>
+                `;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Survey';
+            }
+        });
+    </script>
+</body>
+</html>

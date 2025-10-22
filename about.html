@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="About FACILITAIR - Multi-Agent AI Collaboration Platform">
+    <title>About - FACILITAIR</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/animations.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png">
+</head>
+<body>
+    <!-- Performance detection canvas (hidden) -->
+    <canvas id="perf-test" style="display: none;"></canvas>
+
+    <!-- Background Animation Container -->
+    <div id="bg-animation" class="bg-animation"></div>
+
+    <!-- Header -->
+    <header class="header glass-dark">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" style="text-decoration: none;">
+                    <div class="logo-container">
+                        <img src="/logo.png" alt="FACILITAIR Logo" class="logo">
+                        <span class="brand-name">FACILITAIR</span>
+                    </div>
+                </a>
+                <nav class="nav">
+                    <a href="/blog.html" class="nav-link">Blog</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- About Hero -->
+        <section class="hero" style="min-height: 50vh;">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title about-title">About <span style="white-space: nowrap;">FACILITAIR</span></h1>
+                    <p class="hero-subtitle">Helping AI models work together to reduce hallucinations and condense workflow clutter<br>since July 2025 - Made in San Francisco, CA</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section class="platform-info">
+            <div class="container-narrow">
+                <div class="glass-dark" style="padding: 3rem; border-radius: 24px;">
+                    <h2 class="section-title text-center">Our Mission</h2>
+                    <p class="section-description" style="text-align: left; font-size: 1.2rem; line-height: 1.8;">
+                        FACILITAIR is dedicated to proving that multi-agent AI collaboration isn't just theory—it's
+                        a practical solution to the hallucination problem plaguing single-model AI systems.
+                    </p>
+                    <p class="section-description" style="text-align: left; font-size: 1.2rem; line-height: 1.8;">
+                        Through rigorous benchmarking and production deployments, we've demonstrated that specialized
+                        AI agents working together outperform generalist single-model approaches by 36.8% on average,
+                        with even greater improvements in complex domains like security and algorithm design.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Story Section -->
+        <section class="platform-info">
+            <div class="container-narrow">
+                <h2 class="section-title text-center">The Journey</h2>
+
+                <div class="glass-dark" style="padding: 3rem; border-radius: 24px; margin-bottom: 2rem;">
+                    <h3 class="feature-title">The Problem</h3>
+                    <p class="feature-description" style="font-size: 1.1rem; line-height: 1.8;">
+                        AI hallucinations—confident but incorrect outputs—represent one of the biggest barriers to
+                        deploying AI in production. Single-model systems, no matter how sophisticated, lack the
+                        cross-validation and error-correction mechanisms that multi-agent systems provide.
+                    </p>
+                </div>
+
+                <div class="glass-dark" style="padding: 3rem; border-radius: 24px; margin-bottom: 2rem;">
+                    <h3 class="feature-title">The Research</h3>
+                    <p class="feature-description" style="font-size: 1.1rem; line-height: 1.8;">
+                        We started with a simple hypothesis: if we let specialized AI agents collaborate—each focusing
+                        on what they do best—would we get better results than a single generalist model?
+                    </p>
+                    <p class="feature-description" style="font-size: 1.1rem; line-height: 1.8;">
+                        The answer, proven across <strong style="color: var(--facilitair-teal);">50,000+ inference runs</strong> testing dozens of models over three months,
+                        100+ benchmarked tasks across 5 categories, and 62+ real-world production deployments, is a resounding yes.
+                        Sequential collaboration (Architect → Coder → Reviewer → Refiner → Documenter) achieved a <strong style="color: var(--facilitair-teal);">73% pass rate</strong>
+                        versus just <strong>19%</strong> for single-model approaches—a <strong style="color: var(--facilitair-teal);">+284% improvement</strong>
+                        in production-ready code quality.
+                    </p>
+                </div>
+
+                <div class="glass-dark" style="padding: 3rem; border-radius: 24px;">
+                    <h3 class="feature-title">The Validation</h3>
+                    <p class="feature-description" style="font-size: 1.1rem; line-height: 1.8;">
+                        We didn't stop at theory. CodeSwarm and Anomaly Hunter are production systems demonstrating
+                        the real-world viability of multi-agent collaboration:
+                    </p>
+                    <ul style="color: rgba(250, 250, 250, 0.8); font-size: 1.05rem; line-height: 1.8; margin-top: 1rem; padding-left: 1.5rem;">
+                        <li><strong>CodeSwarm:</strong> 92-96/100 quality scores in production code generation</li>
+                        <li><strong>Anomaly Hunter:</strong> 100% detection rate across 5 industries</li>
+                        <li><strong>Continuous Learning:</strong> Systems that improve with every task</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="platform-info">
+            <div class="container-narrow">
+                <h2 class="section-title text-center">The Founder</h2>
+
+                <div class="glass-dark" style="padding: 3rem; border-radius: 24px;">
+                    <h3 class="feature-title" style="text-align: center;">Blake Ledden - Founder</h3>
+                    <p class="feature-description" style="font-size: 1.1rem; line-height: 1.8; text-align: left;">
+                        In July 2025, Blake left his role at Apple after 7 years with the company to focus on finding benefits of models collaborating with each other on user requests. Coming from an IT and startup background, Blake dropped out of college his Sophomore year to work on automation for the Apple Account & Authentication + Safari & WebKit teams for 5 years after 2 years at retail. Before dropping out of college, Blake was President of Augusta University's Association for Computing Machinery Chapter. He is strongest in Python but is a growing fan of Rust, and would love to chat about multi-model orchestration, collaboration, transactions, and any agentic buzzword that comes to mind. In his free time he loves to exercise and enjoy art.
+                    </p>
+
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="https://github.com/bledden" class="btn-secondary" target="_blank">GitHub</a>
+                        <a href="https://linkedin.com/in/blakeledden" class="btn-secondary" target="_blank">LinkedIn</a>
+                        <a href="mailto:blake@facilitair.ai" class="btn-primary">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Values Section -->
+        <section class="platform-info">
+            <div class="container">
+                <h2 class="section-title text-center">Our Values</h2>
+
+                <div class="features-grid">
+                    <div class="feature-card glass-dark">
+                        <h3 class="feature-title">Evidence-Based</h3>
+                        <p class="feature-description">
+                            Every claim backed by objective metrics, public benchmarks, and reproducible results.
+                        </p>
+                    </div>
+
+                    <div class="feature-card glass-dark">
+                        <h3 class="feature-title">Open & Transparent</h3>
+                        <p class="feature-description">
+                            Open-source code, public benchmarks, and full W&B Weave traces for complete transparency.
+                        </p>
+                    </div>
+
+                    <div class="feature-card glass-dark">
+                        <h3 class="feature-title">Production-First</h3>
+                        <p class="feature-description">
+                            Not demos—real production systems with 9/9 sponsor services operational and deployed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="email-signup">
+            <div class="container-narrow">
+                <div class="signup-card glass-dark">
+                    <h2 class="section-title">Join The Beta</h2>
+                    <p class="section-description">
+                        Be part of the multi-agent AI revolution. Get early access and shape the future.
+                    </p>
+                    <form class="signup-form" id="signup-form-1">
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            required
+                            class="email-input glass-light"
+                            aria-label="Email address"
+                        >
+                        <button type="submit" class="btn-primary">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer glass-dark">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="/logo.png" alt="FACILITAIR" class="footer-logo">
+                    <span class="footer-brand-name">FACILITAIR</span>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4 class="footer-heading">Navigation</h4>
+                        <a href="/about.html" class="footer-link">About</a>
+                        <a href="/blog.html" class="footer-link">Blog</a>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4 class="footer-heading">Projects</h4>
+                        <a href="https://github.com/bledden/codeswarm" class="footer-link" target="_blank">CodeSwarm</a>
+                        <a href="https://github.com/bledden/anomaly-hunter" class="footer-link" target="_blank">Anomaly Hunter</a>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4 class="footer-heading">Connect</h4>
+                        <a href="https://github.com/bledden" class="footer-link" target="_blank">GitHub</a>
+                        <a href="https://linkedin.com/in/blakeledden" class="footer-link" target="_blank">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-legal">
+                <div class="legal-text">
+                    <p>&copy; 2025 FACILITAIR. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/scripts/performance.js"></script>
+    <script src="/scripts/animations.js"></script>
+    <script src="/scripts/mobile-header.js"></script>
+    <script src="/scripts/forms.js"></script>
+</body>
+</html>
