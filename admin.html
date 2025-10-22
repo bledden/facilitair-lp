@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FACILITAIR Admin - Database Stats</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #100F0D;
+            color: #FAFAFA;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #5CE1E6;
+            text-align: center;
+        }
+        .stats-container {
+            background: rgba(92, 225, 230, 0.1);
+            border: 1px solid rgba(92, 225, 230, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(92, 225, 230, 0.2);
+        }
+        .stat:last-child {
+            border-bottom: none;
+        }
+        .stat-label {
+            font-weight: 600;
+            color: rgba(250, 250, 250, 0.8);
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #5CE1E6;
+        }
+        .input-group {
+            margin: 2rem 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(92, 225, 230, 0.3);
+            background: rgba(250, 250, 250, 0.1);
+            color: #FAFAFA;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%);
+            color: #100F0D;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(92, 225, 230, 0.3);
+        }
+        .error {
+            background: rgba(255, 100, 100, 0.1);
+            border: 1px solid rgba(255, 100, 100, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            color: #ff6b6b;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>FACILITAIR Admin Dashboard</h1>
+
+    <div id="loginForm">
+        <div class="input-group">
+            <label for="apiKey">Admin API Key:</label>
+            <input type="password" id="apiKey" placeholder="Enter your admin API key">
+        </div>
+        <button onclick="loadStats()">Load Stats</button>
+        <div id="error" class="error hidden"></div>
+    </div>
+
+    <div id="statsContainer" class="hidden">
+        <div class="stats-container">
+            <div class="stat">
+                <span class="stat-label">Total Subscribers</span>
+                <span class="stat-value" id="totalSubscribers">-</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Confirmed Subscribers</span>
+                <span class="stat-value" id="confirmedSubscribers">-</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">New This Week</span>
+                <span class="stat-value" id="recentSubscribers">-</span>
+            </div>
+        </div>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        async function loadStats() {
+            const apiKey = document.getElementById('apiKey').value;
+            const errorDiv = document.getElementById('error');
+
+            if (!apiKey) {
+                errorDiv.textContent = 'Please enter an API key';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/stats', {
+                    headers: {
+                        'X-API-Key': apiKey
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Invalid API key or server error');
+                }
+
+                const data = await response.json();
+
+                // Store API key in session
+                sessionStorage.setItem('adminApiKey', apiKey);
+
+                // Update UI
+                document.getElementById('totalSubscribers').textContent = data.total;
+                document.getElementById('confirmedSubscribers').textContent = data.confirmed;
+                document.getElementById('recentSubscribers').textContent = data.recentWeek;
+
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('statsContainer').classList.remove('hidden');
+                errorDiv.classList.add('hidden');
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('adminApiKey');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('statsContainer').classList.add('hidden');
+            document.getElementById('apiKey').value = '';
+        }
+
+        // Auto-load if API key is in session
+        window.addEventListener('load', () => {
+            const savedApiKey = sessionStorage.getItem('adminApiKey');
+            if (savedApiKey) {
+                document.getElementById('apiKey').value = savedApiKey;
+                loadStats();
+            }
+        });
+    </script>
+</body>
+</html>
