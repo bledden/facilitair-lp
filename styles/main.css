@@ -173,10 +173,14 @@ pre, code {
     -webkit-filter: drop-shadow(0 0 20px rgba(92, 225, 230, 0.8)) drop-shadow(0 0 10px rgba(92, 225, 230, 0.6));
     margin: 0 8px 0 0; /* Give glow space to breathe, more space on right */
     flex-shrink: 0; /* Prevent logo from shrinking */
+    background: none !important; /* Remove any background */
+    border: none !important; /* Remove any border */
+    outline: none !important; /* Remove any outline */
 }
 
 .logo:hover {
     animation: spin 2s linear infinite;
+    background: none !important; /* Ensure no background on hover */
 }
 
 .brand-name {
