@@ -34,3 +34,7 @@ Thumbs.db
 # Logs
 logs/
 *.log
+
+# Deployment Guides (private instructions)
+DEPLOY-*.md
+QUICKSTART.md
