@@ -20,7 +20,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // Initialize SQLite database
-const db = new Database('facilitair-emails.db');
+// Use Railway volume path if available, otherwise local path
+const dbPath = process.env.RAILWAY_VOLUME_MOUNT_PATH
+    ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, 'facilitair-emails.db')
+    : 'facilitair-emails.db';
+console.log(`Using database at: ${dbPath}`);
+const db = new Database(dbPath);
 
 // Create emails table with security features
 db.exec(`
@@ -732,9 +737,17 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`FACILITAIR Landing Page server running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Server listening on 0.0.0.0:${PORT}`);
+    console.log(`Health check available at /health`);
+});
+
+// Log when server is actually ready
+server.on('listening', () => {
+    const addr = server.address();
+    console.log(`Server bound to ${addr.address}:${addr.port}`);
 });
 
 // Graceful shutdown
