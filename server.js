@@ -153,8 +153,11 @@ function getConfirmationEmailHTML(confirmationToken, email) {
                             <p style="margin: 0 0 10px 0; color: rgba(250, 250, 250, 0.5); font-size: 12px;">
                                 This confirmation was requested for ${email}
                             </p>
-                            <p style="margin: 0; color: rgba(250, 250, 250, 0.5); font-size: 12px;">
+                            <p style="margin: 0 0 10px 0; color: rgba(250, 250, 250, 0.5); font-size: 12px;">
                                 If you didn't request this, you can safely ignore this email.
+                            </p>
+                            <p style="margin: 0; color: rgba(250, 250, 250, 0.5); font-size: 12px;">
+                                This is an automated email. Please do not reply. For questions, contact us via <a href="https://facilitair.ai" style="color: #5CE1E6; text-decoration: none;">facilitair.ai</a>
                             </p>
                         </td>
                     </tr>
@@ -243,7 +246,7 @@ function getFollowUpEmailHTML(surveyToken, email) {
                                 Sent to ${email}
                             </p>
                             <p style="margin: 0; color: rgba(250, 250, 250, 0.5); font-size: 12px;">
-                                Questions? Reply to this email anytime.
+                                This is an automated email. Please do not reply. For questions, contact us via <a href="https://facilitair.ai" style="color: #5CE1E6; text-decoration: none;">facilitair.ai</a>
                             </p>
                         </td>
                     </tr>

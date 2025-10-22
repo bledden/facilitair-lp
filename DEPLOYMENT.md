@@ -18,7 +18,7 @@ NODE_ENV=production
 PORT=3000
 BASE_URL=https://facilitair.ai
 ADMIN_API_KEY=your-secure-random-string-here
-RESEND_API_KEY=re_cSfXDoL4_3ojXujNSuP8vjFjKgqzV8tJG
+RESEND_API_KEY=your-resend-api-key-here
 FROM_EMAIL=FACILITAIR <onboarding@facilitair.ai>
 ```
 
@@ -40,7 +40,7 @@ FROM_EMAIL=FACILITAIR <onboarding@facilitair.ai>
      - `NODE_ENV` = `production`
      - `BASE_URL` = `https://facilitair.ai`
      - `ADMIN_API_KEY` = `your-secure-key`
-     - `RESEND_API_KEY` = `re_cSfXDoL4_3ojXujNSuP8vjFjKgqzV8tJG`
+     - `RESEND_API_KEY` = `your-resend-api-key`
      - `FROM_EMAIL` = `FACILITAIR <onboarding@facilitair.ai>`
 
 5. **Deploy**: Railway will automatically build and deploy
