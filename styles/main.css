@@ -610,13 +610,33 @@ section {
 /* Expandable Stats Cards */
 .stats-expandable {
     cursor: pointer;
-    padding: var(--space-6) var(--space-6) calc(var(--space-16) + var(--space-4)) var(--space-6);
+    padding: var(--space-6);
     position: relative;
     z-index: 1;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
     height: 100%;
+}
+
+/* Add visual indicator on hover */
+.stats-expandable:hover:not(.expanded) {
+    border-color: rgba(92, 225, 230, 0.6);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.2);
+}
+
+.stats-expandable:hover:not(.expanded)::after {
+    content: 'Click to expand';
+    position: absolute;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--facilitair-teal);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .stats-expandable.expanded {
@@ -684,6 +704,7 @@ section {
     opacity: 1;
     margin-top: var(--space-6);
     padding-top: var(--space-6);
+    padding-bottom: var(--space-8);
     border-top: 1px solid rgba(92, 225, 230, 0.2);
 }
 
@@ -842,6 +863,7 @@ section {
     line-height: 1.7;
     margin-bottom: var(--space-8);
     font-size: 1.05rem;
+    min-height: 6em;
 }
 
 .project-stats {
@@ -1143,7 +1165,6 @@ section {
 
 .expandable-card {
     padding: var(--space-8);
-    padding-bottom: calc(var(--space-16) + var(--space-4));
     border-radius: 20px;
     border: 1px solid rgba(92, 225, 230, 0.15);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1155,9 +1176,24 @@ section {
     height: 100%;
 }
 
-.expandable-card:hover {
-    border-color: rgba(92, 225, 230, 0.4);
+.expandable-card:hover:not(.expanded) {
+    border-color: rgba(92, 225, 230, 0.6);
     transform: translateY(-4px);
+    box-shadow: 0 0 20px rgba(92, 225, 230, 0.2);
+}
+
+.expandable-card:hover:not(.expanded)::after {
+    content: 'Click to expand';
+    position: absolute;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--facilitair-teal);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .expandable-card.expanded {
@@ -1165,6 +1201,34 @@ section {
     border-color: rgba(92, 225, 230, 0.5);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(92, 225, 230, 0.2);
     transform: scale(1.02);
+}
+
+.expandable-card.expanded:hover::after {
+    content: 'Click to collapse';
+    position: absolute;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--facilitair-teal);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stats-expandable.expanded:hover::after {
+    content: 'Click to collapse';
+    position: absolute;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--facilitair-teal);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .card-header {
@@ -1185,35 +1249,9 @@ section {
     width: 100%;
 }
 
+/* Remove expand button - using hover effects instead */
 .expand-btn {
-    background: rgba(92, 225, 230, 0.1);
-    border: 1px solid rgba(92, 225, 230, 0.3);
-    color: var(--facilitair-teal);
-    cursor: pointer;
-    padding: var(--space-3);
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    bottom: var(--space-6);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-}
-
-.expand-btn:hover {
-    background: rgba(92, 225, 230, 0.2);
-    border-color: rgba(92, 225, 230, 0.5);
-    transform: translateX(-50%) scale(1.1);
-}
-
-.expand-btn svg {
-    transition: transform 0.3s ease;
-    display: block;
+    display: none;
 }
 
 /* Mobile: Smaller expand buttons with more space */
@@ -1221,7 +1259,7 @@ section {
     .expand-btn {
         width: 28px;
         height: 28px;
-        bottom: var(--space-2);
+        bottom: 12px;
     }
 
     .expand-btn svg {
@@ -1230,18 +1268,24 @@ section {
     }
 
     .expandable-card {
-        padding-bottom: 80px;
+        padding-bottom: 60px;
         min-height: 200px;
     }
 
     .stats-expandable {
-        padding-bottom: 80px;
+        padding-bottom: 60px;
         min-height: 200px;
     }
 
+    /* Expanded state on mobile - keep same circular button */
+    .expandable-card.expanded,
+    .stats-expandable.expanded {
+        padding-bottom: 60px;
+    }
+
     .card-preview {
-        margin-bottom: 0;
-        padding-bottom: 0;
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-2);
     }
 
     .card-header {
@@ -1254,13 +1298,9 @@ section {
     }
 
     .card-header p {
-        margin-bottom: 0;
-        padding-bottom: 0;
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-2);
     }
-}
-
-.expandable-card.expanded .expand-btn {
-    bottom: var(--space-4);
 }
 
 .expandable-card.expanded .expand-btn svg {
@@ -1300,6 +1340,7 @@ section {
     max-height: 2000px;
     opacity: 1;
     margin-top: var(--space-6);
+    padding-bottom: var(--space-8);
 }
 
 .card-expanded-content h4 {
@@ -1908,8 +1949,10 @@ section {
     }
 
     .section-title {
-        font-size: clamp(1.5rem, 7vw, 2rem);
+        font-size: clamp(1.25rem, 6vw, 2rem);
         word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
 
     .section-description {
