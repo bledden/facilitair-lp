@@ -167,12 +167,13 @@
             }
 
             .survey-header h1 {
-                font-size: 14px;
+                font-size: 12px;
                 line-height: 1.5;
                 word-spacing: 9999px; /* Force each word to its own line */
                 white-space: normal;
                 overflow-wrap: normal;
                 word-break: keep-all; /* Prevent breaking within words */
+                letter-spacing: -0.5px; /* Tighten letter spacing */
             }
 
             .survey-header p {
@@ -207,8 +208,9 @@
         /* Tablet/iPad landscape responsive styles */
         @media (min-width: 769px) and (max-width: 1024px) {
             .survey-header h1 {
-                font-size: 20px;
+                font-size: 16px;
                 line-height: 1.4;
+                letter-spacing: -0.5px;
             }
 
             .survey-card {
@@ -219,10 +221,11 @@
         /* iPad portrait and smaller landscape */
         @media (min-width: 600px) and (max-width: 900px) and (orientation: landscape) {
             .survey-header h1 {
-                font-size: 18px;
+                font-size: 14px;
                 line-height: 1.4;
                 max-width: 90%;
                 margin: 0 auto var(--space-4);
+                letter-spacing: -0.5px;
             }
         }
     </style>
