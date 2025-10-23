@@ -175,6 +175,11 @@
                 max-width: 80%;
             }
 
+            /* Hide line break on mobile - let text wrap naturally */
+            .desktop-break {
+                display: none;
+            }
+
             .survey-header p {
                 font-size: 14px;
             }
@@ -209,7 +214,7 @@
     <div class="survey-container">
         <div class="survey-card">
             <div class="survey-header">
-                <h1>Help Us Build FACILITAIR For You</h1>
+                <h1>Help Us Build<br class="desktop-break"> FACILITAIR For You</h1>
                 <p>Your insights will directly shape our beta program. All fields are optional, but the more we know, the better we can serve you!</p>
             </div>
 
