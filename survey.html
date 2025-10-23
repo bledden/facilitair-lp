@@ -32,9 +32,10 @@
 
         .survey-header h1 {
             color: var(--facilitair-teal);
-            font-size: 40px;
+            font-size: 16px;
             font-weight: 700;
             margin-bottom: var(--space-4);
+            line-height: 1.4;
         }
 
         .survey-header p {
@@ -167,15 +168,8 @@
             }
 
             .survey-header h1 {
-                font-size: 20px;
-                line-height: 1.5;
+                font-size: 14px;
                 word-spacing: 9999px; /* Force each word to its own line */
-                white-space: normal;
-                overflow-wrap: normal;
-                word-break: keep-all; /* Prevent breaking within words */
-                transform: scale(0.5); /* Scale down to 50% of original size */
-                transform-origin: center;
-                margin-bottom: calc(var(--space-4) * -1.5); /* Compensate for scale spacing */
             }
 
             .survey-header p {
@@ -204,34 +198,6 @@
 
             .submit-btn {
                 font-size: 16px;
-            }
-        }
-
-        /* Tablet/iPad landscape responsive styles */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .survey-header h1 {
-                font-size: 28px;
-                line-height: 1.4;
-                transform: scale(0.7); /* Scale down to 70% */
-                transform-origin: center;
-                margin-bottom: calc(var(--space-4) * -0.5);
-            }
-
-            .survey-card {
-                max-width: 80%;
-            }
-        }
-
-        /* iPad portrait and smaller landscape */
-        @media (min-width: 600px) and (max-width: 900px) and (orientation: landscape) {
-            .survey-header h1 {
-                font-size: 24px;
-                line-height: 1.4;
-                max-width: 90%;
-                margin: 0 auto;
-                transform: scale(0.65); /* Scale down to 65% */
-                transform-origin: center;
-                margin-bottom: calc(var(--space-4) * -0.5);
             }
         }
     </style>
