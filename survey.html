@@ -158,6 +158,41 @@
         .back-link:hover {
             text-decoration: underline;
         }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .survey-card {
+                max-width: 95%;
+                padding: var(--space-6);
+            }
+
+            .survey-header h1 {
+                font-size: 20px;
+                line-height: 1.4;
+                word-spacing: 9999px; /* Force each word to its own line */
+                white-space: normal;
+                overflow-wrap: normal;
+                word-break: keep-all; /* Prevent breaking within words */
+            }
+
+            .survey-header p {
+                font-size: 14px;
+            }
+
+            .form-group label {
+                font-size: 14px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px;
+            }
+
+            .submit-btn {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
