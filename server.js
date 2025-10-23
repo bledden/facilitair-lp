@@ -723,10 +723,10 @@ app.get('/api/survey-responses', (req, res) => {
                 us.how_found,
                 us.background,
                 us.additional_info,
-                us.created_at as survey_completed_at
+                us.submitted_at as survey_completed_at
             FROM user_surveys us
             JOIN subscribers s ON us.subscriber_id = s.id
-            ORDER BY us.created_at DESC
+            ORDER BY us.submitted_at DESC
         `).all();
 
         res.json({
