@@ -739,6 +739,66 @@ app.get('/api/survey-responses', (req, res) => {
     }
 });
 
+// API endpoint: Get all subscribers (admin only)
+app.get('/api/subscribers', (req, res) => {
+    try {
+        const apiKey = req.get('X-API-Key');
+        if (apiKey !== process.env.ADMIN_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const subscribers = db.prepare(`
+            SELECT
+                id,
+                email,
+                subscribed_at,
+                confirmed,
+                confirmed_at,
+                survey_completed
+            FROM subscribers
+            ORDER BY subscribed_at DESC
+        `).all();
+
+        res.json({
+            count: subscribers.length,
+            subscribers: subscribers
+        });
+    } catch (error) {
+        console.error('Subscribers list error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// API endpoint: Delete subscriber (admin only)
+app.delete('/api/subscribers/:id', (req, res) => {
+    try {
+        const apiKey = req.get('X-API-Key');
+        if (apiKey !== process.env.ADMIN_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const subscriberId = parseInt(req.params.id);
+
+        // Delete associated survey responses first (foreign key cascade should handle this, but being explicit)
+        db.prepare('DELETE FROM user_surveys WHERE subscriber_id = ?').run(subscriberId);
+
+        // Delete the subscriber
+        const result = db.prepare('DELETE FROM subscribers WHERE id = ?').run(subscriberId);
+
+        if (result.changes === 0) {
+            return res.status(404).json({ error: 'Subscriber not found' });
+        }
+
+        res.json({
+            success: true,
+            message: 'Subscriber deleted successfully'
+        });
+    } catch (error) {
+        console.error('Delete subscriber error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // Health check endpoint for Railway
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
