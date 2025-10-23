@@ -87,6 +87,67 @@
         .hidden {
             display: none;
         }
+        .survey-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .survey-item {
+            background: rgba(92, 225, 230, 0.05);
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .survey-item h3 {
+            color: #5CE1E6;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        .survey-item p {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+        }
+        .survey-item strong {
+            color: rgba(92, 225, 230, 0.9);
+        }
+        .survey-date {
+            color: rgba(250, 250, 250, 0.6);
+            font-size: 0.9rem;
+        }
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0 0 0;
+            border-bottom: 2px solid rgba(92, 225, 230, 0.3);
+        }
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: rgba(250, 250, 250, 0.6);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0;
+            width: auto;
+        }
+        .tab:hover {
+            color: #5CE1E6;
+            transform: none;
+            box-shadow: none;
+        }
+        .tab.active {
+            color: #5CE1E6;
+            border-bottom-color: #5CE1E6;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -102,20 +163,41 @@
     </div>
 
     <div id="statsContainer" class="hidden">
-        <div class="stats-container">
-            <div class="stat">
-                <span class="stat-label">Total Subscribers</span>
-                <span class="stat-value" id="totalSubscribers">-</span>
-            </div>
-            <div class="stat">
-                <span class="stat-label">Confirmed Subscribers</span>
-                <span class="stat-value" id="confirmedSubscribers">-</span>
-            </div>
-            <div class="stat">
-                <span class="stat-label">New This Week</span>
-                <span class="stat-value" id="recentSubscribers">-</span>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('stats')">Overview</button>
+            <button class="tab" onclick="switchTab('surveys')">Survey Responses</button>
+        </div>
+
+        <div id="statsTab" class="tab-content active">
+            <div class="stats-container">
+                <div class="stat">
+                    <span class="stat-label">Total Subscribers</span>
+                    <span class="stat-value" id="totalSubscribers">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Confirmed Subscribers</span>
+                    <span class="stat-value" id="confirmedSubscribers">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">New This Week</span>
+                    <span class="stat-value" id="recentSubscribers">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Survey Responses</span>
+                    <span class="stat-value" id="surveyCount">-</span>
+                </div>
             </div>
         </div>
+
+        <div id="surveysTab" class="tab-content">
+            <div class="stats-container">
+                <h2 style="color: #5CE1E6; margin-top: 0;">Survey Responses</h2>
+                <div id="surveyList" class="survey-list">
+                    <p style="text-align: center; color: rgba(250, 250, 250, 0.6);">Loading...</p>
+                </div>
+            </div>
+        </div>
+
         <button onclick="logout()">Logout</button>
     </div>
 
@@ -154,9 +236,68 @@
                 document.getElementById('loginForm').classList.add('hidden');
                 document.getElementById('statsContainer').classList.remove('hidden');
                 errorDiv.classList.add('hidden');
+
+                // Load survey responses
+                await loadSurveys(apiKey);
             } catch (error) {
                 errorDiv.textContent = error.message;
                 errorDiv.classList.remove('hidden');
+            }
+        }
+
+        async function loadSurveys(apiKey) {
+            try {
+                const response = await fetch('/api/survey-responses', {
+                    headers: {
+                        'X-API-Key': apiKey || sessionStorage.getItem('adminApiKey')
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load survey responses');
+                }
+
+                const data = await response.json();
+
+                // Update survey count in overview
+                document.getElementById('surveyCount').textContent = data.count;
+
+                // Display survey responses
+                const surveyList = document.getElementById('surveyList');
+                if (data.count === 0) {
+                    surveyList.innerHTML = '<p style="text-align: center; color: rgba(250, 250, 250, 0.6);">No survey responses yet.</p>';
+                } else {
+                    surveyList.innerHTML = data.responses.map(survey => `
+                        <div class="survey-item">
+                            <h3>${survey.email}</h3>
+                            <p class="survey-date">Completed: ${new Date(survey.survey_completed_at).toLocaleString()}</p>
+
+                            <p><strong>Planned Use:</strong> ${survey.planned_use || 'N/A'}</p>
+                            <p><strong>Anticipated Usage:</strong> ${survey.anticipated_usage || 'N/A'}</p>
+                            <p><strong>How They Found Us:</strong> ${survey.how_found || 'N/A'}</p>
+                            <p><strong>Background:</strong> ${survey.background || 'N/A'}</p>
+                            ${survey.additional_info ? `<p><strong>Additional Info:</strong> ${survey.additional_info}</p>` : ''}
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Survey load error:', error);
+                document.getElementById('surveyList').innerHTML =
+                    '<p style="text-align: center; color: #ff6b6b;">Failed to load survey responses.</p>';
+            }
+        }
+
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            if (tab === 'stats') {
+                document.getElementById('statsTab').classList.add('active');
+            } else if (tab === 'surveys') {
+                document.getElementById('surveysTab').classList.add('active');
             }
         }
 

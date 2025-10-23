@@ -705,6 +705,40 @@ app.get('/api/stats', (req, res) => {
     }
 });
 
+// API endpoint: Get survey responses (admin only)
+app.get('/api/survey-responses', (req, res) => {
+    try {
+        // Authentication required
+        const apiKey = req.get('X-API-Key');
+        if (apiKey !== process.env.ADMIN_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const surveys = db.prepare(`
+            SELECT
+                s.email,
+                s.subscribed_at,
+                us.planned_use,
+                us.anticipated_usage,
+                us.how_found,
+                us.background,
+                us.additional_info,
+                us.created_at as survey_completed_at
+            FROM user_surveys us
+            JOIN subscribers s ON us.subscriber_id = s.id
+            ORDER BY us.created_at DESC
+        `).all();
+
+        res.json({
+            count: surveys.length,
+            responses: surveys
+        });
+    } catch (error) {
+        console.error('Survey responses error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // Health check endpoint for Railway
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
