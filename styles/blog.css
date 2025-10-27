@@ -316,24 +316,34 @@
         text-align: center;
     }
 
-    /* Make tables fit in viewport without scrolling */
+    /* Make tables fit in viewport without scrolling - ultra compact */
     .blog-table {
-        font-size: 0.6rem;
+        display: block;
         width: 100%;
-        table-layout: auto;
+        overflow-x: visible;
+    }
+
+    .blog-table thead,
+    .blog-table tbody,
+    .blog-table tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
     }
 
     .blog-table th,
     .blog-table td {
-        padding: 0.25rem 0.15rem;
-        font-size: 0.6rem;
-        line-height: 1.3;
+        padding: 0.2rem 0.1rem;
+        font-size: 0.55rem;
+        line-height: 1.2;
         word-wrap: break-word;
         white-space: normal;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
 
     .blog-table th {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         font-weight: 700;
     }
 }
