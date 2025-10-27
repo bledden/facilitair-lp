@@ -127,52 +127,39 @@
                     <div class="post-full-content" id="post-weekly-update" style="display: none;">
                         <hr style="border: 1px solid rgba(92, 225, 230, 0.2); margin: var(--space-8) 0;">
 
-                        <style>
-                            .markdown-content {
-                                color: rgba(250, 250, 250, 0.9);
-                                font-family: 'Montserrat', sans-serif;
-                            }
-                            .markdown-content pre {
-                                background: rgba(92, 225, 230, 0.05);
-                                border: 1px solid rgba(92, 225, 230, 0.2);
-                                border-radius: 8px;
-                                padding: 1rem;
-                                overflow-x: auto;
-                                font-size: 0.9rem;
-                            }
-                        </style>
-                        <iframe srcdoc='<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<style>
-body {
-    font-family: Montserrat, sans-serif;
-    color: rgba(250, 250, 250, 0.9);
-    background: transparent;
-    line-height: 1.8;
-    padding: 1rem;
-    white-space: pre-wrap;
-    font-size: 1rem;
-}
-</style>
-</head>
-<body>' style="width: 100%; min-height: 2000px; border: none; background: transparent;"></iframe>
-
-                        <div class="markdown-content" style="white-space: pre-wrap; line-height: 1.8; font-size: 1rem;">
-View the full post content by expanding this section. The complete 40-minute read includes detailed breakdowns of all 7 projects, performance metrics, technical deep-dives, and lessons learned from AI-accelerated development.
-
-<strong>Topics covered:</strong>
-- Facilitair Beta: Training orchestration database setup
-- arrwDB v2.0: Real-time streaming and WebSocket implementation
-- AMD Hackathon: Fine-tuning Qwen2.5-72B for tournament Q&A
-- Dendritic Compression: 35-epoch neural network compression test
-- weavehacks-collaborative: 100-task benchmark results
-- Anomaly Hunter: Multi-agent detection across 5 domains
-- CodeSwarm: Knowledge graph self-improvement
-
-<strong>For the complete post</strong>, visit: <a href="https://github.com/bledden" target="_blank" style="color: var(--facilitair-teal);">github.com/bledden</a>
+                        <div id="weekly-update-full-content" style="color: rgba(250, 250, 250, 0.9); font-family: 'Montserrat', sans-serif;">
+                            <!-- Content will be loaded here -->
+                            <p style="text-align: center; padding: var(--space-8); color: rgba(250, 250, 250, 0.6);">
+                                <em>Loading full post content...</em>
+                            </p>
                         </div>
+
+                        <script>
+                            // Load the full blog post content
+                            (function() {
+                                fetch('/blog_post_weekly_update_content.html')
+                                    .then(response => response.text())
+                                    .then(html => {
+                                        document.getElementById('weekly-update-full-content').innerHTML = html;
+                                    })
+                                    .catch(error => {
+                                        console.error('Error loading blog content:', error);
+                                        document.getElementById('weekly-update-full-content').innerHTML = `
+                                            <p style="color: rgba(250, 250, 250, 0.7); padding: var(--space-4);">
+                                                <strong>Complete 40-minute read covering:</strong><br><br>
+                                                • Facilitair Beta: Training orchestration database setup<br>
+                                                • arrwDB v2.0: Real-time streaming and WebSocket implementation<br>
+                                                • AMD Hackathon: Fine-tuning Qwen2.5-72B for tournament Q&A<br>
+                                                • Dendritic Compression: 35-epoch neural network compression test<br>
+                                                • weavehacks-collaborative: 100-task benchmark results<br>
+                                                • Anomaly Hunter: Multi-agent detection across 5 domains<br>
+                                                • CodeSwarm: Knowledge graph self-improvement<br><br>
+                                                <a href="https://github.com/bledden" target="_blank" style="color: var(--facilitair-teal); text-decoration: underline;">View all projects on GitHub →</a>
+                                            </p>
+                                        `;
+                                    });
+                            })();
+                        </script>
 
                         <div class="post-footer">
                             <p><strong>Want to chat?</strong> Reach out:</p>
