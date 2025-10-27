@@ -228,7 +228,7 @@
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;"><strong>Timeline</strong>:</p>
 <ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Week 1: [COMPLETE] Database setup complete, deploy staging, publish blog post #2</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Week 2: Recruit beta users, fix bugs, train Orchestrator v0.1 (Qwen2.5-72B LoRA on 500 traces)</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">Week 2: Recruit beta users, fix bugs, train Orchestrator v0.1</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Week 3: Publish posts #4 and #1, iterate on feedback, deploy v0.1 as A/B test</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Week 4: Public beta launch, begin collecting 10K-100K orchestration traces</li>
 </ul>
@@ -242,9 +242,9 @@
 
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;"><strong>Phase 1 (Weeks 1-2): Orchestrator v0.1</strong></p>
 <ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Fine-tune Qwen2.5-72B with LoRA on 500 internal traces</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">Train initial foundation model on internal orchestration traces</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Expected accuracy: 75-85% (vs 67% baseline)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Training cost: $50-100 (24-hour GPU run)</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;"></li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Deploy as A/B test (50% of users)</li>
 </ul>
 
@@ -259,11 +259,11 @@
 
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;"><strong>Phase 3 (Months 3-6): Orchestrator v1.0</strong></p>
 <ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Train 7B model from scratch (optional) or continue LoRA fine-tuning</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">Train production foundation model from scratch</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">1.1M training examples (100K real + 1M synthetic via data augmentation)</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Custom architecture optimized for orchestration decisions</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Expected accuracy: 92-95%</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Training cost: $2K-3K</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;"></li>
 </ul>
 
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;"><strong>Why This Creates a Moat</strong>:</p>
@@ -272,7 +272,7 @@
 <li style="margin: var(--space-2) 0; line-height: 1.6;">No competitor has orchestration trace data (network effects from usage)</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">100K+ traces = $2.5M-123M market value (equivalent human annotation cost)</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Better model selection = 30-40% cost savings per task</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">ROI: $250 training cost, $700 savings per 10K tasks, payback in ~3,571 tasks (~1 week for 100 active users)</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">Better routing decisions compound over time, creating exponential value from proprietary data</li>
 </ul>
 
 <hr style="border: none; border-top: 1px solid rgba(92, 225, 230, 0.2); margin: var(--space-8) 0;">
