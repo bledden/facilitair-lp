@@ -316,12 +316,35 @@
         text-align: center;
     }
 
-    .blog-table {
-        font-size: 0.85rem;
+    /* Table wrapper for horizontal scroll */
+    .post-full-content .blog-table,
+    .post-preview .blog-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        font-size: 0.75rem;
+    }
+
+    .blog-table thead,
+    .blog-table tbody,
+    .blog-table tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
     }
 
     .blog-table th,
     .blog-table td {
         padding: var(--space-2);
+        font-size: 0.75rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Ensure minimum width for readability */
+    .blog-table {
+        min-width: 600px;
     }
 }
