@@ -318,32 +318,34 @@
 
     /* Make tables fit in viewport without scrolling - ultra compact */
     .blog-table {
-        display: block;
-        width: 100%;
-        overflow-x: visible;
+        display: block !important;
+        width: 100% !important;
+        overflow-x: visible !important;
+        font-size: 0.5rem !important;
     }
 
     .blog-table thead,
     .blog-table tbody,
     .blog-table tr {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
+        display: table !important;
+        width: 100% !important;
+        table-layout: fixed !important;
     }
 
     .blog-table th,
     .blog-table td {
-        padding: 0.2rem 0.1rem;
-        font-size: 0.55rem;
-        line-height: 1.2;
-        word-wrap: break-word;
-        white-space: normal;
-        overflow-wrap: break-word;
-        hyphens: auto;
+        padding: 0.15rem 0.05rem !important;
+        font-size: 0.5rem !important;
+        line-height: 1.1 !important;
+        word-wrap: break-word !important;
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
+        hyphens: auto !important;
+        max-width: none !important;
     }
 
     .blog-table th {
-        font-size: 0.6rem;
-        font-weight: 700;
+        font-size: 0.55rem !important;
+        font-weight: 700 !important;
     }
 }
