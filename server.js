@@ -7,6 +7,7 @@ const express = require('express');
 const cors = require('cors');
 const Database = require('better-sqlite3');
 const path = require('path');
+const fs = require('fs');
 const crypto = require('crypto');
 const { Resend } = require('resend');
 
@@ -17,6 +18,32 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// URL rewrite middleware - Remove .html extensions
+// This allows /about to serve about.html
+app.use((req, res, next) => {
+    // Skip API routes and files with extensions (except .html)
+    if (req.path.startsWith('/api/') ||
+        (path.extname(req.path) && path.extname(req.path) !== '.html')) {
+        return next();
+    }
+
+    // If URL ends with .html, redirect to extensionless version (301 permanent)
+    if (req.path.endsWith('.html')) {
+        const newPath = req.path.slice(0, -5); // Remove .html
+        return res.redirect(301, newPath);
+    }
+
+    // If URL doesn't have .html and the file exists with .html, serve it
+    const htmlPath = path.join(__dirname, req.path + '.html');
+
+    if (fs.existsSync(htmlPath)) {
+        return res.sendFile(htmlPath);
+    }
+
+    next();
+});
+
 app.use(express.static(path.join(__dirname)));
 
 // Initialize SQLite database
