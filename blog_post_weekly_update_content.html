@@ -377,28 +377,31 @@
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;">An <strong>autonomous anomaly detection system</strong> using 3 specialized AI agents:</p>
 
 <ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
-<li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Pattern Analyst</strong> (GPT-5 Pro) - Statistical anomaly detection</li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Z-scores, MAD (Median Absolute Deviation), IQR outliers</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Identifies deviations from historical patterns</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">
+<strong>Pattern Analyst</strong> (GPT-5 Pro) - Statistical anomaly detection
+<ul style="margin: var(--space-4) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Z-scores, MAD (Median Absolute Deviation), IQR outliers</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Identifies deviations from historical patterns</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
-<li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Change Detective</strong> (Claude 4.5 Sonnet) - Time-series drift analysis</li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Trend changes, seasonality shifts, sudden level changes</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Detects subtle drifts that statistics miss</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">
+<strong>Change Detective</strong> (Claude 4.5 Sonnet) - Time-series drift analysis
+<ul style="margin: var(--space-4) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Trend changes, seasonality shifts, sudden level changes</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Detects subtle drifts that statistics miss</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
-<li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Root Cause Agent</strong> (Claude 4.5 Sonnet) - Dependency graph investigation</li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Correlates anomalies across metrics</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Proposes likely root causes with confidence scores</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">
+<strong>Root Cause Agent</strong> (Claude 4.5 Sonnet) - Dependency graph investigation
+<ul style="margin: var(--space-4) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Correlates anomalies across metrics</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Proposes likely root causes with confidence scores</li>
 </ul>
+</li>
+
+</ol>
 
 <h4 style="color: var(--facilitair-teal); margin-top: var(--space-8); margin-bottom: var(--space-4); font-size: 1.5rem;">Performance Validation</h4>
 
@@ -1132,96 +1135,88 @@
 
 <ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Boilerplate Generation</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">FastAPI routers, React components, database schemas</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">10x faster than writing by hand</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: arrwDB's 545-test suite generated in 2 hours</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">FastAPI routers, React components, database schemas</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">10x faster than writing by hand</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: arrwDB's 545-test suite generated in 2 hours</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Pattern Implementation</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">"Implement X like Y" works flawlessly</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: "Add Neo4j integration like the Supabase integration"</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Claude understood the pattern and applied it correctly</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">"Implement X like Y" works flawlessly</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: "Add Neo4j integration like the Supabase integration"</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Claude understood the pattern and applied it correctly</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Documentation</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">README generation, API docs, code comments</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Claude maintains consistent tone across 23K words</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: All 4 blog posts have cohesive narrative voice</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">README generation, API docs, code comments</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Claude maintains consistent tone across 23K words</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: All 4 blog posts have cohesive narrative voice</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Refactoring</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">"Extract this into a separate module" → done instantly</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Handles imports, type hints, dependency injection</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: Refactored Facilitair's 20+ agents without breaking tests</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">"Extract this into a separate module" → done instantly</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Handles imports, type hints, dependency injection</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: Refactored Facilitair's 20+ agents without breaking tests</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Debugging (with context)</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Provide error message + stack trace → Claude identifies root cause</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: Fixed Anomaly Hunter's async deadlock in 3 minutes</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Human would have spent 30+ minutes debugging</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Provide error message + stack trace → Claude identifies root cause</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: Fixed Anomaly Hunter's async deadlock in 3 minutes</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Human would have spent 30+ minutes debugging</li>
 </ul>
-
+</li>
+</ol>
 <h4 style="color: var(--facilitair-teal); margin-top: var(--space-8); margin-bottom: var(--space-4); font-size: 1.5rem;">What AI Struggles With</h4>
 
 <ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Novel Architecture Decisions</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">"Should we use strategy pattern or factory pattern?" → AI waffles</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Best approach: Human decides, AI implements</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: Facilitair's 5-strategy routing was human-designed</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">"Should we use strategy pattern or factory pattern?" → AI waffles</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Best approach: Human decides, AI implements</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: Facilitair's 5-strategy routing was human-designed</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Performance Optimization</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">AI suggests obvious optimizations (caching, indexing)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Misses non-obvious bottlenecks (algorithmic complexity)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: arrwDB's HNSW graph construction needed human profiling</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">AI suggests obvious optimizations (caching, indexing)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Misses non-obvious bottlenecks (algorithmic complexity)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: arrwDB's HNSW graph construction needed human profiling</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Security Edge Cases</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">AI catches common vulnerabilities (SQL injection, XSS)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Misses subtle issues (timing attacks, race conditions)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: Facilitair's OAuth token encryption needed human security audit</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">AI catches common vulnerabilities (SQL injection, XSS)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Misses subtle issues (timing attacks, race conditions)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: Facilitair's OAuth token encryption needed human security audit</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Cross-File Context</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">AI forgets changes made 3 files ago</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Needs frequent reminders of architecture decisions</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: "Remember we're using Pydantic v2, not v1" (repeated 10+ times)</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">AI forgets changes made 3 files ago</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Needs frequent reminders of architecture decisions</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: "Remember we're using Pydantic v2, not v1" (repeated 10+ times)</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Production Deployment</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">AI writes deployment scripts that work locally</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Misses production concerns (secrets management, monitoring, rollback)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Example: All 7 projects needed human deployment configuration</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">AI writes deployment scripts that work locally</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Misses production concerns (secrets management, monitoring, rollback)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Example: All 7 projects needed human deployment configuration</li>
 </ul>
-
+</li>
+</ol>
 <h4 style="color: var(--facilitair-teal); margin-top: var(--space-8); margin-bottom: var(--space-4); font-size: 1.5rem;">Best Practices We Developed</h4>
 
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;"><strong>1. Start with Architecture</strong></p>
@@ -1318,100 +1313,94 @@
 
 <ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Facilitair Beta Launch</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Deploy staging (backend + frontend + Supabase)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Publish blog post #2 "The Real Cost of AI Code Generation"</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Recruit 10-20 beta users from HN/Reddit engagement</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Deploy staging (backend + frontend + Supabase)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Publish blog post #2 "The Real Cost of AI Code Generation"</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Recruit 10-20 beta users from HN/Reddit engagement</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>AMD Hackathon Submission</strong> (Deadline: Oct 29)</li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Finalize Q&A dataset (1,000-5,000 pairs)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Fine-tune LLaMA 3 8B via Unsloth</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Submit tournament agent</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Finalize Q&A dataset (1,000-5,000 pairs)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Fine-tune LLaMA 3 8B via Unsloth</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Submit tournament agent</li>
 </ul>
-
+</li>
+</ol>
 <h4 style="color: var(--facilitair-teal); margin-top: var(--space-8); margin-bottom: var(--space-4); font-size: 1.5rem;">Short-term (Weeks 2-4)</h4>
 
 <ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Blog Post Series</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Week 2: Post #4 "Sequential vs Single-Shot"</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Week 3: Post #1 "5 Approaches Benchmark"</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Week 4: Post #6 "Building a Benchmark"</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Week 2: Post #4 "Sequential vs Single-Shot"</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Week 3: Post #1 "5 Approaches Benchmark"</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Week 4: Post #6 "Building a Benchmark"</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Anomaly Hunter Production Deployment</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Deploy to cloud (AWS/GCP)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Connect to production monitoring (Prometheus/Grafana)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Validate on real production data</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Deploy to cloud (AWS/GCP)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Connect to production monitoring (Prometheus/Grafana)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Validate on real production data</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>CodeSwarm Knowledge Graph Scaling</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Reach 500+ proven patterns in Neo4j</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">A/B test documentation retrieval strategies</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Add multi-language support (JavaScript, TypeScript)</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Reach 500+ proven patterns in Neo4j</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">A/B test documentation retrieval strategies</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Add multi-language support (JavaScript, TypeScript)</li>
 </ul>
-
+</li>
+</ol>
 <h4 style="color: var(--facilitair-teal); margin-top: var(--space-8); margin-bottom: var(--space-4); font-size: 1.5rem;">Medium-term (Months 2-3)</h4>
 
 <ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Dendritic Hackathon Completion</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Finish Whisper compression experiments</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Test second model (BERT/ResNet)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Write research paper + open-source release</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Finish Whisper compression experiments</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Test second model (BERT/ResNet)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Write research paper + open-source release</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>arrwDB Production Hardening</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Add authentication (API keys)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Implement rate limiting</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Deploy to production for Facilitair/CodeSwarm</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Add authentication (API keys)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Implement rate limiting</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Deploy to production for Facilitair/CodeSwarm</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Facilitair Public Beta</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Iterate on beta user feedback</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Complete API documentation</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Launch public beta with pricing</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Iterate on beta user feedback</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Complete API documentation</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Launch public beta with pricing</li>
 </ul>
-
+</li>
+</ol>
 <h4 style="color: var(--facilitair-teal); margin-top: var(--space-8); margin-bottom: var(--space-4); font-size: 1.5rem;">Long-term (Months 4-6)</h4>
 
 <ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Research Paper Submissions</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">weavehacks benchmark → ICSE/NeurIPS</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Dendritic compression → MLSys/ICLR</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Anomaly Hunter multi-agent → KDD</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">weavehacks benchmark → ICSE/NeurIPS</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Dendritic compression → MLSys/ICLR</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Anomaly Hunter multi-agent → KDD</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Enterprise Features</strong></li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Facilitair: Team management, SSO, on-premise deployment</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Anomaly Hunter: Custom model training, domain-specific tuning</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">CodeSwarm: Private knowledge graphs, team collaboration</li>
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Facilitair: Team management, SSO, on-premise deployment</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Anomaly Hunter: Custom model training, domain-specific tuning</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">CodeSwarm: Private knowledge graphs, team collaboration</li>
 </ul>
-
+</li>
+</ol>
 <hr style="border: none; border-top: 1px solid rgba(92, 225, 230, 0.2); margin: var(--space-8) 0;">
 
 <h3 style="color: var(--facilitair-teal); margin-top: var(--space-10); margin-bottom: var(--space-6); font-size: 1.75rem; border-bottom: 2px solid rgba(92, 225, 230, 0.3); padding-bottom: var(--space-3);">The Meta-Lesson: AI as Collaborator, Not Replacement</h3>
