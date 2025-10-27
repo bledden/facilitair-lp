@@ -826,6 +826,179 @@ app.delete('/api/subscribers/:id', (req, res) => {
     }
 });
 
+// API endpoint: Get Cloudflare Analytics (admin only)
+app.get('/api/cloudflare-analytics', async (req, res) => {
+    try {
+        const apiKey = req.get('X-API-Key');
+        if (apiKey !== process.env.ADMIN_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const { period = 'day' } = req.query; // day, week, or month
+
+        // Check if Cloudflare credentials are configured
+        if (!process.env.CLOUDFLARE_API_KEY || !process.env.CLOUDFLARE_EMAIL || !process.env.CLOUDFLARE_ZONE_ID) {
+            return res.status(503).json({
+                error: 'Cloudflare Analytics not configured',
+                message: 'Please set CLOUDFLARE_API_KEY, CLOUDFLARE_EMAIL, and CLOUDFLARE_ZONE_ID environment variables'
+            });
+        }
+
+        // Calculate date range based on period
+        const now = new Date();
+        let startDate;
+        switch (period) {
+            case 'week':
+                startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                break;
+            case 'month':
+                startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                break;
+            default: // day
+                startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        }
+
+        const datetime_geq = startDate.toISOString();
+        const datetime_lt = now.toISOString();
+
+        // GraphQL query for Cloudflare Analytics
+        const query = `
+            query GetZoneAnalytics($zoneTag: String!, $datetime_geq: DateTime!, $datetime_lt: DateTime!) {
+                viewer {
+                    zones(filter: { zoneTag: $zoneTag }) {
+                        totals: httpRequests1dGroups(filter: { datetime_geq: $datetime_geq, datetime_lt: $datetime_lt }) {
+                            uniq {
+                                uniques
+                            }
+                            sum {
+                                requests
+                                pageViews
+                            }
+                        }
+                        timeSeries: httpRequests1dGroups(
+                            filter: { datetime_geq: $datetime_geq, datetime_lt: $datetime_lt }
+                            limit: 100
+                        ) {
+                            dimensions {
+                                date
+                            }
+                            uniq {
+                                uniques
+                            }
+                            sum {
+                                requests
+                                pageViews
+                            }
+                        }
+                        countryData: httpRequests1dGroups(
+                            filter: { datetime_geq: $datetime_geq, datetime_lt: $datetime_lt }
+                            limit: 100
+                        ) {
+                            dimensions {
+                                clientCountryName
+                            }
+                            uniq {
+                                uniques
+                            }
+                            sum {
+                                requests
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const variables = {
+            zoneTag: process.env.CLOUDFLARE_ZONE_ID,
+            datetime_geq,
+            datetime_lt
+        };
+
+        // Make request to Cloudflare GraphQL API
+        const response = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Auth-Email': process.env.CLOUDFLARE_EMAIL,
+                'X-Auth-Key': process.env.CLOUDFLARE_API_KEY
+            },
+            body: JSON.stringify({ query, variables })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Cloudflare API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.errors) {
+            console.error('Cloudflare GraphQL errors:', data.errors);
+            return res.status(500).json({
+                error: 'Cloudflare API error',
+                details: data.errors
+            });
+        }
+
+        // Extract and format the data
+        const zoneData = data.data?.viewer?.zones?.[0];
+        if (!zoneData) {
+            return res.status(404).json({ error: 'No data found for zone' });
+        }
+
+        // Format totals
+        const totals = {
+            uniqueVisitors: zoneData.totals[0]?.uniq?.uniques || 0,
+            totalRequests: zoneData.totals[0]?.sum?.requests || 0,
+            pageViews: zoneData.totals[0]?.sum?.pageViews || 0
+        };
+
+        // Format time series data
+        const timeSeries = (zoneData.timeSeries || []).map(item => ({
+            date: item.dimensions?.date,
+            uniqueVisitors: item.uniq?.uniques || 0,
+            requests: item.sum?.requests || 0,
+            pageViews: item.sum?.pageViews || 0
+        }));
+
+        // Format country data and aggregate by country
+        const countryMap = new Map();
+        (zoneData.countryData || []).forEach(item => {
+            const country = item.dimensions?.clientCountryName || 'Unknown';
+            const existing = countryMap.get(country) || { uniqueVisitors: 0, requests: 0 };
+            existing.uniqueVisitors += item.uniq?.uniques || 0;
+            existing.requests += item.sum?.requests || 0;
+            countryMap.set(country, existing);
+        });
+
+        const countryData = Array.from(countryMap.entries())
+            .map(([country, stats]) => ({
+                country,
+                uniqueVisitors: stats.uniqueVisitors,
+                requests: stats.requests
+            }))
+            .sort((a, b) => b.requests - a.requests)
+            .slice(0, 20); // Top 20 countries
+
+        res.json({
+            period,
+            dateRange: {
+                start: datetime_geq,
+                end: datetime_lt
+            },
+            totals,
+            timeSeries,
+            countryData
+        });
+    } catch (error) {
+        console.error('Cloudflare Analytics error:', error);
+        res.status(500).json({
+            error: 'Failed to fetch Cloudflare Analytics',
+            message: error.message
+        });
+    }
+});
+
 // Health check endpoint for Railway
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });

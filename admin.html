@@ -205,6 +205,89 @@
             background: rgba(255, 82, 82, 0.3);
             transform: translateY(-1px);
         }
+        .period-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .period-btn {
+            padding: 0.5rem 1.5rem;
+            background: rgba(92, 225, 230, 0.1);
+            border: 1px solid rgba(92, 225, 230, 0.3);
+            color: rgba(250, 250, 250, 0.8);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: auto;
+        }
+        .period-btn:hover {
+            background: rgba(92, 225, 230, 0.2);
+            transform: translateY(-1px);
+            box-shadow: none;
+        }
+        .period-btn.active {
+            background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%);
+            color: #100F0D;
+            border-color: #5CE1E6;
+        }
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .analytics-card {
+            background: rgba(92, 225, 230, 0.05);
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .analytics-card-label {
+            color: rgba(250, 250, 250, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .analytics-card-value {
+            color: #5CE1E6;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .country-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .country-table th {
+            background: rgba(92, 225, 230, 0.1);
+            padding: 0.75rem;
+            text-align: left;
+            color: #5CE1E6;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(92, 225, 230, 0.3);
+        }
+        .country-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(92, 225, 230, 0.1);
+        }
+        .country-table tr:hover {
+            background: rgba(92, 225, 230, 0.05);
+        }
+        .loading {
+            text-align: center;
+            color: rgba(250, 250, 250, 0.6);
+            padding: 2rem;
+        }
+        .error-message {
+            background: rgba(255, 100, 100, 0.1);
+            border: 1px solid rgba(255, 100, 100, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            color: #ff6b6b;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -222,6 +305,7 @@
     <div id="statsContainer" class="hidden">
         <div class="tabs">
             <button class="tab active" onclick="switchTab('stats')">Overview</button>
+            <button class="tab" onclick="switchTab('analytics')">Analytics</button>
             <button class="tab" onclick="switchTab('subscribers')">Subscribers</button>
             <button class="tab" onclick="switchTab('surveys')">Survey Responses</button>
         </div>
@@ -243,6 +327,22 @@
                 <div class="stat">
                     <span class="stat-label">Survey Responses</span>
                     <span class="stat-value" id="surveyCount">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="analyticsTab" class="tab-content">
+            <div class="stats-container">
+                <h2 style="color: #5CE1E6; margin-top: 0;">Cloudflare Analytics</h2>
+
+                <div class="period-selector">
+                    <button class="period-btn active" onclick="loadAnalytics('day')">Last 24 Hours</button>
+                    <button class="period-btn" onclick="loadAnalytics('week')">Last 7 Days</button>
+                    <button class="period-btn" onclick="loadAnalytics('month')">Last 30 Days</button>
+                </div>
+
+                <div id="analyticsContent">
+                    <div class="loading">Loading analytics data...</div>
                 </div>
             </div>
         </div>
@@ -425,6 +525,78 @@
             }
         }
 
+        async function loadAnalytics(period) {
+            try {
+                // Update period button states
+                document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+
+                const analyticsContent = document.getElementById('analyticsContent');
+                analyticsContent.innerHTML = '<div class="loading">Loading analytics data...</div>';
+
+                const response = await fetch(`/api/cloudflare-analytics?period=${period}`, {
+                    headers: {
+                        'X-API-Key': sessionStorage.getItem('adminApiKey')
+                    }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to load analytics');
+                }
+
+                const data = await response.json();
+
+                // Build the analytics UI
+                let html = '<div class="analytics-grid">';
+                html += `
+                    <div class="analytics-card">
+                        <div class="analytics-card-label">Unique Visitors</div>
+                        <div class="analytics-card-value">${data.totals.uniqueVisitors.toLocaleString()}</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-card-label">Page Views</div>
+                        <div class="analytics-card-value">${data.totals.pageViews.toLocaleString()}</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-card-label">Total Requests</div>
+                        <div class="analytics-card-value">${data.totals.totalRequests.toLocaleString()}</div>
+                    </div>
+                `;
+                html += '</div>';
+
+                // Add country data table
+                if (data.countryData && data.countryData.length > 0) {
+                    html += '<h3 style="color: #5CE1E6; margin-top: 2rem; margin-bottom: 1rem;">Visitors by Country</h3>';
+                    html += '<table class="country-table">';
+                    html += '<thead><tr><th>Country</th><th>Unique Visitors</th><th>Total Requests</th></tr></thead>';
+                    html += '<tbody>';
+                    data.countryData.forEach(country => {
+                        html += `
+                            <tr>
+                                <td>${country.country}</td>
+                                <td>${country.uniqueVisitors.toLocaleString()}</td>
+                                <td>${country.requests.toLocaleString()}</td>
+                            </tr>
+                        `;
+                    });
+                    html += '</tbody></table>';
+                }
+
+                analyticsContent.innerHTML = html;
+            } catch (error) {
+                console.error('Analytics load error:', error);
+                const analyticsContent = document.getElementById('analyticsContent');
+                analyticsContent.innerHTML = `
+                    <div class="error-message">
+                        Failed to load Cloudflare Analytics: ${error.message}
+                        <br><br>
+                        <small>Make sure CLOUDFLARE_API_KEY, CLOUDFLARE_EMAIL, and CLOUDFLARE_ZONE_ID are configured in Railway.</small>
+                    </div>
+                `;
+            }
+        }
+
         function switchTab(tab) {
             // Update tab buttons
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -434,6 +606,13 @@
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             if (tab === 'stats') {
                 document.getElementById('statsTab').classList.add('active');
+            } else if (tab === 'analytics') {
+                document.getElementById('analyticsTab').classList.add('active');
+                // Load analytics data if not already loaded
+                const analyticsContent = document.getElementById('analyticsContent');
+                if (analyticsContent.querySelector('.loading')) {
+                    loadAnalytics('day');
+                }
             } else if (tab === 'subscribers') {
                 document.getElementById('subscribersTab').classList.add('active');
             } else if (tab === 'surveys') {
