@@ -82,8 +82,114 @@
         <!-- Blog Posts -->
         <section class="blog-posts">
             <div class="container-narrow">
-                <!-- Blog Post Card -->
+                <!-- Blog Post Card #1: Weekly Update -->
                 <article class="blog-post-card glass-dark">
+                    <div class="post-meta">
+                        <span class="post-date">October 27, 2025</span>
+                        <span class="post-category-badge">Research & Development</span>
+                    </div>
+                    <h2 class="post-title">Building in Public: A Week of AI Research Across 7 Projects</h2>
+                    <p class="post-subtitle">126,700 Lines of Production Code: Multi-Agent Systems, Neural Compression, and AI-Accelerated Development</p>
+                    <p class="post-author">By Blake Ledden</p>
+
+                    <div class="post-preview">
+                        <p><strong>TL;DR:</strong> This week we completed Facilitair's training orchestration database (6 new tables with RLS), launched arrwDB v2.0 with real-time streaming and WebSocket support (152+ tests, 47x performance targets exceeded), completed Model #1 for AMD Hackathon Q&A tournament (Qwen2.5-72B, 85-87% accuracy, pivoting to multi-model ensemble for 92-95% target), and have a 35-epoch dendritic compression test running on Whisper-Small (38% parameter reduction). Plus 4 blog posts on AI code generation research ready to publish, multi-agent anomaly detection validated across 5 domains, and self-improving code generation with knowledge graphs. <strong>~126,700 lines of production code across 7 active projects.</strong> All built collaboratively with Claude Code, GPT-5 Pro, and Grok 4.</p>
+
+                        <h4>Project Portfolio Overview:</h4>
+                        <ul>
+                            <li><strong>Facilitair Beta:</strong> AI orchestration platform - ~85,000 LOC, database complete</li>
+                            <li><strong>weavehacks-collaborative:</strong> 100-task benchmark, 73% pass rate vs 19% baseline - ~12,000 LOC</li>
+                            <li><strong>Anomaly Hunter:</strong> Multi-agent anomaly detection, 100% detection rate - ~8,500 LOC</li>
+                            <li><strong>CodeSwarm:</strong> Self-improving code gen with Neo4j knowledge graph - ~6,900 LOC</li>
+                            <li><strong>arrwDB v2.0:</strong> Real-time vector DB with WebSocket + Event Bus - ~8,000 LOC</li>
+                            <li><strong>AMD Hackathon:</strong> Tournament Q&A agent (Qwen2.5-72B fine-tuning) - ~3,500 LOC</li>
+                            <li><strong>Dendritic Hackathon:</strong> Neural compression (38% parameter reduction) - ~2,800 LOC</li>
+                        </ul>
+
+                        <h4>Key Results:</h4>
+                        <ul>
+                            <li><strong>3.3x development speedup</strong> with AI-accelerated development (800 hours → 240 hours)</li>
+                            <li><strong>73% pass rate</strong> on code generation benchmark (vs 19% single-model baseline)</li>
+                            <li><strong>+36.8% quality improvement</strong> with sequential multi-agent approach</li>
+                            <li><strong>100% detection rate</strong> on multi-agent anomaly detection across 5 domains</li>
+                            <li><strong>152+ tests, 47x performance targets exceeded</strong> on arrwDB v2.0 real-time features</li>
+                        </ul>
+
+                        <p>This post chronicles a week of AI research across 7 active projects: multi-agent orchestration, neural network compression, autonomous anomaly detection, and production vector databases. We share architectural decisions, performance metrics, lessons learned, and quantified results from building in public.</p>
+                    </div>
+
+                    <div class="post-actions">
+                        <a href="https://github.com/bledden" target="_blank" class="btn-primary">View Projects on GitHub</a>
+                        <button class="btn-secondary read-more-btn" data-post="weekly-update">Read Full Post</button>
+                    </div>
+
+                    <!-- Full Content (Hidden by Default) -->
+                    <div class="post-full-content" id="post-weekly-update" style="display: none;">
+                        <hr style="border: 1px solid rgba(92, 225, 230, 0.2); margin: var(--space-8) 0;">
+
+                        <style>
+                            .markdown-content {
+                                color: rgba(250, 250, 250, 0.9);
+                                font-family: 'Montserrat', sans-serif;
+                            }
+                            .markdown-content pre {
+                                background: rgba(92, 225, 230, 0.05);
+                                border: 1px solid rgba(92, 225, 230, 0.2);
+                                border-radius: 8px;
+                                padding: 1rem;
+                                overflow-x: auto;
+                                font-size: 0.9rem;
+                            }
+                        </style>
+                        <iframe srcdoc='<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body {
+    font-family: Montserrat, sans-serif;
+    color: rgba(250, 250, 250, 0.9);
+    background: transparent;
+    line-height: 1.8;
+    padding: 1rem;
+    white-space: pre-wrap;
+    font-size: 1rem;
+}
+</style>
+</head>
+<body>' style="width: 100%; min-height: 2000px; border: none; background: transparent;"></iframe>
+
+                        <div class="markdown-content" style="white-space: pre-wrap; line-height: 1.8; font-size: 1rem;">
+View the full post content by expanding this section. The complete 40-minute read includes detailed breakdowns of all 7 projects, performance metrics, technical deep-dives, and lessons learned from AI-accelerated development.
+
+<strong>Topics covered:</strong>
+- Facilitair Beta: Training orchestration database setup
+- arrwDB v2.0: Real-time streaming and WebSocket implementation
+- AMD Hackathon: Fine-tuning Qwen2.5-72B for tournament Q&A
+- Dendritic Compression: 35-epoch neural network compression test
+- weavehacks-collaborative: 100-task benchmark results
+- Anomaly Hunter: Multi-agent detection across 5 domains
+- CodeSwarm: Knowledge graph self-improvement
+
+<strong>For the complete post</strong>, visit: <a href="https://github.com/bledden" target="_blank" style="color: var(--facilitair-teal);">github.com/bledden</a>
+                        </div>
+
+                        <div class="post-footer">
+                            <p><strong>Want to chat?</strong> Reach out:</p>
+                            <ul>
+                                <li>Email: blake@facilitair.ai</li>
+                                <li>Threads: <a href="https://threads.net/@ekalbbackwards" target="_blank">@ekalbbackwards</a></li>
+                                <li>X: <a href="https://x.com/blakeledden" target="_blank">@blakeledden</a></li>
+                                <li>GitHub: <a href="https://github.com/bledden" target="_blank">@bledden</a></li>
+                            </ul>
+
+                            <p style="margin-top: var(--space-6); font-style: italic; color: rgba(250, 250, 250, 0.6);">Published: October 27, 2025 | Reading time: 40 minutes</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Blog Post Card #2: Anomaly Hunter -->
+                <article class="blog-post-card glass-dark" style="margin-top: var(--space-8);">
                     <div class="post-meta">
                         <span class="post-date">October 2025</span>
                         <span class="post-category-badge">Multi-Agent AI</span>
