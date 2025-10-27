@@ -802,49 +802,51 @@
 <h4 style="color: var(--facilitair-teal); margin-top: var(--space-8); margin-bottom: var(--space-4); font-size: 1.5rem;">Key Technical Decisions</h4>
 
 <ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
-<li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Curriculum Learning</strong>: Progressive difficulty (easy → medium → hard)</li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">10 chunks × 5K questions each</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Adaptive learning rate (2e-5 → 1e-5)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Stabilized training and improved convergence</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">
+<strong>Curriculum Learning</strong>: Progressive difficulty (easy → medium → hard)
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">10 chunks × 5K questions each</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Adaptive learning rate (2e-5 → 1e-5)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Stabilized training and improved convergence</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
-<li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Replay Buffer</strong>: "Replay to Remember" technique</li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">500-sample buffer with reservoir sampling</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">10-20% replay ratio increasing over time</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Mitigates catastrophic forgetting</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">
+<strong>Replay Buffer</strong>: "Replay to Remember" technique
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">500-sample buffer with reservoir sampling</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">10-20% replay ratio increasing over time</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Mitigates catastrophic forgetting</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
-<li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>LoRA over Full Fine-Tuning</strong>:</li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">1.15% trainable parameters (839M / 72.7B)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">70% less memory, 2x faster training</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Preserves base model knowledge</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">
+<strong>LoRA over Full Fine-Tuning</strong>:
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">1.15% trainable parameters (839M / 72.7B)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">70% less memory, 2x faster training</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Preserves base model knowledge</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
-<li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Skip Chain-of-Thought (CoT)</strong>:</li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Research shows CoT causes 10-18% catastrophic forgetting in fine-tuning</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Direct answer format more stable for MCQs</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">
+<strong>Skip Chain-of-Thought (CoT)</strong>:
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Research shows CoT causes 10-18% catastrophic forgetting in fine-tuning</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Direct answer format more stable for MCQs</li>
 </ul>
+</li>
 
-<ol style="margin: var(--space-4) 0; padding-left: var(--space-8);">
-<li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Multi-Model Ensemble</strong>:</li>
-</ol>
-<ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Model #1: Conservative baseline (85-87%)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Model #2: Enhanced dataset + higher LoRA rank (88-90%)</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Model #3: Complementary approach</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Weighted voting for 92-95% target</li>
+<li style="margin: var(--space-2) 0; line-height: 1.6;">
+<strong>Multi-Model Ensemble</strong>:
+<ul style="margin: var(--space-2) 0; padding-left: var(--space-6); list-style-type: disc;">
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Model #1: Conservative baseline (85-87%)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Model #2: Enhanced dataset + higher LoRA rank (88-90%)</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Model #3: Complementary approach</li>
+<li style="margin: var(--space-1) 0; line-height: 1.6;">Weighted voting for 92-95% target</li>
 </ul>
+</li>
+</ol>
 
 <h4 style="color: var(--facilitair-teal); margin-top: var(--space-8); margin-bottom: var(--space-4); font-size: 1.5rem;">Model Performance (Model #1)</h4>
 
