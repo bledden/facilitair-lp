@@ -143,7 +143,21 @@
                                 fetch('/blog_post_weekly_update_content.html')
                                     .then(response => response.text())
                                     .then(html => {
-                                        document.getElementById('weekly-update-full-content').innerHTML = html;
+                                        const container = document.getElementById('weekly-update-full-content');
+                                        container.innerHTML = html;
+
+                                        // Execute scripts manually since innerHTML doesn't run them
+                                        const scripts = container.querySelectorAll('script');
+                                        scripts.forEach(script => {
+                                            const newScript = document.createElement('script');
+                                            if (script.src) {
+                                                newScript.src = script.src;
+                                            } else {
+                                                newScript.textContent = script.textContent;
+                                            }
+                                            document.body.appendChild(newScript);
+                                            script.remove(); // Remove from container to avoid duplication
+                                        });
                                     })
                                     .catch(error => {
                                         console.error('Error loading blog content:', error);
