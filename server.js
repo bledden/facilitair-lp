@@ -910,6 +910,84 @@ function getBlogAnnouncementEmailHTML(email, unsubscribeToken) {
     `;
 }
 
+// API endpoint: Send blog announcement to specific emails (admin only)
+app.post('/api/send-blog-announcement-to-emails', async (req, res) => {
+    try {
+        const apiKey = req.get('X-API-Key');
+        if (apiKey !== process.env.ADMIN_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        if (!resend) {
+            return res.status(503).json({ error: 'Email service not configured' });
+        }
+
+        const { emails } = req.body;
+
+        if (!emails || !Array.isArray(emails) || emails.length === 0) {
+            return res.status(400).json({ error: 'Must provide array of email addresses' });
+        }
+
+        // Get subscriber data for these specific emails
+        const placeholders = emails.map(() => '?').join(',');
+        const subscribers = db.prepare(`
+            SELECT email, unsubscribe_token
+            FROM subscribers
+            WHERE email IN (${placeholders})
+            AND confirmed = 1
+        `).all(...emails);
+
+        if (subscribers.length === 0) {
+            return res.json({
+                success: true,
+                sent: 0,
+                failed: 0,
+                message: 'No matching confirmed subscribers found'
+            });
+        }
+
+        let successCount = 0;
+        let failCount = 0;
+        const errors = [];
+
+        for (const subscriber of subscribers) {
+            try {
+                const { data, error } = await resend.emails.send({
+                    from: 'Blake @ FACILITAIR <blake@facilitair.ai>',
+                    to: subscriber.email,
+                    subject: 'First Blog Post: Building in Public - Weekly AI Research Updates',
+                    html: getBlogAnnouncementEmailHTML(subscriber.email, subscriber.unsubscribe_token)
+                });
+
+                if (error) {
+                    failCount++;
+                    errors.push({ email: subscriber.email, error: error.message });
+                } else {
+                    successCount++;
+                }
+
+                // Rate limit: wait 500ms between emails (Resend limit: 2 requests/second)
+                await new Promise(resolve => setTimeout(resolve, 500));
+            } catch (error) {
+                failCount++;
+                errors.push({ email: subscriber.email, error: error.message });
+            }
+        }
+
+        res.json({
+            success: true,
+            sent: successCount,
+            failed: failCount,
+            total: subscribers.length,
+            requested: emails.length,
+            errors: errors.length > 0 ? errors : undefined
+        });
+    } catch (error) {
+        console.error('Blog announcement error:', error);
+        res.status(500).json({ error: 'Server error', message: error.message });
+    }
+});
+
 // API endpoint: Send blog announcement to all confirmed subscribers (admin only)
 app.post('/api/send-blog-announcement', async (req, res) => {
     try {
