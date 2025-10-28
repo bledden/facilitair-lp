@@ -329,6 +329,13 @@
                     <span class="stat-value" id="surveyCount">-</span>
                 </div>
             </div>
+
+            <div style="margin-top: var(--space-8); text-align: center;">
+                <button onclick="sendBlogAnnouncement()" style="background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%); color: var(--facilitair-black); padding: var(--space-4) var(--space-8); border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(92, 225, 230, 0.3); transition: all 0.3s ease;">
+                    📧 Send Blog Announcement to All Subscribers
+                </button>
+                <div id="emailStatus" style="margin-top: var(--space-4); color: rgba(250, 250, 250, 0.8);"></div>
+            </div>
         </div>
 
         <div id="analyticsTab" class="tab-content">
@@ -617,6 +624,47 @@
                 document.getElementById('subscribersTab').classList.add('active');
             } else if (tab === 'surveys') {
                 document.getElementById('surveysTab').classList.add('active');
+            }
+        }
+
+        async function sendBlogAnnouncement() {
+            const statusDiv = document.getElementById('emailStatus');
+            const button = event.target;
+
+            if (!confirm('Send blog announcement to all confirmed subscribers? This action cannot be undone.')) {
+                return;
+            }
+
+            button.disabled = true;
+            button.style.opacity = '0.6';
+            statusDiv.innerHTML = '⏳ Sending emails...';
+
+            try {
+                const response = await fetch('/api/send-blog-announcement', {
+                    method: 'POST',
+                    headers: {
+                        'X-API-Key': sessionStorage.getItem('adminApiKey')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to send emails');
+                }
+
+                statusDiv.innerHTML = `
+                    ✅ Email campaign complete!<br>
+                    Sent: ${data.sent} | Failed: ${data.failed} | Total: ${data.total}
+                    ${data.errors ? '<br><br>Errors: ' + JSON.stringify(data.errors) : ''}
+                `;
+                statusDiv.style.color = data.failed > 0 ? '#FFB84D' : '#5CE1E6';
+            } catch (error) {
+                statusDiv.innerHTML = `❌ Error: ${error.message}`;
+                statusDiv.style.color = '#ff5252';
+            } finally {
+                button.disabled = false;
+                button.style.opacity = '1';
             }
         }
 
