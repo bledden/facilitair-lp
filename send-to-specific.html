@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Send to Specific Emails</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #100F0D;
+            color: #FAFAFA;
+        }
+        h1 {
+            color: #5CE1E6;
+        }
+        button {
+            background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%);
+            color: #100F0D;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(92, 225, 230, 0.1);
+            border: 1px solid rgba(92, 225, 230, 0.3);
+        }
+        .hidden {
+            display: none;
+        }
+        .email-list {
+            background: rgba(92, 225, 230, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .email-list li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Send Blog Announcement to Specific Emails</h1>
+
+    <div class="email-list">
+        <strong>Target Recipients:</strong>
+        <ul>
+            <li>ecohen16@gmail.com</li>
+            <li>ben.hou+facilitair@gong.io</li>
+            <li>poosasaikiran0466@gmail.com</li>
+            <li>ai@lahoda.net</li>
+        </ul>
+    </div>
+
+    <button id="sendBtn" onclick="sendEmails()">📧 Send Blog Announcement</button>
+
+    <div id="status" class="hidden"></div>
+
+    <script>
+        async function sendEmails() {
+            const statusDiv = document.getElementById('status');
+            const button = document.getElementById('sendBtn');
+
+            if (!confirm('Send blog announcement to these 4 subscribers?')) {
+                return;
+            }
+
+            button.disabled = true;
+            statusDiv.classList.remove('hidden');
+            statusDiv.innerHTML = '⏳ Sending emails... This will take about 2 seconds.';
+            statusDiv.style.color = '#5CE1E6';
+
+            try {
+                const response = await fetch('https://facilitair.ai/api/send-blog-announcement-to-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': '0ab80f24321171fdb14d10eeb81154c3114f0ad61012af3d6b669369df7a2242'
+                    },
+                    body: JSON.stringify({
+                        emails: [
+                            'ecohen16@gmail.com',
+                            'ben.hou+facilitair@gong.io',
+                            'poosasaikiran0466@gmail.com',
+                            'ai@lahoda.net'
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to send emails');
+                }
+
+                statusDiv.innerHTML = `
+                    ✅ Email campaign complete!<br><br>
+                    <strong>Sent:</strong> ${data.sent}<br>
+                    <strong>Failed:</strong> ${data.failed}<br>
+                    <strong>Total:</strong> ${data.total}<br>
+                    <strong>Requested:</strong> ${data.requested}
+                    ${data.errors ? '<br><br><strong style="color: #ff5252;">Errors:</strong><br>' + JSON.stringify(data.errors, null, 2) : ''}
+                `;
+                statusDiv.style.color = data.failed > 0 ? '#FFB84D' : '#5CE1E6';
+            } catch (error) {
+                statusDiv.innerHTML = `❌ Error: ${error.message}`;
+                statusDiv.style.color = '#ff5252';
+            } finally {
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
