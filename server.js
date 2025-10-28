@@ -958,8 +958,8 @@ app.post('/api/send-blog-announcement', async (req, res) => {
                     successCount++;
                 }
 
-                // Rate limit: wait 100ms between emails
-                await new Promise(resolve => setTimeout(resolve, 100));
+                // Rate limit: wait 500ms between emails (Resend limit: 2 requests/second)
+                await new Promise(resolve => setTimeout(resolve, 500));
             } catch (error) {
                 failCount++;
                 errors.push({ email: subscriber.email, error: error.message });
