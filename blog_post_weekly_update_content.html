@@ -1,3 +1,5 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
 <h2 style="color: var(--facilitair-teal); margin-top: var(--space-6); margin-bottom: var(--space-6); font-size: 2rem;">Building in Public: A Week of AI Research Across 7 Projects</h2>
 
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;"><strong>TL;DR</strong>: This week we completed Facilitair's training orchestration database (6 new tables with RLS), launched arrwDB v2.0 with real-time streaming and WebSocket support (152+ tests, 47x performance targets exceeded), completed Model #1 for AMD Hackathon Q&A tournament (Qwen2.5-72B, 85-87% accuracy, pivoting to multi-model ensemble for 92-95% target), and have a 35-epoch dendritic compression test running on Whisper-Small (38% parameter reduction). Plus 4 blog posts on AI code generation research ready to publish, multi-agent anomaly detection validated across 5 domains, and self-improving code generation with knowledge graphs. All built collaboratively with Claude Code, GPT-5 Pro, and Grok 4. Here's what we learned.</p>
@@ -166,8 +168,109 @@
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Documentation (10% weight)</strong>: Docstring presence + comment quality + type hints</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Error Handling (10% weight)</strong>: Exception handling + input validation + edge cases</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Testing (5% weight)</strong>: Test presence + test coverage</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">Full methodology: <a href="https://github.com/bledden/weavehacks-collaborative/blob/main/scoring/README.md" target="_blank" style="color: var(--facilitair-teal); text-decoration: underline;">scoring/README.md</a></li>
 </ul>
+
+<div style="margin: var(--space-6) 0; text-align: center;">
+    <button onclick="toggleScoringChart()" style="background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%); color: var(--facilitair-black); padding: var(--space-3) var(--space-6); border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; box-shadow: 0 2px 8px rgba(92, 225, 230, 0.3); transition: all 0.3s ease;">
+        📊 View Scoring Methodology Breakdown
+    </button>
+</div>
+
+<div id="scoringChartContainer" style="display: none; margin: var(--space-6) 0; background: rgba(92, 225, 230, 0.05); border: 1px solid rgba(92, 225, 230, 0.2); border-radius: 12px; padding: var(--space-6); position: relative;">
+    <button onclick="openFullscreen('scoringChartContainer')" style="position: absolute; top: var(--space-3); right: var(--space-3); background: rgba(92, 225, 230, 0.2); color: var(--facilitair-teal); padding: var(--space-2) var(--space-3); border: 1px solid rgba(92, 225, 230, 0.3); border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease;">
+        🔍 Fullscreen
+    </button>
+    <h4 style="color: var(--facilitair-teal); margin: 0 0 var(--space-4) 0; font-size: 1.2rem; text-align: center;">Quality Scoring Weights</h4>
+    <div style="max-width: 800px; margin: 0 auto;">
+        <canvas id="scoringChart"></canvas>
+    </div>
+</div>
+
+<script>
+function toggleScoringChart() {
+    const container = document.getElementById('scoringChartContainer');
+    const isHidden = container.style.display === 'none';
+    container.style.display = isHidden ? 'block' : 'none';
+
+    if (isHidden && !window.scoringChartInstance) {
+        const ctx = document.getElementById('scoringChart').getContext('2d');
+        window.scoringChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Correctness', 'Completeness', 'Code Quality', 'Documentation', 'Error Handling', 'Testing'],
+                datasets: [{
+                    label: 'Weight (%)',
+                    data: [30, 25, 20, 10, 10, 5],
+                    backgroundColor: [
+                        'rgba(92, 225, 230, 0.8)',
+                        'rgba(92, 225, 230, 0.7)',
+                        'rgba(92, 225, 230, 0.6)',
+                        'rgba(92, 225, 230, 0.5)',
+                        'rgba(92, 225, 230, 0.4)',
+                        'rgba(92, 225, 230, 0.3)'
+                    ],
+                    borderColor: 'rgba(92, 225, 230, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(16, 15, 13, 0.95)',
+                        titleColor: '#5CE1E6',
+                        bodyColor: '#FAFAFA',
+                        borderColor: 'rgba(92, 225, 230, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.x + '% weight';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 35,
+                        grid: {
+                            color: 'rgba(92, 225, 230, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(250, 250, 250, 0.8)',
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            },
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(250, 250, 250, 0.9)',
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 13,
+                                weight: '600'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+</script>
 
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;"><strong>Results</strong>:</p>
 <ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
@@ -176,13 +279,390 @@
 <li style="margin: var(--space-2) 0; line-height: 1.6;"><strong>Improvement</strong>: +54 percentage points pass rate, +0.195 quality score (+36.8% relative improvement)</li>
 </ul>
 
+<div style="margin: var(--space-6) 0; text-align: center;">
+    <button onclick="toggleResultsChart()" style="background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%); color: var(--facilitair-black); padding: var(--space-3) var(--space-6); border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; box-shadow: 0 2px 8px rgba(92, 225, 230, 0.3); transition: all 0.3s ease;">
+        📊 View Results Comparison
+    </button>
+</div>
+
+<div id="resultsChartContainer" style="display: none; margin: var(--space-6) 0; background: rgba(92, 225, 230, 0.05); border: 1px solid rgba(92, 225, 230, 0.2); border-radius: 12px; padding: var(--space-6); position: relative;">
+    <button onclick="openFullscreen('resultsChartContainer')" style="position: absolute; top: var(--space-3); right: var(--space-3); background: rgba(92, 225, 230, 0.2); color: var(--facilitair-teal); padding: var(--space-2) var(--space-3); border: 1px solid rgba(92, 225, 230, 0.3); border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease;">
+        🔍 Fullscreen
+    </button>
+    <h4 style="color: var(--facilitair-teal); margin: 0 0 var(--space-4) 0; font-size: 1.2rem; text-align: center;">Pass/Fail Distribution (100 Tasks)</h4>
+    <div style="max-width: 800px; margin: 0 auto;">
+        <canvas id="resultsChart"></canvas>
+    </div>
+    <p style="text-align: center; color: rgba(250, 250, 250, 0.7); font-size: 0.9rem; margin-top: var(--space-4);">
+        Pass threshold: ≥0.70 (70%) on quality rubric
+    </p>
+</div>
+
+<script>
+function toggleResultsChart() {
+    const container = document.getElementById('resultsChartContainer');
+    const isHidden = container.style.display === 'none';
+    container.style.display = isHidden ? 'block' : 'none';
+
+    if (isHidden && !window.resultsChartInstance) {
+        const ctx = document.getElementById('resultsChart').getContext('2d');
+        window.resultsChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Sequential Multi-Agent', 'Single-Shot Baseline'],
+                datasets: [
+                    {
+                        label: 'Passed (≥0.70)',
+                        data: [73, 19],
+                        backgroundColor: 'rgba(92, 225, 230, 0.8)',
+                        borderColor: 'rgba(92, 225, 230, 1)',
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Failed (<0.70)',
+                        data: [27, 81],
+                        backgroundColor: 'rgba(255, 82, 82, 0.6)',
+                        borderColor: 'rgba(255, 82, 82, 1)',
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: window.innerWidth < 768 ? 'bottom' : 'top',
+                        labels: {
+                            color: 'rgba(250, 250, 250, 0.9)',
+                            font: {
+                                size: window.innerWidth < 768 ? 11 : 13
+                            },
+                            padding: window.innerWidth < 768 ? 10 : 15
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(16, 15, 13, 0.95)',
+                        titleColor: '#5CE1E6',
+                        bodyColor: '#FAFAFA',
+                        borderColor: 'rgba(92, 225, 230, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + ' tasks (' +
+                                       Math.round(context.parsed.y) + '%)';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(250, 250, 250, 0.9)',
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            }
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(92, 225, 230, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(250, 250, 250, 0.8)',
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            },
+                            callback: function(value) {
+                                return value + ' tasks';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+</script>
+
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;"><strong>Statistical validation</strong>:</p>
 <ul style="margin: var(--space-4) 0; padding-left: var(--space-8); list-style-type: disc;">
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Paired t-test: t(99) = 7.699, p < 0.0001, Cohen's d = 0.770 (medium-to-large effect size)</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">McNemar's test (pass/fail): χ²(1) = 40.129, p < 0.0001</li>
 <li style="margin: var(--space-2) 0; line-height: 1.6;">Bootstrap 95% CIs (10,000 resamples): Sequential [0.702, 0.751], Baseline [0.506, 0.557]</li>
-<li style="margin: var(--space-2) 0; line-height: 1.6;">See full statistical analysis: <a href="https://github.com/bledden/weavehacks-collaborative/blob/main/results/statistical_results.json" target="_blank" style="color: var(--facilitair-teal); text-decoration: underline;">analysis/statistical_results.json</a></li>
 </ul>
+
+<div style="margin: var(--space-6) 0; text-align: center;">
+    <button onclick="toggleStatsChart()" style="background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%); color: var(--facilitair-black); padding: var(--space-3) var(--space-6); border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; box-shadow: 0 2px 8px rgba(92, 225, 230, 0.3); transition: all 0.3s ease;">
+        📊 View Statistical Analysis
+    </button>
+</div>
+
+<div id="statsChartContainer" style="display: none; margin: var(--space-6) 0; background: rgba(92, 225, 230, 0.05); border: 1px solid rgba(92, 225, 230, 0.2); border-radius: 12px; padding: var(--space-6); position: relative;">
+    <button onclick="openFullscreen('statsChartContainer')" style="position: absolute; top: var(--space-3); right: var(--space-3); background: rgba(92, 225, 230, 0.2); color: var(--facilitair-teal); padding: var(--space-2) var(--space-3); border: 1px solid rgba(92, 225, 230, 0.3); border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease;">
+        🔍 Fullscreen
+    </button>
+    <h4 style="color: var(--facilitair-teal); margin: 0 0 var(--space-6) 0; font-size: 1.2rem; text-align: center;">Performance Comparison with Confidence Intervals</h4>
+
+    <div style="max-width: 900px; margin: 0 auto;">
+        <div style="margin-bottom: var(--space-8);">
+            <h5 style="color: var(--facilitair-teal); font-size: 1rem; text-align: center; margin-bottom: var(--space-4);">Pass Rates</h5>
+            <canvas id="statsPassRateChart"></canvas>
+        </div>
+
+        <div>
+            <h5 style="color: var(--facilitair-teal); font-size: 1rem; text-align: center; margin-bottom: var(--space-4);">Average Quality Scores (with 95% Bootstrap CIs)</h5>
+            <canvas id="statsQualityChart"></canvas>
+        </div>
+    </div>
+
+    <div style="margin-top: var(--space-6); padding: var(--space-4); background: rgba(92, 225, 230, 0.1); border-radius: 8px;">
+        <p style="color: rgba(250, 250, 250, 0.9); font-size: 0.9rem; margin: 0 0 var(--space-2) 0; text-align: center;"><strong>Statistical Significance</strong></p>
+        <ul style="color: rgba(250, 250, 250, 0.8); font-size: 0.85rem; margin: 0; padding-left: var(--space-6); list-style-type: disc;">
+            <li>Paired t-test: p < 0.0001, Cohen's d = 0.770 (medium-to-large effect)</li>
+            <li>McNemar's test: p < 0.0001 (highly significant difference in pass/fail rates)</li>
+            <li>Non-overlapping confidence intervals confirm robust improvement</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+function toggleStatsChart() {
+    const container = document.getElementById('statsChartContainer');
+    const isHidden = container.style.display === 'none';
+    container.style.display = isHidden ? 'block' : 'none';
+
+    if (isHidden && !window.statsPassRateChartInstance) {
+        // Pass Rate Chart
+        const passCtx = document.getElementById('statsPassRateChart').getContext('2d');
+        window.statsPassRateChartInstance = new Chart(passCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Sequential Multi-Agent', 'Single-Shot Baseline'],
+                datasets: [{
+                    label: 'Pass Rate (%)',
+                    data: [73, 19],
+                    backgroundColor: [
+                        'rgba(92, 225, 230, 0.8)',
+                        'rgba(255, 184, 77, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(92, 225, 230, 1)',
+                        'rgba(255, 184, 77, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(16, 15, 13, 0.95)',
+                        titleColor: '#5CE1E6',
+                        bodyColor: '#FAFAFA',
+                        borderColor: 'rgba(92, 225, 230, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + '% pass rate (' + context.parsed.y + ' of 100 tasks)';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(250, 250, 250, 0.9)',
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(92, 225, 230, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(250, 250, 250, 0.8)',
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            },
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Quality Score Chart with Error Bars
+        const qualityCtx = document.getElementById('statsQualityChart').getContext('2d');
+        window.statsQualityChartInstance = new Chart(qualityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Sequential Multi-Agent', 'Single-Shot Baseline'],
+                datasets: [{
+                    label: 'Average Quality Score',
+                    data: [0.726, 0.531],
+                    backgroundColor: [
+                        'rgba(92, 225, 230, 0.8)',
+                        'rgba(255, 184, 77, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(92, 225, 230, 1)',
+                        'rgba(255, 184, 77, 1)'
+                    ],
+                    borderWidth: 2,
+                    errorBars: {
+                        'Sequential Multi-Agent': { plus: 0.025, minus: 0.024 },
+                        'Single-Shot Baseline': { plus: 0.026, minus: 0.025 }
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(16, 15, 13, 0.95)',
+                        titleColor: '#5CE1E6',
+                        bodyColor: '#FAFAFA',
+                        borderColor: 'rgba(92, 225, 230, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const ci = context.dataIndex === 0 ? '[0.702, 0.751]' : '[0.506, 0.557]';
+                                return [
+                                    'Quality Score: ' + context.parsed.y.toFixed(3),
+                                    '95% CI: ' + ci
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(250, 250, 250, 0.9)',
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 1.0,
+                        grid: {
+                            color: 'rgba(92, 225, 230, 0.1)'
+                        },
+                        ticks: {
+                            color: 'rgba(250, 250, 250, 0.8)',
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            },
+                            callback: function(value) {
+                                return value.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Draw confidence interval lines manually
+        const chart = window.statsQualityChartInstance;
+        const drawErrorBars = {
+            id: 'drawErrorBars',
+            afterDatasetsDraw(chart) {
+                const ctx = chart.ctx;
+                const meta = chart.getDatasetMeta(0);
+
+                // Sequential: [0.702, 0.751]
+                const seq = meta.data[0];
+                const seqX = seq.x;
+                const seqTop = chart.scales.y.getPixelForValue(0.751);
+                const seqBottom = chart.scales.y.getPixelForValue(0.702);
+
+                ctx.save();
+                ctx.strokeStyle = 'rgba(92, 225, 230, 1)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(seqX, seqTop);
+                ctx.lineTo(seqX, seqBottom);
+                ctx.stroke();
+
+                // Top cap
+                ctx.beginPath();
+                ctx.moveTo(seqX - 8, seqTop);
+                ctx.lineTo(seqX + 8, seqTop);
+                ctx.stroke();
+
+                // Bottom cap
+                ctx.beginPath();
+                ctx.moveTo(seqX - 8, seqBottom);
+                ctx.lineTo(seqX + 8, seqBottom);
+                ctx.stroke();
+
+                // Baseline: [0.506, 0.557]
+                const base = meta.data[1];
+                const baseX = base.x;
+                const baseTop = chart.scales.y.getPixelForValue(0.557);
+                const baseBottom = chart.scales.y.getPixelForValue(0.506);
+
+                ctx.strokeStyle = 'rgba(255, 184, 77, 1)';
+                ctx.beginPath();
+                ctx.moveTo(baseX, baseTop);
+                ctx.lineTo(baseX, baseBottom);
+                ctx.stroke();
+
+                // Top cap
+                ctx.beginPath();
+                ctx.moveTo(baseX - 8, baseTop);
+                ctx.lineTo(baseX + 8, baseTop);
+                ctx.stroke();
+
+                // Bottom cap
+                ctx.beginPath();
+                ctx.moveTo(baseX - 8, baseBottom);
+                ctx.lineTo(baseX + 8, baseBottom);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        };
+
+        chart.options.plugins.push(drawErrorBars);
+        chart.update();
+    }
+}
+</script>
 
 <h4 style="color: var(--facilitair-teal); margin-top: var(--space-8); margin-bottom: var(--space-4); font-size: 1.5rem;">Key Technical Challenges</h4>
 
@@ -1514,3 +1994,243 @@
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;">*Last Updated: October 27, 2025 @ 9:00 PM PT*</p>
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;">*Written by: Human + Claude Sonnet 4.5 + GPT-5 Pro collaboration*</p>
 <p style="margin: var(--space-4) 0; line-height: 1.8; word-wrap: break-word;">*All claims backed by data: Links to repos and research throughout the post*</p>
+
+<!-- Fullscreen Modal for Charts -->
+<div id="fullscreenModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(16, 15, 13, 0.98); z-index: 10000; padding: var(--space-6); overflow-y: auto; -webkit-overflow-scrolling: touch;">
+    <div style="max-width: 1400px; margin: 0 auto; position: relative; height: 100%;">
+        <button id="closeFullscreen" style="position: absolute; top: 0; right: 0; background: rgba(92, 225, 230, 0.2); color: var(--facilitair-teal); padding: var(--space-3) var(--space-4); border: 1px solid rgba(92, 225, 230, 0.5); border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; z-index: 10001;">
+            ✕ Close
+        </button>
+        <div id="fullscreenContent" style="margin-top: var(--space-12); height: calc(100% - var(--space-12));"></div>
+    </div>
+</div>
+
+<style>
+/* Mobile-responsive chart containers */
+@media (max-width: 768px) {
+    #scoringChartContainer,
+    #resultsChartContainer,
+    #statsChartContainer {
+        padding: var(--space-4) !important;
+    }
+
+    #scoringChartContainer h4,
+    #resultsChartContainer h4,
+    #statsChartContainer h4 {
+        font-size: 1rem !important;
+    }
+
+    #scoringChartContainer h5,
+    #resultsChartContainer h5,
+    #statsChartContainer h5 {
+        font-size: 0.9rem !important;
+    }
+
+    #scoringChartContainer button[onclick^="openFullscreen"],
+    #resultsChartContainer button[onclick^="openFullscreen"],
+    #statsChartContainer button[onclick^="openFullscreen"] {
+        position: static !important;
+        display: block;
+        width: 100%;
+        margin-bottom: var(--space-4);
+        font-size: 0.8rem !important;
+    }
+
+    /* Fullscreen modal adjustments for mobile */
+    #fullscreenModal {
+        padding: var(--space-4) !important;
+    }
+
+    #closeFullscreen {
+        font-size: 0.9rem !important;
+        padding: var(--space-2) var(--space-3) !important;
+    }
+}
+
+/* Chart button hover effects */
+button[onclick^="toggle"] {
+    transition: all 0.3s ease;
+}
+
+button[onclick^="toggle"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(92, 225, 230, 0.4) !important;
+}
+
+button[onclick^="toggle"]:active {
+    transform: translateY(0);
+}
+
+button[onclick^="openFullscreen"]:hover {
+    background: rgba(92, 225, 230, 0.3) !important;
+}
+
+#closeFullscreen:hover {
+    background: rgba(92, 225, 230, 0.3) !important;
+    transform: scale(1.05);
+}
+
+/* Ensure charts are touch-friendly on mobile */
+canvas {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: pan-y pinch-zoom;
+}
+</style>
+
+<script>
+// Fullscreen modal functionality
+function openFullscreen(containerId) {
+    const modal = document.getElementById('fullscreenModal');
+    const content = document.getElementById('fullscreenContent');
+    const originalContainer = document.getElementById(containerId);
+
+    // Clone the chart container
+    const clone = originalContainer.cloneNode(true);
+    clone.style.display = 'block';
+    clone.style.height = '100%';
+    clone.style.padding = 'var(--space-8)';
+
+    // Remove the fullscreen button from clone
+    const fullscreenBtn = clone.querySelector('button[onclick^="openFullscreen"]');
+    if (fullscreenBtn) {
+        fullscreenBtn.remove();
+    }
+
+    // Adjust chart size for fullscreen
+    const canvases = clone.querySelectorAll('canvas');
+    canvases.forEach(canvas => {
+        canvas.style.maxHeight = '600px';
+    });
+
+    content.innerHTML = '';
+    content.appendChild(clone);
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+
+    // Recreate charts in fullscreen with larger size
+    if (containerId === 'scoringChartContainer' && window.scoringChartInstance) {
+        setTimeout(() => {
+            const ctx = clone.querySelector('#scoringChart')?.getContext('2d');
+            if (ctx) {
+                new Chart(ctx, window.scoringChartInstance.config);
+            }
+        }, 100);
+    } else if (containerId === 'resultsChartContainer' && window.resultsChartInstance) {
+        setTimeout(() => {
+            const ctx = clone.querySelector('#resultsChart')?.getContext('2d');
+            if (ctx) {
+                new Chart(ctx, window.resultsChartInstance.config);
+            }
+        }, 100);
+    } else if (containerId === 'statsChartContainer') {
+        setTimeout(() => {
+            const passCtx = clone.querySelector('#statsPassRateChart')?.getContext('2d');
+            const qualityCtx = clone.querySelector('#statsQualityChart')?.getContext('2d');
+
+            if (passCtx && window.statsPassRateChartInstance) {
+                new Chart(passCtx, window.statsPassRateChartInstance.config);
+            }
+
+            if (qualityCtx && window.statsQualityChartInstance) {
+                const qualityChart = new Chart(qualityCtx, window.statsQualityChartInstance.config);
+
+                // Redraw error bars
+                const drawErrorBars = {
+                    id: 'drawErrorBars',
+                    afterDatasetsDraw(chart) {
+                        const ctx = chart.ctx;
+                        const meta = chart.getDatasetMeta(0);
+
+                        const seq = meta.data[0];
+                        const seqX = seq.x;
+                        const seqTop = chart.scales.y.getPixelForValue(0.751);
+                        const seqBottom = chart.scales.y.getPixelForValue(0.702);
+
+                        ctx.save();
+                        ctx.strokeStyle = 'rgba(92, 225, 230, 1)';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.moveTo(seqX, seqTop);
+                        ctx.lineTo(seqX, seqBottom);
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.moveTo(seqX - 10, seqTop);
+                        ctx.lineTo(seqX + 10, seqTop);
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.moveTo(seqX - 10, seqBottom);
+                        ctx.lineTo(seqX + 10, seqBottom);
+                        ctx.stroke();
+
+                        const base = meta.data[1];
+                        const baseX = base.x;
+                        const baseTop = chart.scales.y.getPixelForValue(0.557);
+                        const baseBottom = chart.scales.y.getPixelForValue(0.506);
+
+                        ctx.strokeStyle = 'rgba(255, 184, 77, 1)';
+                        ctx.beginPath();
+                        ctx.moveTo(baseX, baseTop);
+                        ctx.lineTo(baseX, baseBottom);
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.moveTo(baseX - 10, baseTop);
+                        ctx.lineTo(baseX + 10, baseTop);
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.moveTo(baseX - 10, baseBottom);
+                        ctx.lineTo(baseX + 10, baseBottom);
+                        ctx.stroke();
+
+                        ctx.restore();
+                    }
+                };
+
+                qualityChart.options.plugins.push(drawErrorBars);
+                qualityChart.update();
+            }
+        }, 100);
+    }
+}
+
+function closeFullscreen() {
+    const modal = document.getElementById('fullscreenModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+// Event listeners
+document.getElementById('closeFullscreen')?.addEventListener('click', closeFullscreen);
+
+// Close on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeFullscreen();
+    }
+});
+
+// Close on background click
+document.getElementById('fullscreenModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'fullscreenModal') {
+        closeFullscreen();
+    }
+});
+
+// Swipe down to close on mobile
+let touchStartY = 0;
+let touchEndY = 0;
+
+document.getElementById('fullscreenModal')?.addEventListener('touchstart', (e) => {
+    touchStartY = e.changedTouches[0].screenY;
+}, false);
+
+document.getElementById('fullscreenModal')?.addEventListener('touchend', (e) => {
+    touchEndY = e.changedTouches[0].screenY;
+    if (touchStartY < 100 && touchEndY - touchStartY > 100) {
+        closeFullscreen();
+    }
+}, false);
+</script>
