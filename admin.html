@@ -331,8 +331,11 @@
             </div>
 
             <div style="margin-top: var(--space-8); text-align: center;">
-                <button onclick="sendBlogAnnouncement()" style="background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%); color: var(--facilitair-black); padding: var(--space-4) var(--space-8); border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(92, 225, 230, 0.3); transition: all 0.3s ease;">
+                <button onclick="sendBlogAnnouncement()" style="background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%); color: var(--facilitair-black); padding: var(--space-4) var(--space-8); border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(92, 225, 230, 0.3); transition: all 0.3s ease; margin-right: var(--space-4);">
                     📧 Send Blog Announcement to All Subscribers
+                </button>
+                <button onclick="sendToSpecificEmails()" style="background: linear-gradient(135deg, #FFB84D 0%, #E09B3D 100%); color: var(--facilitair-black); padding: var(--space-4) var(--space-8); border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 184, 77, 0.3); transition: all 0.3s ease;">
+                    📧 Send to Failed Recipients (4)
                 </button>
                 <div id="emailStatus" style="margin-top: var(--space-4); color: rgba(250, 250, 250, 0.8);"></div>
             </div>
@@ -656,6 +659,58 @@
                 statusDiv.innerHTML = `
                     ✅ Email campaign complete!<br>
                     Sent: ${data.sent} | Failed: ${data.failed} | Total: ${data.total}
+                    ${data.errors ? '<br><br>Errors: ' + JSON.stringify(data.errors) : ''}
+                `;
+                statusDiv.style.color = data.failed > 0 ? '#FFB84D' : '#5CE1E6';
+            } catch (error) {
+                statusDiv.innerHTML = `❌ Error: ${error.message}`;
+                statusDiv.style.color = '#ff5252';
+            } finally {
+                button.disabled = false;
+                button.style.opacity = '1';
+            }
+        }
+
+        async function sendToSpecificEmails() {
+            const statusDiv = document.getElementById('emailStatus');
+            const button = event.target;
+
+            const specificEmails = [
+                'ecohen16@gmail.com',
+                'ben.hou+facilitair@gong.io',
+                'poosasaikiran0466@gmail.com',
+                'ai@lahoda.net'
+            ];
+
+            if (!confirm(`Send blog announcement to these 4 recipients who didn't receive it?\n\n${specificEmails.join('\n')}`)) {
+                return;
+            }
+
+            button.disabled = true;
+            button.style.opacity = '0.6';
+            statusDiv.innerHTML = '⏳ Sending emails to 4 recipients...';
+
+            try {
+                const response = await fetch('/api/send-blog-announcement-to-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': sessionStorage.getItem('adminApiKey')
+                    },
+                    body: JSON.stringify({
+                        emails: specificEmails
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to send emails');
+                }
+
+                statusDiv.innerHTML = `
+                    ✅ Email campaign complete!<br>
+                    Sent: ${data.sent} | Failed: ${data.failed} | Total: ${data.total} | Requested: ${data.requested}
                     ${data.errors ? '<br><br>Errors: ' + JSON.stringify(data.errors) : ''}
                 `;
                 statusDiv.style.color = data.failed > 0 ? '#FFB84D' : '#5CE1E6';
