@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corch V13 - Orchestration Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --facilitair-teal: #5CE1E6;
+            --facilitair-black: #100F0D;
+            --facilitair-white: #FAFAFA;
+            --facilitair-gray: #D9D9D9;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --error-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--facilitair-black);
+            color: var(--facilitair-white);
+            min-height: 100vh;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(92, 225, 230, 0.1);
+            color: var(--facilitair-teal);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            border: 1px solid rgba(92, 225, 230, 0.3);
+            margin-top: 10px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--facilitair-teal);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--facilitair-teal);
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(92, 225, 230, 0.3);
+            background: rgba(255,255,255,0.05);
+            color: var(--facilitair-white);
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Montserrat', sans-serif;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--facilitair-teal);
+        }
+
+        textarea::placeholder {
+            color: rgba(250, 250, 250, 0.4);
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(92, 225, 230, 0.3);
+            background: rgba(255,255,255,0.05);
+            color: var(--facilitair-white);
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--facilitair-teal);
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: scale(1.02);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            color: var(--facilitair-black);
+        }
+
+        .btn-secondary {
+            background: rgba(92, 225, 230, 0.1);
+            color: var(--facilitair-teal);
+            border: 2px solid var(--facilitair-teal);
+        }
+
+        .execution-status {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .execution-status.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(92, 225, 230, 0.1);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(92, 225, 230, 0.3);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(92, 225, 230, 0.3);
+            border-top: 3px solid var(--facilitair-teal);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--facilitair-teal);
+        }
+
+        .routing-info {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--facilitair-teal);
+        }
+
+        .routing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(92, 225, 230, 0.1);
+        }
+
+        .routing-item:last-child {
+            border-bottom: none;
+        }
+
+        .routing-label {
+            font-weight: 600;
+            color: var(--facilitair-gray);
+            font-size: 0.9em;
+        }
+
+        .routing-value {
+            font-weight: 600;
+            color: var(--facilitair-teal);
+            font-size: 1.05em;
+        }
+
+        .confidence-badge {
+            display: inline-block;
+            background: rgba(92, 225, 230, 0.2);
+            color: var(--facilitair-teal);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--facilitair-teal) 0%, rgba(92, 225, 230, 0.3) 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--facilitair-teal);
+            border: 3px solid var(--facilitair-black);
+        }
+
+        .timeline-item.pending::before {
+            background: rgba(92, 225, 230, 0.3);
+        }
+
+        .timeline-item.running::before {
+            background: var(--facilitair-teal);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .timeline-item.completed::before {
+            background: var(--success-green);
+        }
+
+        .timeline-item.failed::before {
+            background: var(--error-red);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .timeline-content {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: var(--facilitair-teal);
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        .timeline-desc {
+            color: var(--facilitair-gray);
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .timeline-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: var(--facilitair-gray);
+        }
+
+        .cost-tracker {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .cost-item {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            text-align: center;
+        }
+
+        .cost-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--facilitair-teal);
+            margin-bottom: 5px;
+        }
+
+        .cost-label {
+            font-size: 0.85em;
+            color: var(--facilitair-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .task-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--facilitair-teal);
+        }
+
+        .task-item.selected {
+            border-color: var(--facilitair-teal);
+            border-width: 2px;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .task-id {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: var(--facilitair-teal);
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: rgba(217, 217, 217, 0.2);
+            color: var(--facilitair-gray);
+        }
+
+        .status-badge.running {
+            background: rgba(92, 225, 230, 0.2);
+            color: var(--facilitair-teal);
+        }
+
+        .status-badge.completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success-green);
+        }
+
+        .status-badge.failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error-red);
+        }
+
+        .task-prompt {
+            color: var(--facilitair-white);
+            font-size: 0.95em;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8em;
+            color: var(--facilitair-gray);
+        }
+
+        .code-block {
+            background: rgba(0,0,0,0.5);
+            color: var(--facilitair-teal);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--facilitair-gray);
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Corch V13 Orchestration</h1>
+            <div class="subtitle">Multi-Head Attention Routing Engine</div>
+            <div class="version-badge">V13 • 384-dim Embeddings • PostgreSQL Persistence</div>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left Column: Task Creation -->
+            <div class="card">
+                <div class="card-title">
+                    <span>✨</span>
+                    <span>Create Task</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="taskPrompt">Task Description</label>
+                    <textarea id="taskPrompt" placeholder="Example: Build a dashboard to track my API costs and deploy it to production"></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="strategy">Execution Strategy</label>
+                    <select id="strategy" onchange="updateStrategyHelp()">
+                        <option value="auto">Auto (V13 decides)</option>
+                        <option value="direct">Direct (single model)</option>
+                        <option value="orchestrate">Orchestrate (multi-step)</option>
+                    </select>
+                    <div style="font-size: 0.85em; color: var(--facilitair-gray); margin-top: 5px;" id="strategyHelp">
+                        Let V13 choose the best approach
+                    </div>
+                </div>
+
+                <!-- Advanced Settings Expandable Section -->
+                <div style="margin-top: 15px;">
+                    <div style="cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--facilitair-teal); font-weight: 600; font-size: 0.95em; padding: 10px; border-radius: 8px; transition: background 0.2s;" onclick="toggleAdvanced()" onmouseover="this.style.background='rgba(92, 225, 230, 0.1)'" onmouseout="this.style.background='transparent'">
+                        <span id="advancedToggle">▶</span>
+                        <span>Advanced Settings</span>
+                    </div>
+
+                    <div id="advancedSettings" style="display: none; margin-top: 15px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(92, 225, 230, 0.2);">
+
+                        <div class="input-group">
+                            <label for="temperature">Temperature</label>
+                            <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.3" oninput="document.getElementById('tempValue').textContent = this.value">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85em; color: var(--facilitair-gray); margin-top: 5px;">
+                                <span>Focused (0.0)</span>
+                                <span id="tempValue" style="color: var(--facilitair-teal); font-weight: 600;">0.3</span>
+                                <span>Creative (1.0)</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="maxSteps">Max Steps</label>
+                            <input type="number" id="maxSteps" value="10" min="1" max="50">
+                            <div style="font-size: 0.85em; color: var(--facilitair-gray); margin-top: 5px;">
+                                Maximum orchestration steps for multi-step tasks
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="maxCost">Max Cost (cents)</label>
+                            <input type="number" id="maxCost" placeholder="Optional - leave empty for no limit" min="1">
+                            <div style="font-size: 0.85em; color: var(--facilitair-gray); margin-top: 5px;">
+                                Stop execution if cost exceeds this amount
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="maxTime">Max Time (seconds)</label>
+                            <input type="number" id="maxTime" value="300" min="10" max="3600">
+                            <div style="font-size: 0.85em; color: var(--facilitair-gray); margin-top: 5px;">
+                                Maximum execution time (5 minutes default)
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="explanations">Explanation Detail</label>
+                            <select id="explanations">
+                                <option value="none">None - Fast execution</option>
+                                <option value="minimal" selected>Minimal - Key decisions</option>
+                                <option value="detailed">Detailed - Full reasoning</option>
+                            </select>
+                            <div style="font-size: 0.85em; color: var(--facilitair-gray); margin-top: 5px;">
+                                How much reasoning to include in responses
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="onViolation">When Limits Exceeded</label>
+                            <select id="onViolation">
+                                <option value="abort" selected>Abort - Stop immediately</option>
+                                <option value="warn">Warn - Continue with warning</option>
+                                <option value="ask">Ask - Request permission</option>
+                            </select>
+                            <div style="font-size: 0.85em; color: var(--facilitair-gray); margin-top: 5px;">
+                                Action when max cost or time is exceeded
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 15px; padding: 15px; background: rgba(92, 225, 230, 0.1); border-radius: 8px; border-left: 4px solid var(--facilitair-teal);">
+                            <div style="font-weight: 600; color: var(--facilitair-teal); margin-bottom: 8px; font-size: 0.9em;">
+                                Multi-Step Orchestration
+                            </div>
+                            <div style="font-size: 0.85em; line-height: 1.5; color: var(--facilitair-gray);">
+                                When <strong style="color: var(--facilitair-teal);">strategy = "orchestrate"</strong>, the V13 engine:
+                                <ul style="margin-top: 8px; margin-left: 20px;">
+                                    <li>Breaks complex tasks into multiple steps</li>
+                                    <li>Routes each step to the optimal model/tool</li>
+                                    <li>Tracks costs and tokens across all steps</li>
+                                    <li>Respects your max_steps and max_cost limits</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="createTask()" id="createBtn" style="margin-top: 20px;">
+                    Execute Task
+                </button>
+
+                <div class="execution-status" id="executionStatus">
+                    <div class="status-header">
+                        <div class="spinner"></div>
+                        <div class="status-text" id="statusText">Initializing...</div>
+                    </div>
+
+                    <div id="routingInfo"></div>
+                    <div id="timelineContainer"></div>
+                    <div id="costTracker"></div>
+                </div>
+            </div>
+
+            <!-- Right Column: Task History -->
+            <div class="card">
+                <div class="card-title">
+                    <span>📋</span>
+                    <span>Recent Tasks</span>
+                    <button class="btn btn-secondary" onclick="refreshTasks()" style="width: auto; padding: 8px 16px; font-size: 0.9em; margin-left: auto;">
+                        Refresh
+                    </button>
+                </div>
+
+                <div class="task-list" id="taskList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <div>No tasks yet. Create one to get started!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Width: Task Details -->
+        <div class="card" id="taskDetailsCard" style="display: none;">
+            <div class="card-title">
+                <span>🔍</span>
+                <span>Task Details</span>
+                <span id="detailTaskId" style="font-family: 'Courier New', monospace; font-size: 0.8em; margin-left: 15px; opacity: 0.7;"></span>
+            </div>
+            <div id="taskDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        const API_KEY = 'facilitair_dev_key'; // Development API key
+        let currentTaskId = null;
+        let pollingInterval = null;
+
+        // Toggle advanced settings
+        function toggleAdvanced() {
+            const content = document.getElementById('advancedSettings');
+            const toggle = document.getElementById('advancedToggle');
+
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggle.textContent = '▼';
+            } else {
+                content.style.display = 'none';
+                toggle.textContent = '▶';
+            }
+        }
+
+        // Update strategy help text
+        function updateStrategyHelp() {
+            const strategy = document.getElementById('strategy').value;
+            const helpText = document.getElementById('strategyHelp');
+
+            const helpMessages = {
+                'auto': 'Let V13 choose the best approach',
+                'direct': 'Use a single model for fast, simple tasks',
+                'orchestrate': 'Break into multiple steps for complex tasks'
+            };
+
+            helpText.textContent = helpMessages[strategy] || '';
+        }
+
+        // Create a new task
+        async function createTask() {
+            const prompt = document.getElementById('taskPrompt').value.trim();
+            const strategy = document.getElementById('strategy').value;
+
+            // Read advanced settings
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            const maxSteps = parseInt(document.getElementById('maxSteps').value);
+            const maxCost = document.getElementById('maxCost').value ? parseInt(document.getElementById('maxCost').value) : null;
+            const maxTime = parseInt(document.getElementById('maxTime').value);
+            const explanations = document.getElementById('explanations').value;
+            const onViolation = document.getElementById('onViolation').value;
+
+            if (!prompt) {
+                alert('Please enter a task description');
+                return;
+            }
+
+            const createBtn = document.getElementById('createBtn');
+            createBtn.disabled = true;
+            createBtn.textContent = 'Creating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/v1/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        task: {
+                            prompt: prompt,
+                            context: null
+                        },
+                        options: {
+                            strategy: strategy,
+                            temperature: temperature,
+                            explanations: explanations
+                        },
+                        stop_conditions: {
+                            max_steps: maxSteps,
+                            max_cost_cents: maxCost,
+                            max_time_seconds: maxTime,
+                            on_violation: onViolation
+                        }
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentTaskId = data.task_id;
+                    showExecutionStatus();
+                    startPolling(data.task_id);
+                    refreshTasks();
+                } else {
+                    alert(`Error: ${data.detail || 'Failed to create task'}`);
+                }
+            } catch (error) {
+                console.error('Error creating task:', error);
+                alert(`Error: ${error.message}`);
+            } finally {
+                createBtn.disabled = false;
+                createBtn.textContent = 'Execute Task';
+            }
+        }
+
+        // Show execution status section
+        function showExecutionStatus() {
+            document.getElementById('executionStatus').classList.add('show');
+            document.getElementById('statusText').textContent = 'Task created, routing...';
+        }
+
+        // Start polling for task updates
+        function startPolling(taskId) {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+
+            // Poll immediately
+            pollTaskStatus(taskId);
+
+            // Then poll every 1 second
+            pollingInterval = setInterval(() => {
+                pollTaskStatus(taskId);
+            }, 1000);
+        }
+
+        // Poll task status
+        async function pollTaskStatus(taskId) {
+            try {
+                const response = await fetch(`${API_BASE}/v1/tasks/${taskId}`, {
+                    headers: {
+                        'X-API-Key': API_KEY
+                    }
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    updateExecutionStatus(data);
+
+                    // Stop polling if task is complete or failed
+                    if (data.status === 'completed' || data.status === 'failed') {
+                        if (pollingInterval) {
+                            clearInterval(pollingInterval);
+                            pollingInterval = null;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error polling task:', error);
+            }
+        }
+
+        // Update execution status display
+        function updateExecutionStatus(task) {
+            const statusText = document.getElementById('statusText');
+
+            // Update status message
+            const statusMessages = {
+                'pending': 'Task pending...',
+                'routing': 'V13 routing decision...',
+                'running': 'Executing task...',
+                'completed': '✓ Task completed successfully!',
+                'failed': '✗ Task failed'
+            };
+            statusText.textContent = statusMessages[task.status] || task.status;
+
+            // Show routing info if available
+            if (task.routing_decision) {
+                displayRoutingInfo(task.routing_decision);
+            }
+
+            // Show timeline with steps
+            if (task.steps && task.steps.length > 0) {
+                displayTimeline(task.steps, task.status);
+            }
+
+            // Show cost tracking
+            if (task.cost_cents !== null && task.cost_cents !== undefined) {
+                displayCostTracking(task);
+            }
+        }
+
+        // Display routing information
+        function displayRoutingInfo(routing) {
+            const container = document.getElementById('routingInfo');
+            container.innerHTML = `
+                <div class="routing-info">
+                    <div style="font-weight: 600; color: var(--facilitair-teal); margin-bottom: 15px; font-size: 1.1em;">
+                        🧠 V13 Routing Decision
+                    </div>
+                    <div class="routing-item">
+                        <span class="routing-label">Strategy</span>
+                        <span class="routing-value">
+                            ${routing.strategy}
+                            <span class="confidence-badge">${(routing.strategy_confidence * 100).toFixed(1)}%</span>
+                        </span>
+                    </div>
+                    <div class="routing-item">
+                        <span class="routing-label">Sponsor</span>
+                        <span class="routing-value">
+                            ${routing.sponsor}
+                            <span class="confidence-badge">${(routing.sponsor_confidence * 100).toFixed(1)}%</span>
+                        </span>
+                    </div>
+                    <div class="routing-item">
+                        <span class="routing-label">Complexity</span>
+                        <span class="routing-value">
+                            ${routing.complexity}
+                            <span class="confidence-badge">${(routing.complexity_confidence * 100).toFixed(1)}%</span>
+                        </span>
+                    </div>
+                    ${routing.needs_deployment ? `
+                        <div class="routing-item">
+                            <span class="routing-label">Deployment</span>
+                            <span class="routing-value">Required</span>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Display execution timeline
+        function displayTimeline(steps, taskStatus) {
+            const container = document.getElementById('timelineContainer');
+
+            const timelineHtml = `
+                <div style="font-weight: 600; color: var(--facilitair-teal); margin: 20px 0 15px 0; font-size: 1.1em;">
+                    ⚡ Execution Timeline
+                </div>
+                <div class="timeline">
+                    ${steps.map((step, index) => {
+                        let stepStatus = 'pending';
+                        if (step.completed_at) stepStatus = 'completed';
+                        else if (step.started_at) stepStatus = 'running';
+                        if (step.error) stepStatus = 'failed';
+
+                        return `
+                            <div class="timeline-item ${stepStatus}">
+                                <div class="timeline-content">
+                                    <div class="timeline-title">
+                                        Step ${index + 1}: ${escapeHtml(step.description || step.type || 'Processing')}
+                                    </div>
+                                    <div class="timeline-desc">
+                                        ${step.model ? `Model: ${step.model}` : ''}
+                                        ${step.agent_type ? `Type: ${step.agent_type}` : ''}
+                                    </div>
+                                    ${step.tokens_used || step.cost_cents ? `
+                                        <div class="timeline-meta">
+                                            ${step.tokens_used ? `<span>📊 ${step.tokens_used.toLocaleString()} tokens</span>` : ''}
+                                            ${step.cost_cents ? `<span>💰 $${(step.cost_cents / 100).toFixed(4)}</span>` : ''}
+                                        </div>
+                                    ` : ''}
+                                    ${step.error ? `
+                                        <div style="color: var(--error-red); margin-top: 10px; font-size: 0.9em;">
+                                            Error: ${escapeHtml(step.error)}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            container.innerHTML = timelineHtml;
+        }
+
+        // Display cost tracking
+        function displayCostTracking(task) {
+            const container = document.getElementById('costTracker');
+
+            const totalTokens = task.total_tokens || 0;
+            const costCents = task.cost_cents || 0;
+            const stepCount = task.steps ? task.steps.length : 0;
+            const duration = task.completed_at && task.created_at
+                ? Math.round((new Date(task.completed_at) - new Date(task.created_at)) / 1000)
+                : 0;
+
+            container.innerHTML = `
+                <div style="font-weight: 600; color: var(--facilitair-teal); margin: 20px 0 15px 0; font-size: 1.1em;">
+                    📊 Execution Metrics
+                </div>
+                <div class="cost-tracker">
+                    <div class="cost-item">
+                        <div class="cost-value">$${(costCents / 100).toFixed(4)}</div>
+                        <div class="cost-label">Total Cost</div>
+                    </div>
+                    <div class="cost-item">
+                        <div class="cost-value">${totalTokens.toLocaleString()}</div>
+                        <div class="cost-label">Tokens</div>
+                    </div>
+                    <div class="cost-item">
+                        <div class="cost-value">${stepCount}</div>
+                        <div class="cost-label">Steps</div>
+                    </div>
+                    ${duration > 0 ? `
+                        <div class="cost-item">
+                            <div class="cost-value">${duration}s</div>
+                            <div class="cost-label">Duration</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Refresh task list
+        async function refreshTasks() {
+            try {
+                // Note: This endpoint doesn't exist yet, we'll need to add it
+                // For now, we'll just show a message
+                console.log('Task list refresh requested - endpoint not implemented yet');
+
+                // Mock data for demonstration
+                const mockTasks = [
+                    {
+                        task_id: currentTaskId || 'tsk_demo123',
+                        prompt: document.getElementById('taskPrompt').value || 'Sample task',
+                        status: 'running',
+                        created_at: new Date().toISOString(),
+                        cost_cents: 15,
+                        total_tokens: 1250
+                    }
+                ];
+
+                displayTaskList(mockTasks);
+            } catch (error) {
+                console.error('Error refreshing tasks:', error);
+            }
+        }
+
+        // Display task list
+        function displayTaskList(tasks) {
+            const container = document.getElementById('taskList');
+
+            if (!tasks || tasks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <div>No tasks yet. Create one to get started!</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tasks.map(task => {
+                const createdAt = new Date(task.created_at);
+                const timeAgo = getTimeAgo(createdAt);
+
+                return `
+                    <div class="task-item ${task.task_id === currentTaskId ? 'selected' : ''}"
+                         onclick="selectTask('${task.task_id}')">
+                        <div class="task-header">
+                            <span class="task-id">${task.task_id}</span>
+                            <span class="status-badge ${task.status}">${task.status}</span>
+                        </div>
+                        <div class="task-prompt">${escapeHtml(task.prompt)}</div>
+                        <div class="task-meta">
+                            <span>⏱️ ${timeAgo}</span>
+                            ${task.cost_cents ? `<span>💰 $${(task.cost_cents / 100).toFixed(4)}</span>` : ''}
+                            ${task.total_tokens ? `<span>📊 ${task.total_tokens.toLocaleString()} tokens</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Select a task to view details
+        async function selectTask(taskId) {
+            currentTaskId = taskId;
+
+            try {
+                const response = await fetch(`${API_BASE}/v1/tasks/${taskId}`, {
+                    headers: {
+                        'X-API-Key': API_KEY
+                    }
+                });
+                const task = await response.json();
+
+                if (response.ok) {
+                    displayTaskDetails(task);
+
+                    // Start polling if task is still running
+                    if (task.status === 'running' || task.status === 'pending') {
+                        startPolling(taskId);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching task details:', error);
+            }
+        }
+
+        // Display full task details
+        function displayTaskDetails(task) {
+            const card = document.getElementById('taskDetailsCard');
+            const container = document.getElementById('taskDetails');
+            const taskIdSpan = document.getElementById('detailTaskId');
+
+            card.style.display = 'block';
+            taskIdSpan.textContent = task.task_id;
+
+            let html = `
+                <div class="routing-info">
+                    <div style="font-weight: 600; margin-bottom: 10px;">Task Prompt</div>
+                    <div style="color: var(--facilitair-white); line-height: 1.6;">
+                        ${escapeHtml(task.prompt)}
+                    </div>
+                </div>
+            `;
+
+            if (task.result) {
+                html += `
+                    <div style="margin-top: 20px;">
+                        <div style="font-weight: 600; color: var(--facilitair-teal); margin-bottom: 10px;">
+                            Result
+                        </div>
+                        <div class="code-block">${escapeHtml(JSON.stringify(task.result, null, 2))}</div>
+                    </div>
+                `;
+            }
+
+            if (task.error) {
+                html += `
+                    <div style="margin-top: 20px;">
+                        <div style="font-weight: 600; color: var(--error-red); margin-bottom: 10px;">
+                            Error
+                        </div>
+                        <div class="code-block" style="border-color: var(--error-red);">
+                            ${escapeHtml(task.error)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Utility: Get time ago string
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+
+            if (seconds < 60) return `${seconds}s ago`;
+            if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+            return `${Math.floor(seconds / 86400)}d ago`;
+        }
+
+        // Utility: Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Auto-refresh tasks on load
+        window.addEventListener('load', () => {
+            console.log('Orchestration Dashboard loaded');
+            // Uncomment when backend supports listing tasks
+            // refreshTasks();
+        });
+    </script>
+</body>
+</html>

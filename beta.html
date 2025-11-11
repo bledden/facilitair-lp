@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>FACILITAIR Beta - V13 Orchestration Dashboard</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png">
+
+    <style>
+        :root {
+            --facilitair-teal: #5CE1E6;
+            --facilitair-black: #100F0D;
+            --facilitair-white: #FAFAFA;
+            --facilitair-gray: #D9D9D9;
+            --success-green: #10b981;
+            --error-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--facilitair-black);
+            color: var(--facilitair-white);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Password Gate Styles */
+        #passwordGate {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        #passwordGate.hidden {
+            display: none;
+        }
+
+        .logo-container {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+        }
+
+        .brand-name {
+            font-size: 2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gate-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--facilitair-teal);
+        }
+
+        .gate-description {
+            font-size: 1em;
+            color: var(--facilitair-gray);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .password-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(92, 225, 230, 0.3);
+            background: rgba(255,255,255,0.05);
+            color: var(--facilitair-white);
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--facilitair-teal);
+        }
+
+        .password-input::placeholder {
+            color: rgba(250, 250, 250, 0.4);
+        }
+
+        .btn-access {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            color: var(--facilitair-black);
+            transition: all 0.2s ease;
+        }
+
+        .btn-access:hover {
+            transform: scale(1.02);
+        }
+
+        .btn-access:active {
+            transform: scale(0.98);
+        }
+
+        .btn-access:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: var(--error-red);
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .info-text {
+            font-size: 0.85em;
+            color: var(--facilitair-gray);
+            margin-top: 20px;
+        }
+
+        /* Dashboard Container - Hidden until password is correct */
+        #dashboardContainer {
+            display: none;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        #dashboardContainer.show {
+            display: block;
+        }
+
+        /* Header for authenticated view */
+        .beta-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(16, 15, 13, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(92, 225, 230, 0.2);
+            padding: 15px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .beta-logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .beta-logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .beta-brand {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--facilitair-teal);
+        }
+
+        .beta-badge {
+            background: rgba(92, 225, 230, 0.2);
+            color: var(--facilitair-teal);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .logout-btn {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(92, 225, 230, 0.3);
+            border-radius: 8px;
+            color: var(--facilitair-teal);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(92, 225, 230, 0.1);
+        }
+
+        #dashboardFrame {
+            width: 100%;
+            height: calc(100vh - 70px);
+            border: none;
+            margin-top: 70px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Gate -->
+    <div id="passwordGate">
+        <div class="logo-container">
+            <img src="/logo.png" alt="FACILITAIR Logo" class="logo">
+            <div class="brand-name">FACILITAIR</div>
+        </div>
+
+        <h1 class="gate-title">Beta Access</h1>
+        <p class="gate-description">
+            Enter your beta access password to continue to the V13 Orchestration Dashboard.
+            This is a private beta for invited users only.
+        </p>
+
+        <form class="password-form" id="passwordForm">
+            <input
+                type="password"
+                id="betaPassword"
+                class="password-input"
+                placeholder="Enter beta password"
+                autocomplete="off"
+                required
+            >
+            <button type="submit" class="btn-access" id="submitBtn">
+                Access Dashboard
+            </button>
+        </form>
+
+        <div class="error-message" id="errorMessage">
+            Incorrect password. Please try again.
+        </div>
+
+        <p class="info-text">
+            Need access? Contact the team to receive your beta password.
+        </p>
+    </div>
+
+    <!-- Dashboard Container (hidden until authenticated) -->
+    <div id="dashboardContainer">
+        <div class="beta-header">
+            <div class="beta-logo-section">
+                <img src="/logo.png" alt="FACILITAIR" class="beta-logo">
+                <span class="beta-brand">FACILITAIR</span>
+                <span class="beta-badge">BETA</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        <iframe id="dashboardFrame" src="about:blank"></iframe>
+    </div>
+
+    <script>
+        // Configuration
+        const API_URL = '/api/beta';
+        const DASHBOARD_URL = '/beta-dashboard.html';
+        const SESSION_KEY = 'facilitair_beta_session';
+
+        // Check if user has valid session on load
+        window.addEventListener('load', () => {
+            const session = localStorage.getItem(SESSION_KEY);
+            if (session) {
+                // Verify session is still valid
+                verifySession(session);
+            }
+        });
+
+        // Handle password form submission
+        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const password = document.getElementById('betaPassword').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Clear previous error
+            errorMessage.classList.remove('show');
+
+            // Disable button during submission
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verifying...';
+
+            try {
+                const response = await fetch(`${API_URL}/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Store session token
+                    localStorage.setItem(SESSION_KEY, data.session_token);
+
+                    // Show dashboard
+                    showDashboard();
+                } else {
+                    // Show error
+                    errorMessage.textContent = data.error || 'Incorrect password. Please try again.';
+                    errorMessage.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.classList.add('show');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Access Dashboard';
+            }
+        });
+
+        // Verify existing session
+        async function verifySession(sessionToken) {
+            try {
+                const response = await fetch(`${API_URL}/verify-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ session_token: sessionToken })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.valid) {
+                    showDashboard();
+                } else {
+                    // Session invalid, clear it
+                    localStorage.removeItem(SESSION_KEY);
+                }
+            } catch (error) {
+                console.error('Session verification error:', error);
+                localStorage.removeItem(SESSION_KEY);
+            }
+        }
+
+        // Show dashboard
+        function showDashboard() {
+            document.getElementById('passwordGate').classList.add('hidden');
+            document.getElementById('dashboardContainer').classList.add('show');
+
+            // Load dashboard in iframe
+            document.getElementById('dashboardFrame').src = DASHBOARD_URL;
+
+            // Set body to fixed position for iframe
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
+            document.body.style.overflow = 'hidden';
+            document.body.style.display = 'block';
+            document.body.style.height = '100vh';
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem(SESSION_KEY);
+            location.reload();
+        }
+
+        // Prevent back button from bypassing auth
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                // Page was restored from cache, verify session again
+                const session = localStorage.getItem(SESSION_KEY);
+                if (!session) {
+                    location.reload();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

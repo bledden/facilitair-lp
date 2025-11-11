@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>FACILITAIR Beta Admin - Password Management</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/logo.png">
+
+    <style>
+        :root {
+            --facilitair-teal: #5CE1E6;
+            --facilitair-black: #100F0D;
+            --facilitair-white: #FAFAFA;
+            --facilitair-gray: #D9D9D9;
+            --success-green: #10b981;
+            --error-red: #ef4444;
+            --warning-orange: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--facilitair-black);
+            color: var(--facilitair-white);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(92, 225, 230, 0.2);
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--facilitair-gray);
+            font-size: 1.1em;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--facilitair-teal);
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: scale(1.02);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            color: var(--facilitair-black);
+        }
+
+        .btn-danger {
+            background: var(--error-red);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(92, 225, 230, 0.1);
+            color: var(--facilitair-teal);
+            border: 1px solid var(--facilitair-teal);
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(92, 225, 230, 0.3);
+            background: rgba(255,255,255,0.05);
+            color: var(--facilitair-white);
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--facilitair-teal);
+        }
+
+        .password-list {
+            margin-top: 20px;
+        }
+
+        .password-item {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .password-info {
+            flex: 1;
+        }
+
+        .password-value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: var(--facilitair-teal);
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .password-value:hover {
+            text-decoration: underline;
+        }
+
+        .password-meta {
+            font-size: 0.9em;
+            color: var(--facilitair-gray);
+        }
+
+        .password-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success-green);
+        }
+
+        .status-revoked {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error-red);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--success-green);
+            color: var(--success-green);
+        }
+
+        .message-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--error-red);
+            color: var(--error-red);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--facilitair-teal);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--facilitair-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-icon {
+            cursor: pointer;
+            margin-left: 10px;
+            opacity: 0.6;
+        }
+
+        .copy-icon:hover {
+            opacity: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--facilitair-gray);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="/logo.png" alt="FACILITAIR Logo" class="logo">
+            <h1>Beta Password Management</h1>
+            <p class="subtitle">Generate and manage beta access passwords</p>
+        </header>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalPasswords">0</div>
+                <div class="stat-label">Total Passwords</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activePasswords">0</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="revokedPasswords">0</div>
+                <div class="stat-label">Revoked</div>
+            </div>
+        </div>
+
+        <!-- Admin Authentication -->
+        <div class="card" id="authCard">
+            <h2 class="card-title">Admin Authentication</h2>
+            <input type="password" id="adminPassword" placeholder="Enter admin password">
+            <button class="btn btn-primary" onclick="authenticate()">Login</button>
+            <div class="message message-error" id="authError"></div>
+        </div>
+
+        <!-- Admin Panel (hidden until authenticated) -->
+        <div id="adminPanel" style="display: none;">
+
+            <!-- Generate New Password -->
+            <div class="card">
+                <h2 class="card-title">Generate New Password</h2>
+                <div class="message message-success" id="generateSuccess"></div>
+                <div class="message message-error" id="generateError"></div>
+
+                <input type="text" id="passwordLabel" placeholder="Label (e.g., 'John Doe', 'Team Alpha')">
+                <button class="btn btn-primary" onclick="generatePassword()">Generate Password</button>
+            </div>
+
+            <!-- Password List -->
+            <div class="card">
+                <h2 class="card-title">Active Passwords</h2>
+                <div id="passwordList" class="password-list">
+                    <div class="empty-state">No passwords generated yet.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/beta/admin';
+        let adminToken = null;
+
+        // Check for existing admin session
+        window.addEventListener('load', () => {
+            const token = sessionStorage.getItem('facilitair_admin_token');
+            if (token) {
+                adminToken = token;
+                showAdminPanel();
+                loadPasswords();
+            }
+        });
+
+        // Authenticate admin
+        async function authenticate() {
+            const password = document.getElementById('adminPassword').value;
+            const errorEl = document.getElementById('authError');
+
+            errorEl.classList.remove('show');
+
+            try {
+                const response = await fetch(`${API_URL}/auth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    adminToken = data.token;
+                    sessionStorage.setItem('facilitair_admin_token', adminToken);
+                    showAdminPanel();
+                    loadPasswords();
+                } else {
+                    errorEl.textContent = data.error || 'Invalid admin password';
+                    errorEl.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Auth error:', error);
+                errorEl.textContent = 'Authentication failed';
+                errorEl.classList.add('show');
+            }
+        }
+
+        // Show admin panel
+        function showAdminPanel() {
+            document.getElementById('authCard').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+        }
+
+        // Generate new password
+        async function generatePassword() {
+            const label = document.getElementById('passwordLabel').value.trim();
+            const successEl = document.getElementById('generateSuccess');
+            const errorEl = document.getElementById('generateError');
+
+            successEl.classList.remove('show');
+            errorEl.classList.remove('show');
+
+            if (!label) {
+                errorEl.textContent = 'Please enter a label';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({ label })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    successEl.innerHTML = `
+                        Password generated successfully!<br>
+                        <strong>${data.password}</strong>
+                        <span class="copy-icon" onclick="copyToClipboard('${data.password}')" title="Copy">📋</span>
+                    `;
+                    successEl.classList.add('show');
+                    document.getElementById('passwordLabel').value = '';
+                    loadPasswords();
+                } else {
+                    errorEl.textContent = data.error || 'Failed to generate password';
+                    errorEl.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Generate error:', error);
+                errorEl.textContent = 'Failed to generate password';
+                errorEl.classList.add('show');
+            }
+        }
+
+        // Load all passwords
+        async function loadPasswords() {
+            try {
+                const response = await fetch(`${API_URL}/list`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    displayPasswords(data.passwords);
+                    updateStats(data.passwords);
+                }
+            } catch (error) {
+                console.error('Load passwords error:', error);
+            }
+        }
+
+        // Display passwords
+        function displayPasswords(passwords) {
+            const container = document.getElementById('passwordList');
+
+            if (!passwords || passwords.length === 0) {
+                container.innerHTML = '<div class="empty-state">No passwords generated yet.</div>';
+                return;
+            }
+
+            container.innerHTML = passwords.map(p => `
+                <div class="password-item">
+                    <div class="password-info">
+                        <div>
+                            <span class="password-value" onclick="copyToClipboard('${p.password}')" title="Click to copy">
+                                ${p.password}
+                            </span>
+                            <span class="status-badge status-${p.revoked ? 'revoked' : 'active'}">
+                                ${p.revoked ? 'Revoked' : 'Active'}
+                            </span>
+                        </div>
+                        <div class="password-meta">
+                            Label: ${p.label} | Created: ${new Date(p.created_at).toLocaleString()}
+                            ${p.last_used_at ? ` | Last used: ${new Date(p.last_used_at).toLocaleString()}` : ''}
+                        </div>
+                    </div>
+                    <div class="password-actions">
+                        ${!p.revoked ? `
+                            <button class="btn btn-danger" onclick="revokePassword('${p.password}')">
+                                Revoke
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-secondary" onclick="copyToClipboard('${p.password}')">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistics
+        function updateStats(passwords) {
+            const total = passwords.length;
+            const active = passwords.filter(p => !p.revoked).length;
+            const revoked = passwords.filter(p => p.revoked).length;
+
+            document.getElementById('totalPasswords').textContent = total;
+            document.getElementById('activePasswords').textContent = active;
+            document.getElementById('revokedPasswords').textContent = revoked;
+        }
+
+        // Revoke password
+        async function revokePassword(password) {
+            if (!confirm('Are you sure you want to revoke this password? This cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/revoke`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    loadPasswords();
+                } else {
+                    alert(data.error || 'Failed to revoke password');
+                }
+            } catch (error) {
+                console.error('Revoke error:', error);
+                alert('Failed to revoke password');
+            }
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show temporary success message
+                const temp = document.createElement('div');
+                temp.style.position = 'fixed';
+                temp.style.top = '20px';
+                temp.style.right = '20px';
+                temp.style.background = 'var(--success-green)';
+                temp.style.color = 'white';
+                temp.style.padding = '15px 20px';
+                temp.style.borderRadius = '10px';
+                temp.style.zIndex = '10000';
+                temp.textContent = 'Copied to clipboard!';
+                document.body.appendChild(temp);
+
+                setTimeout(() => {
+                    temp.remove();
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

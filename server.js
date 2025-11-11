@@ -1230,6 +1230,328 @@ app.get('/api/cloudflare-analytics', async (req, res) => {
     }
 });
 
+// ==================== BETA PASSWORD MANAGEMENT ====================
+
+// Initialize beta passwords table
+db.exec(`
+    CREATE TABLE IF NOT EXISTS beta_passwords (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        password TEXT UNIQUE NOT NULL,
+        password_hash TEXT UNIQUE NOT NULL,
+        label TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        last_used_at DATETIME,
+        revoked BOOLEAN DEFAULT 0,
+        revoked_at DATETIME
+    );
+
+    CREATE TABLE IF NOT EXISTS beta_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_token TEXT UNIQUE NOT NULL,
+        password_id INTEGER NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        expires_at DATETIME NOT NULL,
+        ip_address TEXT,
+        user_agent TEXT,
+        FOREIGN KEY (password_id) REFERENCES beta_passwords(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_beta_password_hash ON beta_passwords(password_hash);
+    CREATE INDEX IF NOT EXISTS idx_beta_session_token ON beta_sessions(session_token);
+    CREATE INDEX IF NOT EXISTS idx_beta_session_expires ON beta_sessions(expires_at);
+`);
+
+// Admin password from environment variable (YOU MUST SET THIS)
+const ADMIN_PASSWORD = process.env.BETA_ADMIN_PASSWORD || crypto.randomBytes(16).toString('hex');
+if (!process.env.BETA_ADMIN_PASSWORD) {
+    console.warn(`
+        ⚠️  WARNING: BETA_ADMIN_PASSWORD not set in environment!
+        ⚠️  Using generated password: ${ADMIN_PASSWORD}
+        ⚠️  Set BETA_ADMIN_PASSWORD in .env for production
+    `);
+}
+
+// Helper: Generate random password
+function generateBetaPassword() {
+    // Generate 4 groups of 4 characters (e.g., A7F2-K9M3-P5T8-W2D6)
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed confusing chars like 0, O, 1, I
+    const groups = [];
+    for (let i = 0; i < 4; i++) {
+        let group = '';
+        for (let j = 0; j < 4; j++) {
+            group += chars[Math.floor(Math.random() * chars.length)];
+        }
+        groups.push(group);
+    }
+    return groups.join('-');
+}
+
+// Helper: Hash password
+function hashPassword(password) {
+    return crypto.createHash('sha256').update(password).digest('hex');
+}
+
+// Helper: Generate session token
+function generateSessionToken() {
+    return crypto.randomBytes(32).toString('hex');
+}
+
+// Helper: Verify admin token
+function verifyAdminToken(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+
+    const token = authHeader.substring(7);
+    const adminTokenHash = hashPassword(ADMIN_PASSWORD);
+
+    if (hashPassword(token) !== adminTokenHash) {
+        return res.status(401).json({ success: false, error: 'Invalid admin token' });
+    }
+
+    next();
+}
+
+// API: Admin authentication
+app.post('/api/beta/admin/auth', (req, res) => {
+    try {
+        const { password } = req.body;
+
+        if (password === ADMIN_PASSWORD) {
+            res.json({
+                success: true,
+                token: ADMIN_PASSWORD // In production, use JWT
+            });
+        } else {
+            res.status(401).json({
+                success: false,
+                error: 'Invalid admin password'
+            });
+        }
+    } catch (error) {
+        console.error('Admin auth error:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
+
+// API: Generate new beta password (admin only)
+app.post('/api/beta/admin/generate', verifyAdminToken, (req, res) => {
+    try {
+        const { label } = req.body;
+
+        if (!label || label.trim().length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Label is required'
+            });
+        }
+
+        const password = generateBetaPassword();
+        const passwordHash = hashPassword(password);
+
+        const stmt = db.prepare(`
+            INSERT INTO beta_passwords (password, password_hash, label)
+            VALUES (?, ?, ?)
+        `);
+
+        stmt.run(password, passwordHash, label.trim());
+
+        res.json({
+            success: true,
+            password: password,
+            label: label.trim()
+        });
+    } catch (error) {
+        console.error('Generate password error:', error);
+        if (error.message.includes('UNIQUE')) {
+            // Retry once if collision
+            return app.post('/api/beta/admin/generate', verifyAdminToken)(req, res);
+        }
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
+
+// API: List all beta passwords (admin only)
+app.get('/api/beta/admin/list', verifyAdminToken, (req, res) => {
+    try {
+        const passwords = db.prepare(`
+            SELECT id, password, label, created_at, last_used_at, revoked, revoked_at
+            FROM beta_passwords
+            ORDER BY created_at DESC
+        `).all();
+
+        res.json({
+            success: true,
+            passwords: passwords
+        });
+    } catch (error) {
+        console.error('List passwords error:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
+
+// API: Revoke beta password (admin only)
+app.post('/api/beta/admin/revoke', verifyAdminToken, (req, res) => {
+    try {
+        const { password } = req.body;
+
+        const stmt = db.prepare(`
+            UPDATE beta_passwords
+            SET revoked = 1, revoked_at = CURRENT_TIMESTAMP
+            WHERE password = ?
+        `);
+
+        const result = stmt.run(password);
+
+        if (result.changes === 0) {
+            return res.status(404).json({
+                success: false,
+                error: 'Password not found'
+            });
+        }
+
+        // Invalidate all sessions for this password
+        db.prepare(`
+            DELETE FROM beta_sessions
+            WHERE password_id = (SELECT id FROM beta_passwords WHERE password = ?)
+        `).run(password);
+
+        res.json({
+            success: true,
+            message: 'Password revoked'
+        });
+    } catch (error) {
+        console.error('Revoke password error:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
+
+// API: Verify beta password (public)
+app.post('/api/beta/verify', (req, res) => {
+    try {
+        const { password } = req.body;
+        const ip = req.ip || req.connection.remoteAddress;
+        const userAgent = req.headers['user-agent'] || '';
+
+        if (!password) {
+            return res.status(400).json({
+                success: false,
+                error: 'Password required'
+            });
+        }
+
+        // Check if password exists and is not revoked
+        const betaPassword = db.prepare(`
+            SELECT id, password, revoked
+            FROM beta_passwords
+            WHERE password = ? AND revoked = 0
+        `).get(password);
+
+        if (!betaPassword) {
+            return res.status(401).json({
+                success: false,
+                error: 'Invalid or revoked password'
+            });
+        }
+
+        // Update last_used_at
+        db.prepare(`
+            UPDATE beta_passwords
+            SET last_used_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `).run(betaPassword.id);
+
+        // Create session token (expires in 7 days)
+        const sessionToken = generateSessionToken();
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 7);
+
+        db.prepare(`
+            INSERT INTO beta_sessions (session_token, password_id, expires_at, ip_address, user_agent)
+            VALUES (?, ?, ?, ?, ?)
+        `).run(sessionToken, betaPassword.id, expiresAt.toISOString(), ip, userAgent);
+
+        res.json({
+            success: true,
+            session_token: sessionToken,
+            expires_at: expiresAt.toISOString()
+        });
+    } catch (error) {
+        console.error('Verify password error:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
+
+// API: Verify session token (public)
+app.post('/api/beta/verify-session', (req, res) => {
+    try {
+        const { session_token } = req.body;
+
+        if (!session_token) {
+            return res.status(400).json({
+                success: false,
+                valid: false,
+                error: 'Session token required'
+            });
+        }
+
+        // Check if session exists and hasn't expired
+        const session = db.prepare(`
+            SELECT s.id, s.expires_at, p.revoked
+            FROM beta_sessions s
+            JOIN beta_passwords p ON s.password_id = p.id
+            WHERE s.session_token = ?
+        `).get(session_token);
+
+        if (!session) {
+            return res.json({
+                success: true,
+                valid: false,
+                error: 'Invalid session'
+            });
+        }
+
+        const now = new Date();
+        const expiresAt = new Date(session.expires_at);
+
+        if (now > expiresAt || session.revoked) {
+            // Delete expired or revoked session
+            db.prepare('DELETE FROM beta_sessions WHERE id = ?').run(session.id);
+
+            return res.json({
+                success: true,
+                valid: false,
+                error: 'Session expired or revoked'
+            });
+        }
+
+        res.json({
+            success: true,
+            valid: true
+        });
+    } catch (error) {
+        console.error('Verify session error:', error);
+        res.status(500).json({ success: false, valid: false, error: 'Server error' });
+    }
+});
+
+// Cleanup expired sessions (run periodically)
+setInterval(() => {
+    try {
+        const result = db.prepare(`
+            DELETE FROM beta_sessions
+            WHERE expires_at < datetime('now')
+        `).run();
+
+        if (result.changes > 0) {
+            console.log(`Cleaned up ${result.changes} expired beta sessions`);
+        }
+    } catch (error) {
+        console.error('Session cleanup error:', error);
+    }
+}, 60 * 60 * 1000); // Run every hour
+
 // Health check endpoint for Railway
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
