@@ -44,6 +44,24 @@ app.use((req, res, next) => {
     next();
 });
 
+// Beta subdomain routing - MUST come before static middleware
+app.get('/', (req, res) => {
+    const hostname = req.hostname || req.get('host') || req.headers.host || req.headers['x-forwarded-host'];
+
+    console.log('=== ROOT REQUEST DEBUG ===');
+    console.log('req.hostname:', req.hostname);
+    console.log('Combined hostname:', hostname);
+    console.log('=========================');
+
+    if (hostname && hostname.startsWith('beta.')) {
+        console.log('✓ Serving beta.html for hostname:', hostname);
+        return res.sendFile(path.join(__dirname, 'beta.html'));
+    } else {
+        console.log('✗ Serving index.html for hostname:', hostname);
+        return res.sendFile(path.join(__dirname, 'index.html'));
+    }
+});
+
 app.use(express.static(path.join(__dirname)));
 
 // Initialize SQLite database
@@ -1680,29 +1698,7 @@ app.post('/api/v10/route', (req, res) => {
     }
 });
 
-// Serve HTML pages
-app.get('/', (req, res) => {
-    // Check if accessing via beta subdomain
-    const hostname = req.hostname || req.get('host') || req.headers.host || req.headers['x-forwarded-host'];
-
-    // Comprehensive logging
-    console.log('=== ROOT REQUEST DEBUG ===');
-    console.log('req.hostname:', req.hostname);
-    console.log('req.get("host"):', req.get('host'));
-    console.log('req.headers.host:', req.headers.host);
-    console.log('req.headers["x-forwarded-host"]:', req.headers['x-forwarded-host']);
-    console.log('Combined hostname:', hostname);
-    console.log('All headers:', JSON.stringify(req.headers, null, 2));
-    console.log('=========================');
-
-    if (hostname && hostname.startsWith('beta.')) {
-        console.log('✓ Serving beta.html for hostname:', hostname);
-        res.sendFile(path.join(__dirname, 'beta.html'));
-    } else {
-        console.log('✗ Serving index.html for hostname:', hostname);
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
-});
+// Serve HTML pages (root handler moved earlier, before static middleware)
 
 app.get('/test-beta', (req, res) => {
     console.log('Force serving beta.html from /test-beta');
