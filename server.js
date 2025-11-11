@@ -1683,13 +1683,20 @@ app.post('/api/v10/route', (req, res) => {
 // Serve HTML pages
 app.get('/', (req, res) => {
     // Check if accessing via beta subdomain
-    const hostname = req.hostname || req.get('host');
+    const hostname = req.hostname || req.get('host') || req.headers.host || req.headers['x-forwarded-host'];
+
+    // Log for debugging
+    console.log('Root request - hostname:', hostname, 'headers:', {
+        host: req.get('host'),
+        'x-forwarded-host': req.headers['x-forwarded-host'],
+        'x-forwarded-proto': req.headers['x-forwarded-proto']
+    });
 
     if (hostname && hostname.startsWith('beta.')) {
-        // Serve beta password gate
+        console.log('Serving beta.html for hostname:', hostname);
         res.sendFile(path.join(__dirname, 'beta.html'));
     } else {
-        // Serve main landing page
+        console.log('Serving index.html for hostname:', hostname);
         res.sendFile(path.join(__dirname, 'index.html'));
     }
 });
