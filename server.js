@@ -1704,6 +1704,19 @@ app.get('/', (req, res) => {
     }
 });
 
+app.get('/debug-hostname', (req, res) => {
+    const hostname = req.hostname || req.get('host') || req.headers.host || req.headers['x-forwarded-host'];
+    res.json({
+        'req.hostname': req.hostname,
+        'req.get("host")': req.get('host'),
+        'req.headers.host': req.headers.host,
+        'req.headers["x-forwarded-host"]': req.headers['x-forwarded-host'],
+        'combined': hostname,
+        'isBeta': hostname && hostname.startsWith('beta.'),
+        'allHeaders': req.headers
+    });
+});
+
 app.get('/about.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'about.html'));
 });
