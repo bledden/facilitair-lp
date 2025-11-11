@@ -1610,8 +1610,24 @@ app.post('/api/corch/execute', async (req, res) => {
         res.setHeader('Connection', 'keep-alive');
         res.setHeader('X-Accel-Buffering', 'no');
 
-        // Pipe the SSE stream from Corch to the client
-        response.body.pipe(res);
+        // Stream the SSE response from Corch to the client
+        // Native fetch returns a ReadableStream, not a Node stream
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        try {
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                // Write the chunk to the response
+                res.write(decoder.decode(value, { stream: true }));
+            }
+            res.end();
+        } catch (streamError) {
+            console.error('Stream error:', streamError);
+            res.end();
+        }
 
     } catch (error) {
         console.error('Corch execution proxy error:', error);
