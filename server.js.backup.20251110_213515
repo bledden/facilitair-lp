@@ -1557,85 +1557,9 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// ==================== V10 ROUTING API PROXY ====================
-
-// Mock V10 routing endpoint (simple heuristic-based routing for demo)
-app.post('/api/v10/route', (req, res) => {
-    try {
-        const { task } = req.body;
-
-        if (!task || task.trim().length === 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'Task description is required'
-            });
-        }
-
-        // Simple heuristic routing for demo
-        const taskLower = task.toLowerCase();
-        let strategy = 'DIRECT';
-        let capability = 'code_generation';
-        let domain = 'backend';
-        let execution_type = 'pure_sequential';
-
-        if (taskLower.includes('deploy') || taskLower.includes('ci/cd') || taskLower.includes('pipeline')) {
-            capability = 'deployment';
-            domain = 'infrastructure';
-            strategy = 'ORCHESTRATE';
-        } else if (taskLower.includes('test') || taskLower.includes('testing')) {
-            capability = 'unit_testing';
-            domain = 'testing';
-        } else if (taskLower.includes('frontend') || taskLower.includes('react') || taskLower.includes('ui') || taskLower.includes('component')) {
-            capability = 'code_generation';
-            domain = 'frontend';
-        } else if (taskLower.includes('api') || taskLower.includes('endpoint') || taskLower.includes('rest')) {
-            capability = 'code_generation';
-            domain = 'backend';
-        } else if (taskLower.includes('data') || taskLower.includes('processing') || taskLower.includes('analytics')) {
-            capability = 'data_processing';
-            domain = 'backend';
-        } else if (taskLower.includes('refactor') || taskLower.includes('optimize')) {
-            capability = 'refactoring';
-            domain = 'backend';
-        } else if (taskLower.includes('document') || taskLower.includes('readme')) {
-            capability = 'documentation';
-            domain = 'general';
-        }
-
-        if (task.split(' ').length > 15 || taskLower.includes('comprehensive') || taskLower.includes('complete')) {
-            strategy = 'ORCHESTRATE';
-        }
-
-        if (taskLower.includes('parallel')) {
-            execution_type = 'pure_parallel';
-        } else if (taskLower.includes('if') || taskLower.includes('conditional') || taskLower.includes('based on')) {
-            execution_type = 'conditional';
-        } else if (taskLower.includes('loop') || taskLower.includes('iterate')) {
-            execution_type = 'iterative';
-        }
-
-        res.json({
-            success: true,
-            strategy,
-            capability,
-            domain,
-            execution_type,
-            confidence: {
-                strategy: 0.75 + Math.random() * 0.2,
-                capability: 0.65 + Math.random() * 0.25,
-                domain: 0.70 + Math.random() * 0.25,
-                execution_type: 0.55 + Math.random() * 0.30
-            }
-        });
-    } catch (error) {
-        console.error('V10 routing error:', error);
-        res.status(500).json({ success: false, error: 'Server error' });
-    }
-});
-
 // Serve HTML pages
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'beta.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/about.html', (req, res) => {
