@@ -1635,7 +1635,16 @@ app.post('/api/v10/route', (req, res) => {
 
 // Serve HTML pages
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'beta.html'));
+    // Check if accessing via beta subdomain
+    const hostname = req.hostname || req.get('host');
+
+    if (hostname && hostname.startsWith('beta.')) {
+        // Serve beta password gate
+        res.sendFile(path.join(__dirname, 'beta.html'));
+    } else {
+        // Serve main landing page
+        res.sendFile(path.join(__dirname, 'index.html'));
+    }
 });
 
 app.get('/about.html', (req, res) => {
