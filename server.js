@@ -1685,18 +1685,21 @@ app.get('/', (req, res) => {
     // Check if accessing via beta subdomain
     const hostname = req.hostname || req.get('host') || req.headers.host || req.headers['x-forwarded-host'];
 
-    // Log for debugging
-    console.log('Root request - hostname:', hostname, 'headers:', {
-        host: req.get('host'),
-        'x-forwarded-host': req.headers['x-forwarded-host'],
-        'x-forwarded-proto': req.headers['x-forwarded-proto']
-    });
+    // Comprehensive logging
+    console.log('=== ROOT REQUEST DEBUG ===');
+    console.log('req.hostname:', req.hostname);
+    console.log('req.get("host"):', req.get('host'));
+    console.log('req.headers.host:', req.headers.host);
+    console.log('req.headers["x-forwarded-host"]:', req.headers['x-forwarded-host']);
+    console.log('Combined hostname:', hostname);
+    console.log('All headers:', JSON.stringify(req.headers, null, 2));
+    console.log('=========================');
 
     if (hostname && hostname.startsWith('beta.')) {
-        console.log('Serving beta.html for hostname:', hostname);
+        console.log('✓ Serving beta.html for hostname:', hostname);
         res.sendFile(path.join(__dirname, 'beta.html'));
     } else {
-        console.log('Serving index.html for hostname:', hostname);
+        console.log('✗ Serving index.html for hostname:', hostname);
         res.sendFile(path.join(__dirname, 'index.html'));
     }
 });
