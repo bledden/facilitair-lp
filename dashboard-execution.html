@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corch - Live Task Execution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --facilitair-teal: #5CE1E6;
+            --facilitair-black: #100F0D;
+            --facilitair-white: #FAFAFA;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--facilitair-black);
+            color: var(--facilitair-white);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--facilitair-teal);
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(92, 225, 230, 0.3);
+            border-radius: 10px;
+            color: var(--facilitair-white);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 120px;
+            margin-bottom: 15px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--facilitair-teal);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            color: var(--facilitair-black);
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1em;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .example-tag {
+            background: rgba(92, 225, 230, 0.1);
+            color: var(--facilitair-teal);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            border: 1px solid rgba(92, 225, 230, 0.3);
+            transition: all 0.2s;
+        }
+
+        .example-tag:hover {
+            background: rgba(92, 225, 230, 0.2);
+        }
+
+        /* Progress Display */
+        .progress-container {
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-stage {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--facilitair-teal);
+            margin-bottom: 15px;
+        }
+
+        .progress-message {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .progress-detail {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--facilitair-teal), #2DD4BF);
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        /* Results Display */
+        .results-grid {
+            display: none;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .results-grid.active {
+            display: grid;
+        }
+
+        .result-item {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--facilitair-teal);
+        }
+
+        .result-label {
+            font-size: 0.85em;
+            opacity: 0.7;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .result-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .result-output {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .cost-breakdown {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cost-item {
+            background: rgba(92, 225, 230, 0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        .cost-label {
+            opacity: 0.7;
+            font-size: 0.85em;
+        }
+
+        .cost-value {
+            font-weight: 700;
+            color: var(--facilitair-teal);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Corch</h1>
+            <p class="subtitle">Intelligent AI Task Orchestration</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Input Card -->
+            <div class="card">
+                <h2 class="card-title">Describe Your Task</h2>
+                <textarea id="task-input" placeholder="Example: Build a REST API for user management with authentication"></textarea>
+                <button class="btn" id="execute-btn" onclick="executeTask()">Execute Task</button>
+
+                <div class="examples">
+                    <div class="example-tag" onclick="useExample('Deploy a React app to Vercel with CI/CD pipeline')">Deploy React App</div>
+                    <div class="example-tag" onclick="useExample('Write comprehensive unit tests for authentication module')">Write Tests</div>
+                    <div class="example-tag" onclick="useExample('Build a REST API for user management with PostgreSQL')">Build API</div>
+                    <div class="example-tag" onclick="useExample('Create a data processing pipeline for analytics')">Data Pipeline</div>
+                </div>
+            </div>
+
+            <!-- Progress/Results Card -->
+            <div class="card">
+                <h2 class="card-title">Execution Status</h2>
+
+                <!-- Progress Display -->
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-stage" id="current-stage">
+                        <div class="progress-message" id="stage-message">Starting...</div>
+                        <div class="progress-detail" id="stage-detail">Preparing to execute your task...</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Display -->
+                <div class="results-grid" id="results-grid">
+                    <div class="result-item">
+                        <div class="result-label">Task Output</div>
+                        <div class="result-output" id="task-output"></div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-label">Execution Details</div>
+                        <div class="cost-breakdown" id="execution-details"></div>
+                    </div>
+
+                    <div class="result-item" id="routing-details">
+                        <div class="result-label">Routing Decision</div>
+                        <div class="result-value" id="routing-info"></div>
+                    </div>
+                </div>
+
+                <!-- Error Display -->
+                <div class="error-message" id="error-message" style="display: none;"></div>
+
+                <!-- Idle State -->
+                <div id="idle-state" style="text-align: center; opacity: 0.5; padding: 40px;">
+                    Enter a task and click "Execute Task" to begin
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const EXECUTION_API_URL = '/api/corch/execute';
+
+        function useExample(text) {
+            document.getElementById('task-input').value = text;
+        }
+
+        async function executeTask() {
+            const task = document.getElementById('task-input').value.trim();
+            if (!task) {
+                alert('Please enter a task description');
+                return;
+            }
+
+            // UI Setup
+            const executeBtn = document.getElementById('execute-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const resultsGrid = document.getElementById('results-grid');
+            const errorMessage = document.getElementById('error-message');
+            const idleState = document.getElementById('idle-state');
+
+            executeBtn.disabled = true;
+            executeBtn.textContent = 'Executing...';
+            progressContainer.classList.add('active');
+            resultsGrid.classList.remove('active');
+            errorMessage.style.display = 'none';
+            idleState.style.display = 'none';
+
+            try {
+                // Connect to SSE stream
+                const response = await fetch(EXECUTION_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ task })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // Keep incomplete line in buffer
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = JSON.parse(line.slice(6));
+                            handleProgressUpdate(data);
+                        }
+                    }
+                }
+
+            } catch (error) {
+                console.error('Execution error:', error);
+                showError(error.message);
+            } finally {
+                executeBtn.disabled = false;
+                executeBtn.textContent = 'Execute Task';
+            }
+        }
+
+        function handleProgressUpdate(data) {
+            const { stage, message, detail, progress, result } = data;
+
+            if (stage === 'completed') {
+                showResults(result);
+            } else if (stage === 'error') {
+                showError(detail || message);
+            } else {
+                updateProgress(message, detail, progress);
+            }
+        }
+
+        function updateProgress(message, detail, progress) {
+            document.getElementById('stage-message').textContent = message;
+            document.getElementById('stage-detail').textContent = detail;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+
+        function showResults(result) {
+            const progressContainer = document.getElementById('progress-container');
+            const resultsGrid = document.getElementById('results-grid');
+
+            progressContainer.classList.remove('active');
+            resultsGrid.classList.add('active');
+
+            // Show output
+            document.getElementById('task-output').textContent =
+                result.output || result.error || 'Task completed';
+
+            // Show execution details
+            const detailsHtml = `
+                <div class="cost-item">
+                    <div class="cost-label">Duration</div>
+                    <div class="cost-value">${result.duration_seconds?.toFixed(2) || '0.00'}s</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-label">Cost</div>
+                    <div class="cost-value">$${(result.cost_cents / 100).toFixed(4)}</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-label">Steps</div>
+                    <div class="cost-value">${result.steps || 0}</div>
+                </div>
+            `;
+            document.getElementById('execution-details').innerHTML = detailsHtml;
+
+            // Show routing info
+            if (result.routing) {
+                const routingHtml = `
+                    Strategy: ${result.routing.strategy} |
+                    Capability: ${result.routing.capability} |
+                    Domain: ${result.routing.domain}
+                `;
+                document.getElementById('routing-info').textContent = routingHtml;
+            }
+        }
+
+        function showError(message) {
+            const progressContainer = document.getElementById('progress-container');
+            const errorMessage = document.getElementById('error-message');
+
+            progressContainer.classList.remove('active');
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = `Error: ${message}`;
+        }
+    </script>
+</body>
+</html>

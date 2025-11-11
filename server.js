@@ -1557,6 +1557,53 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// ==================== CORCH EXECUTION API PROXY ====================
+
+// Proxy endpoint for Corch execution with SSE streaming
+app.post('/api/corch/execute', async (req, res) => {
+    try {
+        const { task } = req.body;
+
+        if (!task || task.trim().length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Task description is required'
+            });
+        }
+
+        const CORCH_API_URL = process.env.CORCH_API_URL || 'http://localhost:5001';
+
+        // Forward request to Corch backend and stream response
+        const response = await fetch(`${CORCH_API_URL}/api/execute`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ task })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Corch API returned ${response.status}`);
+        }
+
+        // Set SSE headers
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('X-Accel-Buffering', 'no');
+
+        // Pipe the SSE stream from Corch to the client
+        response.body.pipe(res);
+
+    } catch (error) {
+        console.error('Corch execution proxy error:', error);
+        res.status(500).json({
+            success: false,
+            error: `Execution service unavailable: ${error.message}`
+        });
+    }
+});
+
 // ==================== V10 ROUTING API PROXY ====================
 
 // Mock V10 routing endpoint (simple heuristic-based routing for demo)
