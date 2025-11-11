@@ -1704,6 +1704,11 @@ app.get('/', (req, res) => {
     }
 });
 
+app.get('/test-beta', (req, res) => {
+    console.log('Force serving beta.html from /test-beta');
+    res.sendFile(path.join(__dirname, 'beta.html'));
+});
+
 app.get('/debug-hostname', (req, res) => {
     const hostname = req.hostname || req.get('host') || req.headers.host || req.headers['x-forwarded-host'];
     res.json({
