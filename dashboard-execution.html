@@ -317,6 +317,20 @@
                         <div class="result-label">Routing Decision</div>
                         <div class="result-value" id="routing-info"></div>
                     </div>
+
+                    <div class="result-item" id="models-details" style="display: none;">
+                        <div class="result-label">Models Used</div>
+                        <div class="cost-breakdown" id="models-info"></div>
+                    </div>
+
+                    <div class="result-item" id="sponsor-link" style="display: none;">
+                        <div class="result-label">Powered By</div>
+                        <div class="result-value">
+                            <a href="https://daytona.io" target="_blank" style="color: var(--facilitair-teal); text-decoration: none; font-weight: 600;">
+                                Daytona - Development Environment Manager
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Error Display -->
@@ -456,6 +470,21 @@
                 `;
                 document.getElementById('routing-info').textContent = routingHtml;
             }
+
+            // Show models used (if available)
+            if (result.models_used && result.models_used.length > 0) {
+                const modelsHtml = result.models_used.map(model => `
+                    <div class="cost-item">
+                        <div class="cost-label">${model.name || model}</div>
+                        <div class="cost-value">${model.calls || 1} call${model.calls !== 1 ? 's' : ''}</div>
+                    </div>
+                `).join('');
+                document.getElementById('models-info').innerHTML = modelsHtml;
+                document.getElementById('models-details').style.display = 'block';
+            }
+
+            // Always show sponsor link
+            document.getElementById('sponsor-link').style.display = 'block';
         }
 
         function showError(message) {
