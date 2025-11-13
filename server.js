@@ -24,7 +24,8 @@ app.use((req, res, next) => {
     const host = req.hostname || req.get('host') || req.headers.host;
     if (host && host.startsWith('www.')) {
         const nonWwwHost = host.replace(/^www\./, '');
-        const protocol = req.protocol || (req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http');
+        // Always use https for production
+        const protocol = req.get('x-forwarded-proto') || req.protocol || 'https';
         return res.redirect(301, `${protocol}://${nonWwwHost}${req.originalUrl}`);
     }
     next();
