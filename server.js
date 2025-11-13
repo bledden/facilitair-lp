@@ -593,7 +593,20 @@ app.get('/api/confirm/:token', async (req, res) => {
 // API endpoint: Submit survey
 app.post('/api/survey', (req, res) => {
     try {
-        const { token, plannedUse, anticipatedUsage, howFound, background, additionalInfo } = req.body;
+        const {
+            token,
+            plannedUse,
+            anticipatedUsage,
+            taskTypes,
+            domains,
+            howFound,
+            role,
+            currentServices,
+            painPoints,
+            valueProps,
+            byok,
+            additionalInfo
+        } = req.body;
 
         // Validate token and find subscriber
         const subscriber = db.prepare('SELECT * FROM subscribers WHERE unsubscribe_token = ? AND confirmed = 1').get(token);
@@ -612,12 +625,44 @@ app.post('/api/survey', (req, res) => {
             });
         }
 
+        // Convert arrays to JSON strings for storage
+        const taskTypesJson = JSON.stringify(taskTypes || []);
+        const domainsJson = JSON.stringify(domains || []);
+        const currentServicesJson = JSON.stringify(currentServices || []);
+        const valuePropsJson = JSON.stringify(valueProps || []);
+
         // Insert survey response
         const insertStmt = db.prepare(`
-            INSERT INTO user_surveys (subscriber_id, planned_use, anticipated_usage, how_found, background, additional_info)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO user_surveys (
+                subscriber_id,
+                planned_use,
+                anticipated_usage,
+                task_types,
+                domains,
+                how_found,
+                role,
+                current_services,
+                pain_points,
+                value_props,
+                byok,
+                additional_info
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
-        insertStmt.run(subscriber.id, plannedUse, anticipatedUsage, howFound, background || null, additionalInfo || null);
+        insertStmt.run(
+            subscriber.id,
+            plannedUse,
+            anticipatedUsage,
+            taskTypesJson,
+            domainsJson,
+            howFound,
+            role || null,
+            currentServicesJson,
+            painPoints || null,
+            valuePropsJson,
+            byok || null,
+            additionalInfo || null
+        );
 
         // Mark survey as completed
         const updateStmt = db.prepare('UPDATE subscribers SET survey_completed = 1 WHERE id = ?');

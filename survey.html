@@ -124,6 +124,32 @@
             line-height: 1.5;
         }
 
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            cursor: pointer;
+            font-size: 15px;
+            color: rgba(250, 250, 250, 0.9);
+            padding: var(--space-2) 0;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+            accent-color: var(--facilitair-teal);
+        }
+
+        .checkbox-label:hover {
+            color: var(--facilitair-teal);
+        }
+
         .submit-btn {
             width: 100%;
             background: linear-gradient(135deg, #5CE1E6 0%, #4BA9AE 100%);
@@ -270,6 +296,42 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="task-types">
+                        What type of tasks will you automate? <span class="optional">(Optional)</span>
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="taskTypes" value="code_generation"> Code Generation</label>
+                        <label class="checkbox-label"><input type="checkbox" name="taskTypes" value="debugging"> Debugging</label>
+                        <label class="checkbox-label"><input type="checkbox" name="taskTypes" value="testing"> Testing</label>
+                        <label class="checkbox-label"><input type="checkbox" name="taskTypes" value="documentation"> Documentation</label>
+                        <label class="checkbox-label"><input type="checkbox" name="taskTypes" value="refactoring"> Refactoring</label>
+                        <label class="checkbox-label"><input type="checkbox" name="taskTypes" value="data_analysis"> Data Analysis</label>
+                        <label class="checkbox-label"><input type="checkbox" name="taskTypes" value="design"> Design/Architecture</label>
+                        <label class="checkbox-label"><input type="checkbox" name="taskTypes" value="optimization"> Optimization</label>
+                    </div>
+                    <div class="hint">Select all that apply. These map to FACILITAIR's core capabilities.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="domains">
+                        Which domains do you work in? <span class="optional">(Optional)</span>
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="frontend"> Frontend Development</label>
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="backend"> Backend Development</label>
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="machine_learning"> Machine Learning / AI</label>
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="data_engineering"> Data Engineering</label>
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="devops"> DevOps / Infrastructure</label>
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="mobile"> Mobile Development</label>
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="database"> Database Design</label>
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="cloud"> Cloud / Serverless</label>
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="security"> Security</label>
+                        <label class="checkbox-label"><input type="checkbox" name="domains" value="testing"> Testing / QA</label>
+                    </div>
+                    <div class="hint">Select all that apply. Helps us prioritize domain-specific improvements.</div>
+                </div>
+
+                <div class="form-group">
                     <label for="how-found">
                         How did you find out about FACILITAIR? <span class="optional">(Required)</span>
                     </label>
@@ -286,20 +348,88 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="background">
-                        Your Background <span class="optional">(Optional)</span>
+                    <label for="role">
+                        What's your role? <span class="optional">(Optional)</span>
+                    </label>
+                    <select id="role" name="role">
+                        <option value="">Select...</option>
+                        <option value="software_engineer">Software Engineer / Developer</option>
+                        <option value="data_scientist">Data Scientist / ML Engineer</option>
+                        <option value="product_manager">Product Manager</option>
+                        <option value="engineering_manager">Engineering Manager / CTO</option>
+                        <option value="devops_engineer">DevOps / Platform Engineer</option>
+                        <option value="designer">Designer</option>
+                        <option value="researcher">Researcher / Academic</option>
+                        <option value="student">Student</option>
+                        <option value="founder">Founder / Entrepreneur</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="hint">Helps us tailor the beta experience to your needs.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="current-services">
+                        Which AI services do you currently use? <span class="optional">(Optional)</span>
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="currentServices" value="openai"> OpenAI (GPT-4, etc.)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="currentServices" value="anthropic"> Anthropic (Claude)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="currentServices" value="openrouter"> OpenRouter</label>
+                        <label class="checkbox-label"><input type="checkbox" name="currentServices" value="google"> Google AI (Gemini)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="currentServices" value="local"> Local models (Ollama, etc.)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="currentServices" value="dev_tools"> Dev tools (Daytona, Vercel, etc.)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="currentServices" value="none"> None yet</label>
+                    </div>
+                    <div class="hint">Helps us prioritize integrations and BYOK features.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pain-points">
+                        What's your biggest pain point with current AI tools? <span class="optional">(Optional)</span>
                     </label>
                     <textarea
-                        id="background"
-                        name="background"
-                        placeholder="e.g., Software engineer, AI researcher, product manager..."
+                        id="pain-points"
+                        name="painPoints"
+                        placeholder="e.g., too expensive, unreliable results, hard to integrate, can't chain tasks..."
                     ></textarea>
-                    <div class="hint">Share your professional background or areas of expertise if you're comfortable.</div>
+                    <div class="hint">Help us understand what problems you need solved.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="value-props">
+                        What would make you choose FACILITAIR over direct API calls? <span class="optional">(Optional)</span>
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="valueProps" value="auto_model_selection"> Automatic model selection</label>
+                        <label class="checkbox-label"><input type="checkbox" name="valueProps" value="cost_optimization"> Cost optimization</label>
+                        <label class="checkbox-label"><input type="checkbox" name="valueProps" value="multi_step"> Multi-step orchestration</label>
+                        <label class="checkbox-label"><input type="checkbox" name="valueProps" value="better_results"> Better results through intelligent routing</label>
+                        <label class="checkbox-label"><input type="checkbox" name="valueProps" value="unified_api"> Unified API (343+ models)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="valueProps" value="task_history"> Task persistence and history</label>
+                        <label class="checkbox-label"><input type="checkbox" name="valueProps" value="retry_fallback"> Built-in retry/fallback logic</label>
+                        <label class="checkbox-label"><input type="checkbox" name="valueProps" value="dont_know"> Don't know yet</label>
+                    </div>
+                    <div class="hint">Select all that resonate with you.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="byok">
+                        Would you bring your own API keys? <span class="optional">(Optional)</span>
+                    </label>
+                    <select id="byok" name="byok">
+                        <option value="">Select...</option>
+                        <option value="yes_openrouter">Yes, I have OpenRouter credits</option>
+                        <option value="yes_openai_anthropic">Yes, I have OpenAI/Anthropic credits</option>
+                        <option value="maybe">Maybe, depending on pricing</option>
+                        <option value="no">No, I prefer FACILITAIR to handle it</option>
+                        <option value="dont_understand">I don't understand what this means</option>
+                    </select>
+                    <div class="hint">BYOK lets you use your existing AI credits. Helps us prioritize this feature.</div>
                 </div>
 
                 <div class="form-group">
                     <label for="additional-info">
-                        Anything Else? <span class="optional">(Optional)</span>
+                        Anything else? <span class="optional">(Optional)</span>
                     </label>
                     <textarea
                         id="additional-info"
@@ -341,13 +471,25 @@
             // Clear previous messages
             messageContainer.innerHTML = '';
 
+            // Helper function to get checked checkbox values
+            function getCheckedValues(name) {
+                return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+                    .map(cb => cb.value);
+            }
+
             // Get form data
             const formData = {
                 token: token,
                 plannedUse: document.getElementById('planned-use').value,
                 anticipatedUsage: document.getElementById('anticipated-usage').value,
+                taskTypes: getCheckedValues('taskTypes'),
+                domains: getCheckedValues('domains'),
                 howFound: document.getElementById('how-found').value,
-                background: document.getElementById('background').value,
+                role: document.getElementById('role').value,
+                currentServices: getCheckedValues('currentServices'),
+                painPoints: document.getElementById('pain-points').value,
+                valueProps: getCheckedValues('valueProps'),
+                byok: document.getElementById('byok').value,
                 additionalInfo: document.getElementById('additional-info').value
             };
 
