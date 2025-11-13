@@ -19,6 +19,17 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 app.use(cors());
 app.use(express.json());
 
+// Redirect www to non-www - MUST come first
+app.use((req, res, next) => {
+    const host = req.hostname || req.get('host') || req.headers.host;
+    if (host && host.startsWith('www.')) {
+        const nonWwwHost = host.replace(/^www\./, '');
+        const protocol = req.protocol || (req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http');
+        return res.redirect(301, `${protocol}://${nonWwwHost}${req.originalUrl}`);
+    }
+    next();
+});
+
 // URL rewrite middleware - Remove .html extensions
 // This allows /about to serve about.html
 app.use((req, res, next) => {
