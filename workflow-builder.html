@@ -1,0 +1,3836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facilitair Workflow Builder - Visual Orchestration</title>
+
+    <!-- React Flow CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reactflow@11.10.4/dist/style.css">
+
+    <style>
+        :root {
+            --facilitair-teal: #5CE1E6;
+            --facilitair-cyan: #12D1D8;
+            --facilitair-purple: #C565E3;
+            --facilitair-blue: #4A90E2;
+            --facilitair-gray: #9CA3AF;
+            --facilitair-dark: #1F2937;
+            --facilitair-darker: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--facilitair-darker) 0%, var(--facilitair-dark) 100%);
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(31, 41, 55, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--facilitair-teal);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Mode Switcher */
+        .mode-switcher {
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px;
+            border-radius: 10px;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+        }
+
+        .mode-btn {
+            padding: 10px 24px;
+            background: transparent;
+            color: var(--facilitair-gray);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .mode-btn:hover {
+            color: var(--facilitair-teal);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);
+            color: var(--facilitair-darker);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--facilitair-teal) 0%, var(--facilitair-cyan) 100%);
+            color: var(--facilitair-darker);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(92, 225, 230, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(156, 163, 175, 0.2);
+            color: #fff;
+            border: 1px solid var(--facilitair-gray);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(156, 163, 175, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            min-width: 200px;
+            max-width: 500px;
+            background: rgba(31, 41, 55, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(92, 225, 230, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .sidebar-resizer {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            cursor: ew-resize;
+            background: transparent;
+            z-index: 10;
+        }
+
+        .sidebar-resizer:hover,
+        .sidebar-resizer.resizing {
+            background: var(--facilitair-teal);
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--facilitair-teal);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .workflow-item {
+            background: rgba(92, 225, 230, 0.05);
+            border: 1px solid rgba(92, 225, 230, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85em;
+        }
+
+        .workflow-item:hover {
+            background: rgba(92, 225, 230, 0.15);
+            border-color: var(--facilitair-teal);
+            transform: translateX(3px);
+        }
+
+        .workflow-name {
+            color: var(--facilitair-white);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .workflow-meta {
+            color: var(--facilitair-gray);
+            font-size: 0.8em;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .workflow-delete {
+            color: var(--error-red);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 6px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            float: right;
+        }
+
+        .workflow-item:hover .workflow-delete {
+            opacity: 1;
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background: rgba(31, 41, 55, 0.98);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--facilitair-teal);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 180px;
+            z-index: 10000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .context-menu.show {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 10px 20px;
+            color: var(--facilitair-white);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .context-menu-item:hover {
+            background: var(--facilitair-teal);
+            color: var(--facilitair-dark);
+        }
+
+        .context-menu-item.danger:hover {
+            background: var(--error-red);
+            color: white;
+        }
+
+        .context-menu-separator {
+            height: 1px;
+            background: rgba(92, 225, 230, 0.2);
+            margin: 5px 10px;
+        }
+
+        .node-type {
+            background: rgba(92, 225, 230, 0.1);
+            border: 2px dashed var(--facilitair-teal);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: grab;
+            transition: all 0.2s ease;
+        }
+
+        .node-type:hover {
+            background: rgba(92, 225, 230, 0.2);
+            border-style: solid;
+            transform: translateX(5px);
+        }
+
+        .node-type:active {
+            cursor: grabbing;
+        }
+
+        .node-icon {
+            font-size: 1.3em;
+            margin-right: 8px;
+        }
+
+        .node-label {
+            font-weight: 600;
+            display: block;
+        }
+
+        .node-description {
+            font-size: 0.75em;
+            color: var(--facilitair-gray);
+            margin-top: 4px;
+        }
+
+        /* Canvas */
+        .canvas-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .reactflow-wrapper {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* React Flow Dark Theme Overrides */
+        .react-flow {
+            background: radial-gradient(circle at 50% 50%, rgba(92, 225, 230, 0.03) 0%, transparent 50%);
+        }
+
+        .react-flow__node {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid var(--facilitair-teal);
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 180px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .react-flow__node:hover {
+            border-color: var(--facilitair-cyan);
+            box-shadow: 0 6px 12px rgba(92, 225, 230, 0.3);
+        }
+
+        .react-flow__node.selected {
+            border-color: var(--facilitair-teal);
+            box-shadow: 0 0 0 4px rgba(92, 225, 230, 0.2);
+        }
+
+        .react-flow__handle {
+            background: var(--facilitair-teal);
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(31, 41, 55, 0.95);
+        }
+
+        .react-flow__edge-path {
+            stroke: var(--facilitair-teal);
+            stroke-width: 2;
+        }
+
+        .react-flow__edge.selected .react-flow__edge-path {
+            stroke: var(--facilitair-cyan);
+            stroke-width: 3;
+        }
+
+        .react-flow__controls {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(92, 225, 230, 0.3);
+        }
+
+        .react-flow__controls-button {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(92, 225, 230, 0.3);
+            color: var(--facilitair-teal);
+        }
+
+        .react-flow__controls-button:hover {
+            background: rgba(92, 225, 230, 0.1);
+        }
+
+        .react-flow__minimap {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(92, 225, 230, 0.3);
+        }
+
+        .react-flow__background {
+            background: transparent;
+        }
+
+        /* Properties Panel */
+        .properties-panel {
+            width: 350px;
+            min-width: 250px;
+            max-width: 600px;
+            background: rgba(31, 41, 55, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(92, 225, 230, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .properties-resizer {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            cursor: ew-resize;
+            background: transparent;
+            z-index: 10;
+        }
+
+        .properties-resizer:hover,
+        .properties-resizer.resizing {
+            background: var(--facilitair-teal);
+        }
+
+        .panel-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--facilitair-teal);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--facilitair-gray);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(92, 225, 230, 0.3);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9em;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--facilitair-teal);
+            box-shadow: 0 0 0 3px rgba(92, 225, 230, 0.1);
+        }
+
+        /* Model select dropdown styling */
+        select.form-control {
+            font-family: 'Courier New', 'Monaco', monospace;
+            font-size: 0.82em;
+        }
+
+        select.form-control.model-select-scrollable {
+            height: 220px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+
+        select.form-control option {
+            padding: 6px 8px;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.4;
+            min-height: 28px;
+        }
+
+        select.form-control optgroup {
+            font-weight: 700;
+            color: var(--facilitair-teal);
+            background: rgba(92, 225, 230, 0.1);
+            padding: 5px 8px;
+            font-size: 0.9em;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider {
+            flex: 1;
+        }
+
+        .slider-value {
+            color: var(--facilitair-teal);
+            font-weight: 600;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .node-content-preview {
+            font-size: 0.8em;
+            color: var(--facilitair-gray);
+            margin-top: 5px;
+        }
+
+        .empty-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--facilitair-gray);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .empty-state-text {
+            font-size: 0.9em;
+            max-width: 400px;
+        }
+
+        .help-text {
+            font-size: 0.8em;
+            color: var(--facilitair-gray);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(92, 225, 230, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(92, 225, 230, 0);
+            }
+        }
+
+        /* Config Section Headers */
+        .config-section-header {
+            background: rgba(92, 225, 230, 0.1);
+            border-left: 4px solid var(--facilitair-teal);
+            padding: 12px 15px;
+            margin: 20px 0 15px 0;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .config-section-header:hover {
+            background: rgba(92, 225, 230, 0.15);
+        }
+
+        .config-section-header .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .config-section-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .config-section-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .config-section-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        /* Panel minimize button */
+        .panel-minimize-btn {
+            background: transparent;
+            border: none;
+            color: var(--facilitair-teal);
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px 10px;
+            float: right;
+            transition: all 0.3s ease;
+        }
+
+        .panel-minimize-btn:hover {
+            background: rgba(92, 225, 230, 0.1);
+            border-radius: 4px;
+        }
+
+        .panel-content {
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: calc(100vh - 80px);
+            transition: all 0.3s ease;
+        }
+
+        .properties-panel.minimized {
+            width: 60px;
+        }
+
+        .properties-panel.minimized .panel-content {
+            display: none;
+        }
+
+        .properties-panel.minimized .panel-title {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            padding: 20px 15px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-title">Facilitair</div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <!-- Action Buttons -->
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="window.workflowApp && window.workflowApp.loadTemplate()">Templates</button>
+                <button class="btn btn-secondary" onclick="window.workflowApp && window.workflowApp.saveWorkflow()">Save</button>
+                <button class="btn btn-success" onclick="window.workflowApp && window.workflowApp.executeWorkflow()">Run Workflow</button>
+            </div>
+            <!-- Mode Switcher -->
+            <div class="mode-switcher">
+                <button class="mode-btn" onclick="switchToChat()">
+                    Chat Mode
+                </button>
+                <button class="mode-btn active">
+                    Workflow Builder
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Node Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="contextMenuAction('name')">
+            <span>✏️</span>
+            <span>Name Node</span>
+        </div>
+        <div class="context-menu-item" onclick="contextMenuAction('duplicate')">
+            <span>📋</span>
+            <span>Duplicate</span>
+        </div>
+        <div class="context-menu-item" onclick="contextMenuAction('copy')">
+            <span>📄</span>
+            <span>Copy</span>
+        </div>
+        <div class="context-menu-item" onclick="contextMenuAction('cut')">
+            <span>✂️</span>
+            <span>Cut</span>
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item danger" onclick="contextMenuAction('delete')">
+            <span>🗑️</span>
+            <span>Delete</span>
+        </div>
+    </div>
+
+    <!-- Edge/Connector Context Menu -->
+    <div class="context-menu" id="edgeContextMenu">
+        <div class="context-menu-item" onclick="edgeContextMenuAction('label')">
+            <span>✏️</span>
+            <span>Add Label</span>
+        </div>
+        <div class="context-menu-item" onclick="edgeContextMenuAction('style')">
+            <span>🎨</span>
+            <span>Change Style</span>
+        </div>
+        <div class="context-menu-item" onclick="edgeContextMenuAction('duplicate')">
+            <span>📋</span>
+            <span>Duplicate Connector</span>
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item danger" onclick="edgeContextMenuAction('delete')">
+            <span>🗑️</span>
+            <span>Delete Connector</span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar: Node Types -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-resizer" id="sidebarResizer"></div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Nodes</div>
+
+                <div class="node-type" draggable="true" data-node-type="input">
+                    <span class="node-label">Input</span>
+                    <div class="node-description">User prompt or file upload</div>
+                </div>
+
+                <div class="node-type" draggable="true" data-node-type="model">
+                    <span class="node-label">Model</span>
+                    <div class="node-description">Execute with AI model</div>
+                </div>
+
+                <div class="node-type" draggable="true" data-node-type="tool">
+                    <span class="node-label">Tool</span>
+                    <div class="node-description">Execute external tool or API</div>
+                </div>
+
+                <div class="node-type" draggable="true" data-node-type="mcp">
+                    <span class="node-label">MCP</span>
+                    <div class="node-description">Model Context Protocol integration</div>
+                </div>
+
+                <div class="node-type" draggable="true" data-node-type="output">
+                    <span class="node-label">Output</span>
+                    <div class="node-description">Final result</div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">My Workflows</div>
+                <div id="myWorkflowsList" style="font-size: 0.85em; color: var(--facilitair-gray);">
+                    No saved workflows yet
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+            <div id="reactflow-root" class="reactflow-wrapper">
+                <div class="empty-state">
+                    <div class="empty-state-title">Start Building Your Workflow</div>
+                    <div class="empty-state-text">
+                        Drag nodes from the left sidebar onto the canvas to create your AI orchestration workflow.
+                        Connect them together to define the execution flow.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Properties Panel -->
+        <div class="properties-panel" id="propertiesPanel">
+            <div class="properties-resizer" id="propertiesResizer"></div>
+            <div class="panel-title" id="panelTitle">
+                Configuration
+                <button class="panel-minimize-btn" onclick="togglePropertiesPanel()" title="Minimize/Expand Panel">
+                    <span id="panelToggleIcon">_</span>
+                </button>
+            </div>
+
+            <div id="panelContent" class="panel-content">
+                <div id="no-selection" style="color: var(--facilitair-gray); font-size: 0.9em;">
+                    Select a node or connection to configure
+                </div>
+
+            <div id="node-config" style="display: none;">
+                <!-- Parallel Execution Alert -->
+                <div id="parallelExecutionAlert" style="
+                    display: none;
+                    background: linear-gradient(135deg, rgba(92, 225, 230, 0.15) 0%, rgba(45, 212, 191, 0.15) 100%);
+                    border: 2px solid var(--facilitair-teal);
+                    border-radius: 10px;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                    animation: pulse 2s ease-in-out infinite;
+                ">
+                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <div style="
+                            background: var(--facilitair-teal);
+                            color: var(--facilitair-black);
+                            font-weight: 900;
+                            width: 32px;
+                            height: 32px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 1.2em;
+                            flex-shrink: 0;
+                        ">⚡</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 1.05em; margin-bottom: 4px;">Parallel Execution Detected</div>
+                            <div style="font-size: 0.85em; color: var(--facilitair-gray); margin-bottom: 12px;">
+                                This node has <strong id="parallelCount">0</strong> outgoing connections.
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label class="form-label" style="font-size: 0.9em; margin-bottom: 6px;">Execution Mode</label>
+                                <select class="form-control" id="parallelExecutionMode" style="font-size: 0.9em;">
+                                    <option value="parallel">Execute All Paths Simultaneously</option>
+                                    <option value="once">Execute Once (First Path Only)</option>
+                                    <option value="race">Race (First to Complete)</option>
+                                    <option value="sequential">Sequential (One After Another)</option>
+                                </select>
+                                <div class="help-text" style="margin-top: 6px;">
+                                    Choose how to handle multiple outgoing connections
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Label</label>
+                    <input type="text" class="form-control" id="nodeLabel" placeholder="Enter node label">
+                    <div class="help-text">Custom display name for this node</div>
+                </div>
+
+                <!-- INPUT NODE CONFIG -->
+                <div id="inputConfig" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Input Type</label>
+                        <select class="form-control" id="inputType">
+                            <option value="text">Text Prompt</option>
+                            <option value="file">File Upload</option>
+                            <option value="variable">Variable Reference</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="inputTextGroup">
+                        <label class="form-label">Text Input</label>
+                        <textarea class="form-control" id="inputText" placeholder="Enter your prompt or text here..."></textarea>
+                    </div>
+
+                    <div class="form-group" id="inputFileGroup" style="display: none;">
+                        <label class="form-label">File Upload</label>
+                        <div id="fileDropZone" style="
+                            border: 2px dashed var(--facilitair-teal);
+                            border-radius: 8px;
+                            padding: 30px;
+                            text-align: center;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            background: rgba(92, 225, 230, 0.05);
+                        ">
+                            <div style="font-weight: 600; margin-bottom: 5px; font-size: 1.1em;">Drop file here or click to browse</div>
+                            <div style="font-size: 0.85em; color: var(--facilitair-gray);">Supported: .txt, .md, .json, .csv, .py, .js, .pdf, etc.</div>
+                        </div>
+                        <input type="file" id="inputFileInput" style="display: none;">
+                        <div id="selectedFileName" style="margin-top: 10px; display: none; padding: 10px; background: rgba(92, 225, 230, 0.1); border-radius: 6px;">
+                            <span style="font-weight: 600;">Selected:</span> <span id="fileNameDisplay"></span>
+                            <button onclick="clearSelectedFile()" style="float: right; background: transparent; border: none; color: var(--facilitair-teal); cursor: pointer; font-weight: 600;">&times;</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="inputVarGroup" style="display: none;">
+                        <label class="form-label">Variable Name</label>
+                        <input type="text" class="form-control" id="inputVariable" placeholder="$previous_output">
+                    </div>
+                </div>
+
+                <!-- MODEL NODE CONFIG -->
+                <div id="modelConfig" style="display: none;">
+                    <!-- Core Configuration -->
+                    <div class="form-group">
+                        <label class="form-label">Model Selection</label>
+                        <input type="text" class="form-control" id="modelSearch" placeholder="Search 341+ models..." style="margin-bottom: 10px;">
+                        <select class="form-control model-select-scrollable" id="modelSelect" size="8">
+                            <option value="">Loading models...</option>
+                        </select>
+                        <div class="help-text">Loaded: <span id="modelCount">0</span> models available</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Prompt</label>
+                        <textarea class="form-control" id="modelPrompt" placeholder="Enter prompt here or leave blank to use input from previous node..." rows="3"></textarea>
+                        <div class="help-text">
+                            The actual task/question sent to the AI. Leave blank to pass through input from connected node.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">System Prompt (Optional)</label>
+                        <textarea class="form-control" id="systemPrompt" placeholder="You are a helpful assistant..." rows="2"></textarea>
+                        <div class="help-text">
+                            Sets the AI's role, behavior, and constraints.
+                        </div>
+                    </div>
+
+                    <!-- Multimodal Inputs -->
+                    <div class="form-group">
+                        <label class="form-label">Media Upload (Images/Videos)</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('modelMediaInput').click()" style="flex: 1;">
+                                📷 Choose Files
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="clearModelMedia()" style="flex: 1;">
+                                🗑️ Clear All
+                            </button>
+                        </div>
+                        <input type="file" id="modelMediaInput" accept="image/*,video/*" multiple style="display: none;">
+                        <div id="modelMediaPreview" style="display: none; margin-top: 10px; padding: 10px; background: rgba(92, 225, 230, 0.05); border: 1px solid rgba(92, 225, 230, 0.2); border-radius: 8px;">
+                            <div style="font-size: 0.85em; color: var(--facilitair-gray); margin-bottom: 8px;">Selected Files:</div>
+                            <div id="modelMediaList" style="font-size: 0.85em; color: var(--facilitair-white);"></div>
+                        </div>
+                        <div class="help-text">
+                            Upload images or videos for vision-capable models (GPT-4V, Claude 3, Gemini Pro Vision, etc.)
+                        </div>
+                    </div>
+
+                    <!-- Basic Parameters -->
+                    <div class="config-section-header" onclick="toggleConfigSection('basicParams')">
+                        <span>Basic Parameters</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div id="basicParams" class="config-section-content">
+                        <div class="form-group">
+                            <label class="form-label">Temperature</label>
+                            <div class="slider-container">
+                                <input type="range" class="form-control slider" id="temperature" min="0" max="2" step="0.1" value="1.0">
+                                <span class="slider-value" id="tempValue">1.0</span>
+                            </div>
+                            <div class="help-text">0.0 = deterministic, 1.0 = baseline, 2.0 = very creative</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Max Tokens</label>
+                            <input type="number" class="form-control" id="maxTokens" placeholder="Auto" min="1" max="200000">
+                            <div class="help-text">Maximum response length (leave empty for model default)</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Top P (Nucleus Sampling)</label>
+                            <div class="slider-container">
+                                <input type="range" class="form-control slider" id="topP" min="0" max="1" step="0.05" value="1.0">
+                                <span class="slider-value" id="topPValue">1.0</span>
+                            </div>
+                            <div class="help-text">Probability threshold for token selection</div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Parameters -->
+                    <div class="config-section-header collapsed" onclick="toggleConfigSection('advancedParams')">
+                        <span>Advanced Parameters</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div id="advancedParams" class="config-section-content collapsed">
+                        <div class="form-group">
+                            <label class="form-label">Frequency Penalty</label>
+                            <div class="slider-container">
+                                <input type="range" class="form-control slider" id="frequencyPenalty" min="0" max="2" step="0.1" value="0">
+                                <span class="slider-value" id="frequencyPenaltyValue">0</span>
+                            </div>
+                            <div class="help-text">Reduce repetition of common tokens</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Presence Penalty</label>
+                            <div class="slider-container">
+                                <input type="range" class="form-control slider" id="presencePenalty" min="0" max="2" step="0.1" value="0">
+                                <span class="slider-value" id="presencePenaltyValue">0</span>
+                            </div>
+                            <div class="help-text">Encourage topic diversity</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Stop Sequences</label>
+                            <input type="text" class="form-control" id="stopSequences" placeholder="Comma-separated: END, STOP">
+                            <div class="help-text">Sequences that stop generation</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Seed (Reproducibility)</label>
+                            <input type="number" class="form-control" id="seed" placeholder="Random">
+                            <div class="help-text">Same seed = deterministic outputs</div>
+                        </div>
+                    </div>
+
+                    <!-- Output & Context -->
+                    <div class="config-section-header collapsed" onclick="toggleConfigSection('outputContext')">
+                        <span>Output & Context Settings</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div id="outputContext" class="config-section-content collapsed">
+                        <div class="form-group">
+                            <label class="form-label">Response Format</label>
+                            <select class="form-control" id="responseFormat">
+                                <option value="">Default (Text)</option>
+                                <option value="json_object">JSON Object</option>
+                                <option value="json_schema">JSON Schema</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Streaming</label>
+                            <select class="form-control" id="streaming">
+                                <option value="false">Wait for Complete Response</option>
+                                <option value="true">Stream Response (Real-time)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Context Management</label>
+                            <select class="form-control" id="contextMode">
+                                <option value="single">Single Turn (No History)</option>
+                                <option value="maintain">Maintain Context (Multi-turn)</option>
+                                <option value="sliding">Sliding Window</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONDITIONAL NODE CONFIG -->
+                <div id="conditionalConfig" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Condition Type</label>
+                        <select class="form-control" id="conditionType">
+                            <option value="contains">Contains text</option>
+                            <option value="not_contains">Does not contain</option>
+                            <option value="equals">Equals</option>
+                            <option value="not_equals">Not equals</option>
+                            <option value="starts_with">Starts with</option>
+                            <option value="ends_with">Ends with</option>
+                            <option value="regex_match">Regex match</option>
+                            <option value="length_gt">Length greater than</option>
+                            <option value="length_lt">Length less than</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Comparison Value</label>
+                        <input type="text" class="form-control" id="conditionValue" placeholder="Enter value to compare against">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">True Path Label</label>
+                        <input type="text" class="form-control" id="truePath" placeholder="If condition is true" value="True">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">False Path Label</label>
+                        <input type="text" class="form-control" id="falsePath" placeholder="If condition is false" value="False">
+                    </div>
+                </div>
+
+                <!-- LOOP NODE CONFIG -->
+                <div id="loopConfig" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Loop Type</label>
+                        <select class="form-control" id="loopType">
+                            <option value="fixed">Fixed Count</option>
+                            <option value="foreach">For Each Item</option>
+                            <option value="while">While Condition</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="loopCountGroup">
+                        <label class="form-label">Iteration Count</label>
+                        <input type="number" class="form-control" id="loopCount" placeholder="Number of iterations" min="1" max="1000" value="3">
+                    </div>
+
+                    <div class="form-group" id="loopItemsGroup" style="display: none;">
+                        <label class="form-label">Items to Iterate</label>
+                        <textarea class="form-control" id="loopItems" placeholder="Enter items, one per line or JSON array"></textarea>
+                    </div>
+
+                    <div class="form-group" id="loopConditionGroup" style="display: none;">
+                        <label class="form-label">While Condition</label>
+                        <input type="text" class="form-control" id="loopCondition" placeholder="output.contains('continue')">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Max Iterations</label>
+                        <input type="number" class="form-control" id="maxIterations" value="100" min="1" max="10000">
+                        <div class="help-text">Safety limit to prevent infinite loops</div>
+                    </div>
+                </div>
+
+                <!-- TOOL NODE CONFIG -->
+                <div id="toolConfig" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Tool Provider</label>
+                        <select class="form-control" id="toolProvider" onchange="onToolProviderChange(this.value)">
+                            <option value="">-- Select Provider --</option>
+                            <option value="pipedream">Pipedream (25+ Tools)</option>
+                            <option value="custom">Custom API</option>
+                        </select>
+                        <div class="help-text">Choose the external tool or service provider</div>
+                    </div>
+
+                    <!-- Pipedream Tool Selection -->
+                    <div id="pipedreamToolSelection" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Select Tool</label>
+                            <input type="text" class="form-control" id="pipedreamToolSearch" placeholder="Search tools..." style="margin-bottom: 10px;" onkeyup="filterPipedreamTools(this.value)">
+                            <select class="form-control model-select-scrollable" id="pipedreamToolSelect" size="6" onchange="onPipedreamToolChange(this.value)">
+                                <option value="">Loading tools...</option>
+                            </select>
+                            <div class="help-text">Loaded: <span id="pipedreamToolCount">0</span> tools available</div>
+                        </div>
+
+                        <div class="form-group" id="pipedreamActionGroup" style="display: none;">
+                            <label class="form-label">Action / Capability</label>
+                            <select class="form-control" id="pipedreamAction">
+                                <option value="">-- Select Action --</option>
+                            </select>
+                            <div class="help-text">What do you want this tool to do?</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Parameters (JSON)</label>
+                            <textarea class="form-control" id="pipedreamParameters" placeholder='{"channel": "#general", "message": "${input}"}' rows="4"></textarea>
+                            <div class="help-text">Tool-specific parameters (use ${input} for previous node output)</div>
+                        </div>
+                    </div>
+
+                    <!-- Custom API Configuration -->
+                    <div id="customApiConfig" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">API Endpoint URL</label>
+                            <input type="text" class="form-control" id="toolEndpoint" placeholder="https://api.example.com/endpoint">
+                            <div class="help-text">Full URL to your API endpoint</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">HTTP Method</label>
+                            <select class="form-control" id="toolMethod">
+                                <option value="POST">POST</option>
+                                <option value="GET">GET</option>
+                                <option value="PUT">PUT</option>
+                                <option value="PATCH">PATCH</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Request Body (JSON)</label>
+                            <textarea class="form-control" id="toolRequestBody" placeholder='{"key": "value"}' rows="4"></textarea>
+                            <div class="help-text">JSON payload to send (use ${input} to reference previous node output)</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Headers (JSON)</label>
+                            <textarea class="form-control" id="toolHeaders" placeholder='{"Content-Type": "application/json"}' rows="3"></textarea>
+                            <div class="help-text">Additional HTTP headers</div>
+                        </div>
+                    </div>
+
+                    <!-- Common Fields -->
+                    <div class="form-group">
+                        <label class="form-label">API Key / Token</label>
+                        <input type="password" class="form-control" id="toolApiKey" placeholder="Leave blank to use environment variable">
+                        <div class="help-text">Authentication token (optional if set in backend .env)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Timeout (seconds)</label>
+                        <input type="number" class="form-control" id="toolTimeout" value="30" min="1" max="300">
+                    </div>
+                </div>
+
+                <!-- MCP NODE CONFIG -->
+                <div id="mcpConfig" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">MCP Provider</label>
+                        <select class="form-control" id="mcpProvider" onchange="onMcpProviderChange(this.value)">
+                            <option value="">-- Select MCP Provider --</option>
+                            <option value="metorial">Metorial (21 Tools, 80+ Actions)</option>
+                            <option value="custom">Custom MCP Server</option>
+                        </select>
+                        <div class="help-text">Model Context Protocol server</div>
+                    </div>
+
+                    <!-- Metorial Tool Selection -->
+                    <div id="metorialToolSelection" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Select Tool</label>
+                            <input type="text" class="form-control" id="metorialToolSearch" placeholder="Search tools..." style="margin-bottom: 10px;" onkeyup="filterMetorialTools(this.value)">
+                            <select class="form-control model-select-scrollable" id="metorialToolSelect" size="6" onchange="onMetorialToolChange(this.value)">
+                                <option value="">Loading tools...</option>
+                            </select>
+                            <div class="help-text">Loaded: <span id="metorialToolCount">0</span> tools available</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Action</label>
+                            <select class="form-control" id="mcpTool">
+                                <option value="">-- Select Action --</option>
+                            </select>
+                            <div class="help-text">Specific action to execute</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Parameters (JSON)</label>
+                            <textarea class="form-control" id="mcpParameters" placeholder='{"channel": "#general", "message": "${input}"}' rows="4"></textarea>
+                            <div class="help-text">Use ${input} for previous node output</div>
+                        </div>
+                    </div>
+
+                    <!-- Custom MCP Config -->
+                    <div id="customMcpConfig" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">MCP Server URL</label>
+                            <input type="text" class="form-control" id="mcpServerUrl" placeholder="https://api.example.com">
+                            <div class="help-text">Base URL for the MCP server</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Tool / Capability</label>
+                            <input type="text" class="form-control" id="customMcpTool" placeholder="tool_name">
+                            <div class="help-text">Specific tool or capability to invoke</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Parameters (JSON)</label>
+                            <textarea class="form-control" id="customMcpParameters" placeholder='{"query": "${input}"}' rows="4"></textarea>
+                            <div class="help-text">Use ${input} for previous node output</div>
+                        </div>
+                    </div>
+
+                    <!-- Common fields -->
+                    <div class="form-group">
+                        <label class="form-label">API Key</label>
+                        <input type="password" class="form-control" id="mcpApiKey" placeholder="Leave blank to use environment variable">
+                        <div class="help-text">Authentication for MCP server</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Context Mode</label>
+                        <select class="form-control" id="mcpContextMode">
+                            <option value="inject">Inject into Context</option>
+                            <option value="return">Return as Output</option>
+                            <option value="both">Both</option>
+                        </select>
+                        <div class="help-text">How to handle MCP tool results</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Timeout (seconds)</label>
+                        <input type="number" class="form-control" id="mcpTimeout" value="60" min="1" max="300">
+                    </div>
+                </div>
+
+                <!-- OUTPUT NODE CONFIG -->
+                <div id="outputConfig" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Output Format</label>
+                        <select class="form-control" id="outputFormat">
+                            <option value="text">Plain Text</option>
+                            <option value="json">JSON</option>
+                            <option value="markdown">Markdown</option>
+                            <option value="html">HTML</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Save to File</label>
+                        <input type="text" class="form-control" id="outputFile" placeholder="/path/to/output.txt (optional)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Display Mode</label>
+                        <select class="form-control" id="outputDisplay">
+                            <option value="console">Console Only</option>
+                            <option value="file">File Only</option>
+                            <option value="both">Console + File</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONNECTION CONFIG -->
+            <div id="edge-config" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Connection Type</label>
+                    <input type="text" class="form-control" id="edgeType" readonly value="Connection">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">From → To</label>
+                    <input type="text" class="form-control" id="edgeFlow" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Label</label>
+                    <input type="text" class="form-control" id="edgeLabel" placeholder="Optional connection label (shows on edge)">
+                </div>
+
+                <!-- CONDITIONAL LOGIC -->
+                <div class="form-group">
+                    <label class="form-label">Execution Mode</label>
+                    <select class="form-control" id="edgeExecutionMode">
+                        <option value="always">Always Execute</option>
+                        <option value="conditional">Conditional (If/Then)</option>
+                        <option value="loop">Loop/Iterate</option>
+                        <option value="on_success">Only on Success</option>
+                        <option value="on_failure">Only on Failure</option>
+                    </select>
+                </div>
+
+                <!-- CONDITIONAL MODE CONFIG -->
+                <div id="edgeConditionalConfig" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Condition Type</label>
+                        <select class="form-control" id="edgeConditionType">
+                            <option value="contains">Output contains text</option>
+                            <option value="not_contains">Output does not contain</option>
+                            <option value="equals">Output equals</option>
+                            <option value="not_equals">Output not equals</option>
+                            <option value="starts_with">Output starts with</option>
+                            <option value="ends_with">Output ends with</option>
+                            <option value="regex">Regex match</option>
+                            <option value="length_gt">Output length &gt;</option>
+                            <option value="length_lt">Output length &lt;</option>
+                            <option value="json_valid">Valid JSON</option>
+                            <option value="json_has_key">JSON has key</option>
+                            <option value="custom_js">Custom JavaScript</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="edgeConditionValueGroup">
+                        <label class="form-label">Condition Value</label>
+                        <input type="text" class="form-control" id="edgeConditionValue" placeholder="Value to compare against">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Logic Operator (Multi-Condition)</label>
+                        <select class="form-control" id="edgeLogicOperator">
+                            <option value="single">Single Condition</option>
+                            <option value="and">AND (All must match)</option>
+                            <option value="or">OR (Any must match)</option>
+                            <option value="xor">XOR (Exactly one)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">On True Path Label</label>
+                        <input type="text" class="form-control" id="edgeTruePath" value="True" placeholder="Label when condition is true">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">On False Path Label</label>
+                        <input type="text" class="form-control" id="edgeFalsePath" value="False" placeholder="Label when condition is false">
+                    </div>
+                </div>
+
+                <!-- LOOP MODE CONFIG -->
+                <div id="edgeLoopConfig" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Loop Type</label>
+                        <select class="form-control" id="edgeLoopType">
+                            <option value="fixed">Fixed Count</option>
+                            <option value="foreach">For Each Item</option>
+                            <option value="while">While Condition</option>
+                            <option value="until">Until Condition</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="edgeLoopCountGroup">
+                        <label class="form-label">Iteration Count</label>
+                        <input type="number" class="form-control" id="edgeLoopCount" value="3" min="1" max="10000">
+                    </div>
+
+                    <div class="form-group" id="edgeLoopItemsGroup" style="display: none;">
+                        <label class="form-label">Items to Iterate</label>
+                        <textarea class="form-control" id="edgeLoopItems" placeholder="JSON array or line-separated items"></textarea>
+                    </div>
+
+                    <div class="form-group" id="edgeLoopConditionGroup" style="display: none;">
+                        <label class="form-label">Loop Condition</label>
+                        <input type="text" class="form-control" id="edgeLoopCondition" placeholder="e.g., output.contains('continue')">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Max Iterations (Safety Limit)</label>
+                        <input type="number" class="form-control" id="edgeMaxIterations" value="100" min="1" max="10000">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Loop Variable Name</label>
+                        <input type="text" class="form-control" id="edgeLoopVar" value="$item" placeholder="Variable name for current item">
+                        <div class="help-text">Access in downstream nodes (e.g., $item, $index)</div>
+                    </div>
+                </div>
+
+                <!-- DATA TRANSFORM -->
+                <div class="form-group">
+                    <label class="form-label">Data Transform</label>
+                    <select class="form-control" id="edgeTransform">
+                        <option value="">No Transform (Pass Through)</option>
+                        <option value="uppercase">Convert to Uppercase</option>
+                        <option value="lowercase">Convert to Lowercase</option>
+                        <option value="trim">Trim Whitespace</option>
+                        <option value="json_parse">Parse as JSON</option>
+                        <option value="json_stringify">Stringify to JSON</option>
+                        <option value="extract_code">Extract Code Blocks</option>
+                        <option value="extract_numbers">Extract Numbers</option>
+                        <option value="extract_urls">Extract URLs</option>
+                        <option value="extract_emails">Extract Emails</option>
+                        <option value="markdown_to_html">Markdown → HTML</option>
+                        <option value="html_to_text">HTML → Plain Text</option>
+                        <option value="custom_js">Custom JavaScript</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="edgeCustomJsGroup" style="display: none;">
+                    <label class="form-label">Custom JavaScript</label>
+                    <textarea class="form-control" id="edgeCustomJs" placeholder="function transform(input) { return input; }" style="font-family: 'Courier New', monospace;"></textarea>
+                    <div class="help-text">Input available as 'input' variable, return transformed value</div>
+                </div>
+
+                <!-- RETRY & ERROR HANDLING -->
+                <div class="form-group">
+                    <label class="form-label">Retry on Failure</label>
+                    <select class="form-control" id="edgeRetry">
+                        <option value="0">No Retry</option>
+                        <option value="1">1 Retry</option>
+                        <option value="3">3 Retries</option>
+                        <option value="5">5 Retries</option>
+                        <option value="10">10 Retries</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Retry Delay (seconds)</label>
+                    <input type="number" class="form-control" id="edgeRetryDelay" value="1" min="0" max="60">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Timeout (seconds)</label>
+                    <input type="number" class="form-control" id="edgeTimeout" value="60" min="1" max="600">
+                    <div class="help-text">Max time to wait for target node to complete</div>
+                </div>
+
+                <!-- CACHING -->
+                <div class="form-group">
+                    <label class="form-label">Cache Results</label>
+                    <select class="form-control" id="edgeCache">
+                        <option value="0">No Caching</option>
+                        <option value="60">1 Minute</option>
+                        <option value="300">5 Minutes</option>
+                        <option value="3600">1 Hour</option>
+                        <option value="86400">24 Hours</option>
+                    </select>
+                    <div class="help-text">Cache identical inputs to save API calls</div>
+                </div>
+
+                <!-- PRIORITY -->
+                <div class="form-group">
+                    <label class="form-label">Execution Priority</label>
+                    <select class="form-control" id="edgePriority">
+                        <option value="normal">Normal</option>
+                        <option value="high">High</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <div class="help-text">For parallel branches, higher priority executes first</div>
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-secondary" onclick="deleteSelectedEdge()" style="width: 100%; background: rgba(239, 68, 68, 0.2); border-color: #EF4444; color: #EF4444;">
+                        Delete Connection
+                    </button>
+                </div>
+            </div>
+            </div> <!-- Close panel-content -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/reactflow@11.10.4/dist/umd/index.js"></script>
+
+    <script>
+        // ============================================
+        // COMPREHENSIVE WORKFLOW BUILDER - PHASE 2
+        // ============================================
+
+        console.log('Initializing Facilitair Workflow Builder...');
+
+        // Check dependencies
+        if (typeof React === 'undefined') {
+            console.error('React not loaded');
+            alert('Error: React library failed to load. Please refresh the page.');
+        }
+        if (typeof ReactDOM === 'undefined') {
+            console.error('ReactDOM not loaded');
+            alert('Error: ReactDOM library failed to load. Please refresh the page.');
+        }
+        if (typeof ReactFlow === 'undefined') {
+            console.error('ReactFlow not loaded');
+            alert('Error: ReactFlow library failed to load. Please refresh the page.');
+        }
+
+        // Global state
+        const appState = {
+            nodes: [],
+            edges: [],
+            nodeIdCounter: 0,
+            selectedNodeId: null,
+            selectedEdgeId: null,
+            allModels: [],
+            reactFlowInstance: null
+        };
+
+        // Node icons removed for professional UI
+
+        // ============================================
+        // CUSTOM NODE COMPONENT
+        // ============================================
+
+        function CustomNode({ data, id }) {
+            const label = data.customLabel || data.nodeType;
+
+            const handleStyle = {
+                background: '#5CE1E6',
+                width: '10px',
+                height: '10px',
+                border: '2px solid #1F2937',
+                borderRadius: '50%'
+            };
+
+            return React.createElement('div', {
+                style: {
+                    textAlign: 'center',
+                    position: 'relative',
+                    padding: '12px 16px',
+                    minWidth: '120px'
+                }
+            },
+                // Connection handles on all 4 sides
+                React.createElement(ReactFlow.Handle, {
+                    type: 'target',
+                    position: 'top',
+                    id: 'top',
+                    style: handleStyle
+                }),
+                React.createElement(ReactFlow.Handle, {
+                    type: 'source',
+                    position: 'bottom',
+                    id: 'bottom',
+                    style: handleStyle
+                }),
+                React.createElement(ReactFlow.Handle, {
+                    type: 'target',
+                    position: 'left',
+                    id: 'left',
+                    style: handleStyle
+                }),
+                React.createElement(ReactFlow.Handle, {
+                    type: 'source',
+                    position: 'right',
+                    id: 'right',
+                    style: handleStyle
+                }),
+                // Node content
+                React.createElement('div', { style: { fontWeight: 600, fontSize: '0.95em', color: '#fff' } }, label),
+                data.model && React.createElement('div', {
+                    style: { fontSize: '0.75em', color: '#9CA3AF', marginTop: '5px' }
+                }, `Model: ${data.model.split('/').pop()}`),
+                data.temperature !== undefined && data.nodeType === 'model' && React.createElement('div', {
+                    style: { fontSize: '0.75em', color: '#9CA3AF' }
+                }, `Temp: ${data.temperature}`)
+            );
+        }
+
+        // Define node types for React Flow
+        const nodeTypes = {
+            custom: CustomNode
+        };
+
+        // ============================================
+        // REACT FLOW APP
+        // ============================================
+
+        function WorkflowBuilder() {
+            const [nodes, setNodes] = React.useState([]);
+            const [edges, setEdges] = React.useState([]);
+            const [rfInstance, setRfInstance] = React.useState(null);
+
+            // Sync with global state
+            React.useEffect(() => {
+                appState.nodes = nodes;
+            }, [nodes]);
+
+            React.useEffect(() => {
+                appState.edges = edges;
+            }, [edges]);
+
+            React.useEffect(() => {
+                if (rfInstance) {
+                    appState.reactFlowInstance = rfInstance;
+                }
+            }, [rfInstance]);
+
+            // Node changes handler
+            const onNodesChange = React.useCallback((changes) => {
+                setNodes((nds) => ReactFlow.applyNodeChanges(changes, nds));
+            }, []);
+
+            // Edge changes handler
+            const onEdgesChange = React.useCallback((changes) => {
+                setEdges((eds) => ReactFlow.applyEdgeChanges(changes, eds));
+            }, []);
+
+            // Connect nodes
+            const onConnect = React.useCallback((connection) => {
+                setEdges((eds) => ReactFlow.addEdge({
+                    ...connection,
+                    animated: true,
+                    style: { stroke: '#5CE1E6', strokeWidth: 2 }
+                }, eds));
+            }, []);
+
+            // Node click handler
+            const onNodeClick = React.useCallback((event, node) => {
+                appState.selectedNodeId = node.id;
+                appState.selectedEdgeId = null;
+                updatePropertiesPanel(node);
+            }, []);
+
+            // Edge click handler
+            const onEdgeClick = React.useCallback((event, edge) => {
+                appState.selectedEdgeId = edge.id;
+                appState.selectedNodeId = null;
+                updateEdgePropertiesPanel(edge);
+            }, []);
+
+            // Drag over handler
+            const onDragOver = React.useCallback((event) => {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'move';
+            }, []);
+
+            // Drop handler
+            const onDrop = React.useCallback((event) => {
+                event.preventDefault();
+
+                const nodeType = event.dataTransfer.getData('application/reactflow');
+                if (!nodeType || !rfInstance) return;
+
+                const reactFlowBounds = event.target.getBoundingClientRect();
+                const position = rfInstance.project({
+                    x: event.clientX - reactFlowBounds.left,
+                    y: event.clientY - reactFlowBounds.top,
+                });
+
+                const newNode = {
+                    id: `node_${++appState.nodeIdCounter}`,
+                    type: 'custom',
+                    position,
+                    data: {
+                        nodeType,
+                        customLabel: nodeType.charAt(0).toUpperCase() + nodeType.slice(1),
+                        model: '',
+                        temperature: 1.0,
+                        maxTokens: '',
+                        systemPrompt: ''
+                    }
+                };
+
+                setNodes((nds) => {
+                    const updatedNodes = nds.concat(newNode);
+
+                    // Only check auto-zoom if we have at least 4 nodes
+                    // This prevents premature zooming on early workflow construction
+                    if (updatedNodes.length >= 4) {
+                        setTimeout(() => {
+                            checkAndAutoZoom(rfInstance, updatedNodes);
+                        }, 100);
+                    }
+
+                    return updatedNodes;
+                });
+                console.log('Node added:', newNode);
+            }, [rfInstance]);
+
+            // Initialize React Flow
+            const onInit = React.useCallback((instance) => {
+                setRfInstance(instance);
+                console.log('React Flow initialized');
+            }, []);
+
+            return React.createElement(
+                ReactFlow.ReactFlow,
+                {
+                    nodes,
+                    edges,
+                    onNodesChange,
+                    onEdgesChange,
+                    onConnect,
+                    onNodeClick,
+                    onEdgeClick,
+                    onDragOver,
+                    onDrop,
+                    onInit,
+                    nodeTypes,
+                    fitView: false,  // Disabled auto-fit to prevent zoom on every node placement
+                    attributionPosition: 'bottom-left'
+                },
+                React.createElement(ReactFlow.Controls),
+                React.createElement(ReactFlow.Background, { color: '#5CE1E6', gap: 20, size: 1 }),
+                React.createElement(ReactFlow.MiniMap, {
+                    nodeColor: '#5CE1E6',
+                    maskColor: 'rgba(0, 0, 0, 0.6)'
+                })
+            );
+        }
+
+        // ============================================
+        // AUTO-ZOOM MANAGEMENT
+        // ============================================
+
+        function checkAndAutoZoom(rfInstance, nodes) {
+            if (!rfInstance || nodes.length < 2) return;
+
+            // Get viewport dimensions
+            const viewport = rfInstance.getViewport();
+            const reactFlowWrapper = document.getElementById('reactflow-root');
+            if (!reactFlowWrapper) return;
+
+            const viewportWidth = reactFlowWrapper.clientWidth;
+            const viewportHeight = reactFlowWrapper.clientHeight;
+
+            // Calculate bounding box of all nodes (assume ~180px width, ~80px height per node)
+            const NODE_WIDTH = 180;
+            const NODE_HEIGHT = 80;
+            const PADDING = 150; // Extra padding around nodes
+
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            nodes.forEach(node => {
+                minX = Math.min(minX, node.position.x);
+                minY = Math.min(minY, node.position.y);
+                maxX = Math.max(maxX, node.position.x + NODE_WIDTH);
+                maxY = Math.max(maxY, node.position.y + NODE_HEIGHT);
+            });
+
+            // Add padding for workspace
+            const nodesWidth = (maxX - minX) + (PADDING * 2);
+            const nodesHeight = (maxY - minY) + (PADDING * 2);
+
+            // Calculate how much of viewport is covered by nodes (in screen space)
+            const screenNodesWidth = nodesWidth * viewport.zoom;
+            const screenNodesHeight = nodesHeight * viewport.zoom;
+
+            const coverageX = screenNodesWidth / viewportWidth;
+            const coverageY = screenNodesHeight / viewportHeight;
+            const coverage = Math.max(coverageX, coverageY);
+
+            console.log(`Canvas coverage: ${(coverage * 100).toFixed(1)}%`);
+
+            // Only zoom out if nodes cover more than 75% of viewport (much less aggressive)
+            // This gives room for several more nodes before next zoom
+            if (coverage > 0.75) {
+                // Zoom out to bring coverage to ~60% (leaving plenty of room)
+                const targetZoom = viewport.zoom * (0.6 / coverage);
+                const clampedZoom = Math.max(0.1, Math.min(2, targetZoom)); // Clamp between 0.1 and 2
+
+                rfInstance.setViewport({
+                    x: viewport.x,
+                    y: viewport.y,
+                    zoom: clampedZoom
+                }, { duration: 400 });
+
+                console.log(`Auto-zoom: ${viewport.zoom.toFixed(2)} → ${clampedZoom.toFixed(2)} (coverage was ${(coverage * 100).toFixed(1)}%)`);
+            }
+        }
+
+        // ============================================
+        // DRAG AND DROP SETUP
+        // ============================================
+
+        function setupDragAndDrop() {
+            const nodeTypes = document.querySelectorAll('.node-type');
+            nodeTypes.forEach(node => {
+                node.addEventListener('dragstart', (event) => {
+                    const nodeType = event.currentTarget.getAttribute('data-node-type');
+                    event.dataTransfer.setData('application/reactflow', nodeType);
+                    event.dataTransfer.effectAllowed = 'move';
+                    console.log('Dragging node type:', nodeType);
+                });
+            });
+            console.log('Drag and drop setup complete');
+        }
+
+        // ============================================
+        // PROPERTIES PANEL
+        // ============================================
+
+        function updatePropertiesPanel(node) {
+            document.getElementById('no-selection').style.display = 'none';
+            document.getElementById('node-config').style.display = 'block';
+
+            // Update panel title with node type
+            const nodeType = node.data.nodeType;
+            const nodeTypeCapitalized = nodeType.charAt(0).toUpperCase() + nodeType.slice(1);
+            document.getElementById('panelTitle').textContent = `${nodeTypeCapitalized} Node`;
+
+            document.getElementById('nodeLabel').value = node.data.customLabel || '';
+
+            // Check for parallel execution (multiple outgoing connections)
+            const edges = appState.edges;
+            const outgoingEdges = edges.filter(e => e.source === node.id);
+            const parallelAlert = document.getElementById('parallelExecutionAlert');
+            const parallelExecutionMode = document.getElementById('parallelExecutionMode');
+
+            if (outgoingEdges.length > 1) {
+                if (parallelAlert) {
+                    parallelAlert.style.display = 'block';
+                    parallelAlert.querySelector('#parallelCount').textContent = outgoingEdges.length;
+
+                    // Load saved execution mode
+                    if (parallelExecutionMode) {
+                        parallelExecutionMode.value = node.data.parallelExecutionMode || 'parallel';
+                    }
+                }
+            } else {
+                if (parallelAlert) {
+                    parallelAlert.style.display = 'none';
+                }
+            }
+
+            // Hide all config sections first
+            document.getElementById('inputConfig').style.display = 'none';
+            document.getElementById('modelConfig').style.display = 'none';
+            document.getElementById('toolConfig').style.display = 'none';
+            document.getElementById('mcpConfig').style.display = 'none';
+            document.getElementById('conditionalConfig').style.display = 'none';
+            document.getElementById('loopConfig').style.display = 'none';
+            document.getElementById('outputConfig').style.display = 'none';
+
+            // Show relevant config based on node type
+
+            if (nodeType === 'input') {
+                document.getElementById('inputConfig').style.display = 'block';
+                document.getElementById('inputType').value = node.data.inputType || 'text';
+                document.getElementById('inputText').value = node.data.inputText || '';
+                document.getElementById('inputVariable').value = node.data.inputVariable || '';
+                updateInputTypeDisplay(node.data.inputType || 'text');
+
+                // Show selected file if exists
+                if (node.data.inputFilePath) {
+                    document.getElementById('selectedFileName').style.display = 'block';
+                    document.getElementById('fileNameDisplay').textContent = node.data.inputFilePath;
+                } else {
+                    document.getElementById('selectedFileName').style.display = 'none';
+                }
+
+                // Store selected node ID for file upload
+                appState.selectedNodeId = node.id;
+            }
+
+            if (nodeType === 'model') {
+                document.getElementById('modelConfig').style.display = 'block';
+                document.getElementById('modelSelect').value = node.data.model || '';
+                document.getElementById('modelPrompt').value = node.data.modelPrompt || '';
+                document.getElementById('systemPrompt').value = node.data.systemPrompt || '';
+                document.getElementById('temperature').value = node.data.temperature !== undefined ? node.data.temperature : 1.0;
+                document.getElementById('tempValue').textContent = node.data.temperature !== undefined ? node.data.temperature : 1.0;
+                document.getElementById('maxTokens').value = node.data.maxTokens || '';
+                document.getElementById('topP').value = node.data.topP !== undefined ? node.data.topP : 1.0;
+                document.getElementById('topPValue').textContent = node.data.topP !== undefined ? node.data.topP : 1.0;
+                document.getElementById('stopSequences').value = node.data.stopSequences || '';
+                document.getElementById('frequencyPenalty').value = node.data.frequencyPenalty !== undefined ? node.data.frequencyPenalty : 0;
+                document.getElementById('frequencyPenaltyValue').textContent = node.data.frequencyPenalty !== undefined ? node.data.frequencyPenalty : 0;
+                document.getElementById('presencePenalty').value = node.data.presencePenalty !== undefined ? node.data.presencePenalty : 0;
+                document.getElementById('presencePenaltyValue').textContent = node.data.presencePenalty !== undefined ? node.data.presencePenalty : 0;
+                document.getElementById('seed').value = node.data.seed || '';
+                document.getElementById('responseFormat').value = node.data.responseFormat || '';
+
+                // Restore media files if exists
+                const mediaPreview = document.getElementById('modelMediaPreview');
+                const mediaList = document.getElementById('modelMediaList');
+                if (node.data.mediaFiles && node.data.mediaFiles.length > 0) {
+                    mediaPreview.style.display = 'block';
+                    mediaList.innerHTML = node.data.mediaFiles.map(file => `
+                        <div style="padding: 5px 0; display: flex; justify-content: space-between; align-items: center;">
+                            <span>
+                                ${file.type.startsWith('image/') ? '🖼️' : '🎥'} ${file.name}
+                            </span>
+                            <span style="color: var(--facilitair-gray); font-size: 0.8em;">
+                                ${(file.size / 1024).toFixed(1)} KB
+                            </span>
+                        </div>
+                    `).join('');
+                } else {
+                    mediaPreview.style.display = 'none';
+                    mediaList.innerHTML = '';
+                }
+                document.getElementById('streaming').value = node.data.streaming ? 'true' : 'false';
+                document.getElementById('contextMode').value = node.data.contextMode || 'single';
+            }
+
+            if (nodeType === 'conditional') {
+                document.getElementById('conditionalConfig').style.display = 'block';
+                document.getElementById('conditionType').value = node.data.conditionType || 'contains';
+                document.getElementById('conditionValue').value = node.data.conditionValue || '';
+                document.getElementById('truePath').value = node.data.truePath || 'True';
+                document.getElementById('falsePath').value = node.data.falsePath || 'False';
+            }
+
+            if (nodeType === 'loop') {
+                document.getElementById('loopConfig').style.display = 'block';
+                document.getElementById('loopType').value = node.data.loopType || 'fixed';
+                document.getElementById('loopCount').value = node.data.loopCount || 3;
+                document.getElementById('loopItems').value = node.data.loopItems || '';
+                document.getElementById('loopCondition').value = node.data.loopCondition || '';
+                document.getElementById('maxIterations').value = node.data.maxIterations || 100;
+                updateLoopTypeDisplay(node.data.loopType || 'fixed');
+            }
+
+            if (nodeType === 'tool') {
+                document.getElementById('toolConfig').style.display = 'block';
+                document.getElementById('toolProvider').value = node.data.toolProvider || '';
+                document.getElementById('toolEndpoint').value = node.data.toolEndpoint || '';
+                document.getElementById('toolApiKey').value = node.data.toolApiKey || '';
+                document.getElementById('toolMethod').value = node.data.toolMethod || 'POST';
+                document.getElementById('toolRequestBody').value = node.data.toolRequestBody || '';
+                document.getElementById('toolHeaders').value = node.data.toolHeaders || '';
+                document.getElementById('toolTimeout').value = node.data.toolTimeout || 30;
+            }
+
+            if (nodeType === 'mcp') {
+                document.getElementById('mcpConfig').style.display = 'block';
+                document.getElementById('mcpProvider').value = node.data.mcpProvider || '';
+                document.getElementById('mcpServerUrl').value = node.data.mcpServerUrl || 'https://api.metorial.com';
+                document.getElementById('mcpApiKey').value = node.data.mcpApiKey || '';
+                document.getElementById('mcpTool').value = node.data.mcpTool || '';
+                document.getElementById('mcpParameters').value = node.data.mcpParameters || '';
+                document.getElementById('mcpContextMode').value = node.data.mcpContextMode || 'inject';
+                document.getElementById('mcpTimeout').value = node.data.mcpTimeout || 60;
+            }
+
+            if (nodeType === 'output') {
+                document.getElementById('outputConfig').style.display = 'block';
+                document.getElementById('outputFormat').value = node.data.outputFormat || 'text';
+                document.getElementById('outputFile').value = node.data.outputFile || '';
+                document.getElementById('outputDisplay').value = node.data.outputDisplay || 'console';
+            }
+
+            // Wire up change handlers
+            setupPropertyHandlers(node.id);
+        }
+
+        function updateInputTypeDisplay(type) {
+            document.getElementById('inputTextGroup').style.display = type === 'text' ? 'block' : 'none';
+            document.getElementById('inputFileGroup').style.display = type === 'file' ? 'block' : 'none';
+            document.getElementById('inputVarGroup').style.display = type === 'variable' ? 'block' : 'none';
+        }
+
+        function updateLoopTypeDisplay(type) {
+            document.getElementById('loopCountGroup').style.display = type === 'fixed' ? 'block' : 'none';
+            document.getElementById('loopItemsGroup').style.display = type === 'foreach' ? 'block' : 'none';
+            document.getElementById('loopConditionGroup').style.display = type === 'while' ? 'block' : 'none';
+        }
+
+        // ============================================
+        // EDGE PROPERTIES PANEL
+        // ============================================
+
+        function updateEdgePropertiesPanel(edge) {
+            document.getElementById('no-selection').style.display = 'none';
+            document.getElementById('node-config').style.display = 'none';
+            document.getElementById('edge-config').style.display = 'block';
+
+            // Update panel title for edge/connection
+            document.getElementById('panelTitle').textContent = 'Connection';
+
+            // Get source and target node labels
+            const nodes = appState.reactFlowInstance.getNodes();
+            const sourceNode = nodes.find(n => n.id === edge.source);
+            const targetNode = nodes.find(n => n.id === edge.target);
+            const sourceLabel = sourceNode ? sourceNode.data.customLabel : edge.source;
+            const targetLabel = targetNode ? targetNode.data.customLabel : edge.target;
+
+            const data = edge.data || {};
+
+            document.getElementById('edgeFlow').value = `${sourceLabel} → ${targetLabel}`;
+            document.getElementById('edgeLabel').value = edge.label || '';
+            document.getElementById('edgeExecutionMode').value = data.executionMode || 'always';
+
+            // Conditional config
+            document.getElementById('edgeConditionType').value = data.conditionType || 'contains';
+            document.getElementById('edgeConditionValue').value = data.conditionValue || '';
+            document.getElementById('edgeLogicOperator').value = data.logicOperator || 'single';
+            document.getElementById('edgeTruePath').value = data.truePath || 'True';
+            document.getElementById('edgeFalsePath').value = data.falsePath || 'False';
+
+            // Loop config
+            document.getElementById('edgeLoopType').value = data.loopType || 'fixed';
+            document.getElementById('edgeLoopCount').value = data.loopCount || 3;
+            document.getElementById('edgeLoopItems').value = data.loopItems || '';
+            document.getElementById('edgeLoopCondition').value = data.loopCondition || '';
+            document.getElementById('edgeMaxIterations').value = data.maxIterations || 100;
+            document.getElementById('edgeLoopVar').value = data.loopVar || '$item';
+
+            // Transform
+            document.getElementById('edgeTransform').value = data.transform || '';
+            document.getElementById('edgeCustomJs').value = data.customJs || '';
+
+            // Error handling
+            document.getElementById('edgeRetry').value = data.retry || '0';
+            document.getElementById('edgeRetryDelay').value = data.retryDelay || 1;
+            document.getElementById('edgeTimeout').value = data.timeout || 60;
+
+            // Performance
+            document.getElementById('edgeCache').value = data.cache || '0';
+            document.getElementById('edgePriority').value = data.priority || 'normal';
+
+            // Show/hide sections based on execution mode
+            updateEdgeExecutionModeDisplay(data.executionMode || 'always');
+            updateEdgeLoopTypeDisplay(data.loopType || 'fixed');
+            updateEdgeTransformDisplay(data.transform || '');
+
+            // Wire up change handlers
+            setupEdgePropertyHandlers(edge.id);
+        }
+
+        function updateEdgeExecutionModeDisplay(mode) {
+            document.getElementById('edgeConditionalConfig').style.display = mode === 'conditional' ? 'block' : 'none';
+            document.getElementById('edgeLoopConfig').style.display = mode === 'loop' ? 'block' : 'none';
+        }
+
+        function updateEdgeLoopTypeDisplay(type) {
+            document.getElementById('edgeLoopCountGroup').style.display = type === 'fixed' ? 'block' : 'none';
+            document.getElementById('edgeLoopItemsGroup').style.display = type === 'foreach' ? 'block' : 'none';
+            const showCondition = type === 'while' || type === 'until';
+            document.getElementById('edgeLoopConditionGroup').style.display = showCondition ? 'block' : 'none';
+        }
+
+        function updateEdgeTransformDisplay(transform) {
+            document.getElementById('edgeCustomJsGroup').style.display = transform === 'custom_js' ? 'block' : 'none';
+        }
+
+        function setupEdgePropertyHandlers(edgeId) {
+            const edgeLabel = document.getElementById('edgeLabel');
+            edgeLabel.onchange = () => updateEdgeData(edgeId, { label: edgeLabel.value });
+
+            const edgeExecutionMode = document.getElementById('edgeExecutionMode');
+            edgeExecutionMode.onchange = () => {
+                const newData = { ...getEdgeData(edgeId), executionMode: edgeExecutionMode.value };
+                updateEdgeData(edgeId, { data: newData });
+                updateEdgeExecutionModeDisplay(edgeExecutionMode.value);
+            };
+
+            // Conditional handlers
+            const edgeConditionType = document.getElementById('edgeConditionType');
+            edgeConditionType.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), conditionType: edgeConditionType.value } });
+            };
+
+            const edgeConditionValue = document.getElementById('edgeConditionValue');
+            edgeConditionValue.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), conditionValue: edgeConditionValue.value } });
+            };
+
+            const edgeLogicOperator = document.getElementById('edgeLogicOperator');
+            edgeLogicOperator.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), logicOperator: edgeLogicOperator.value } });
+            };
+
+            const edgeTruePath = document.getElementById('edgeTruePath');
+            edgeTruePath.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), truePath: edgeTruePath.value } });
+            };
+
+            const edgeFalsePath = document.getElementById('edgeFalsePath');
+            edgeFalsePath.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), falsePath: edgeFalsePath.value } });
+            };
+
+            // Loop handlers
+            const edgeLoopType = document.getElementById('edgeLoopType');
+            edgeLoopType.onchange = () => {
+                const newData = { ...getEdgeData(edgeId), loopType: edgeLoopType.value };
+                updateEdgeData(edgeId, { data: newData });
+                updateEdgeLoopTypeDisplay(edgeLoopType.value);
+            };
+
+            const edgeLoopCount = document.getElementById('edgeLoopCount');
+            edgeLoopCount.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), loopCount: parseInt(edgeLoopCount.value) } });
+            };
+
+            const edgeLoopItems = document.getElementById('edgeLoopItems');
+            edgeLoopItems.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), loopItems: edgeLoopItems.value } });
+            };
+
+            const edgeLoopCondition = document.getElementById('edgeLoopCondition');
+            edgeLoopCondition.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), loopCondition: edgeLoopCondition.value } });
+            };
+
+            const edgeMaxIterations = document.getElementById('edgeMaxIterations');
+            edgeMaxIterations.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), maxIterations: parseInt(edgeMaxIterations.value) } });
+            };
+
+            const edgeLoopVar = document.getElementById('edgeLoopVar');
+            edgeLoopVar.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), loopVar: edgeLoopVar.value } });
+            };
+
+            // Transform handlers
+            const edgeTransform = document.getElementById('edgeTransform');
+            edgeTransform.onchange = () => {
+                const newData = { ...getEdgeData(edgeId), transform: edgeTransform.value };
+                updateEdgeData(edgeId, { data: newData });
+                updateEdgeTransformDisplay(edgeTransform.value);
+            };
+
+            const edgeCustomJs = document.getElementById('edgeCustomJs');
+            edgeCustomJs.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), customJs: edgeCustomJs.value } });
+            };
+
+            // Error handling handlers
+            const edgeRetry = document.getElementById('edgeRetry');
+            edgeRetry.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), retry: edgeRetry.value } });
+            };
+
+            const edgeRetryDelay = document.getElementById('edgeRetryDelay');
+            edgeRetryDelay.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), retryDelay: parseInt(edgeRetryDelay.value) } });
+            };
+
+            const edgeTimeout = document.getElementById('edgeTimeout');
+            edgeTimeout.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), timeout: parseInt(edgeTimeout.value) } });
+            };
+
+            // Performance handlers
+            const edgeCache = document.getElementById('edgeCache');
+            edgeCache.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), cache: edgeCache.value } });
+            };
+
+            const edgePriority = document.getElementById('edgePriority');
+            edgePriority.onchange = () => {
+                updateEdgeData(edgeId, { data: { ...getEdgeData(edgeId), priority: edgePriority.value } });
+            };
+        }
+
+        function getEdgeData(edgeId) {
+            if (!appState.reactFlowInstance) return {};
+            const edges = appState.reactFlowInstance.getEdges();
+            const edge = edges.find(e => e.id === edgeId);
+            return edge?.data || {};
+        }
+
+        function updateEdgeData(edgeId, updates) {
+            if (!appState.reactFlowInstance) {
+                console.warn('⚠️ React Flow instance not ready');
+                return;
+            }
+
+            const edges = appState.reactFlowInstance.getEdges();
+            const updatedEdges = edges.map(edge => {
+                if (edge.id === edgeId) {
+                    return { ...edge, ...updates };
+                }
+                return edge;
+            });
+
+            appState.reactFlowInstance.setEdges(updatedEdges);
+            console.log('Edge updated:', edgeId, updates);
+        }
+
+        function deleteSelectedEdge() {
+            if (!appState.selectedEdgeId || !appState.reactFlowInstance) {
+                alert('No connection selected');
+                return;
+            }
+
+            const edges = appState.reactFlowInstance.getEdges();
+            const filteredEdges = edges.filter(e => e.id !== appState.selectedEdgeId);
+            appState.reactFlowInstance.setEdges(filteredEdges);
+
+            // Reset UI
+            appState.selectedEdgeId = null;
+            document.getElementById('edge-config').style.display = 'none';
+            document.getElementById('no-selection').style.display = 'block';
+            document.getElementById('panelTitle').textContent = 'Configuration';
+
+            console.log('Connection deleted');
+        }
+
+        function setupPropertyHandlers(nodeId) {
+            // Common handlers
+            const labelInput = document.getElementById('nodeLabel');
+            labelInput.onchange = () => updateNodeData(nodeId, { customLabel: labelInput.value });
+
+            // Parallel execution mode handler
+            const parallelExecutionMode = document.getElementById('parallelExecutionMode');
+            if (parallelExecutionMode) {
+                parallelExecutionMode.onchange = () => updateNodeData(nodeId, { parallelExecutionMode: parallelExecutionMode.value });
+            }
+
+            // Input node handlers
+            const inputType = document.getElementById('inputType');
+            if (inputType) {
+                inputType.onchange = () => {
+                    updateNodeData(nodeId, { inputType: inputType.value });
+                    updateInputTypeDisplay(inputType.value);
+                };
+            }
+
+            const inputText = document.getElementById('inputText');
+            if (inputText) inputText.onchange = () => updateNodeData(nodeId, { inputText: inputText.value });
+
+            const inputFilePath = document.getElementById('inputFilePath');
+            if (inputFilePath) inputFilePath.onchange = () => updateNodeData(nodeId, { inputFilePath: inputFilePath.value });
+
+            const inputVariable = document.getElementById('inputVariable');
+            if (inputVariable) inputVariable.onchange = () => updateNodeData(nodeId, { inputVariable: inputVariable.value });
+
+            // Model node handlers
+            const modelSelect = document.getElementById('modelSelect');
+            if (modelSelect) modelSelect.onchange = () => updateNodeData(nodeId, { model: modelSelect.value });
+
+            const modelPrompt = document.getElementById('modelPrompt');
+            if (modelPrompt) modelPrompt.onchange = () => updateNodeData(nodeId, { modelPrompt: modelPrompt.value });
+
+            const systemPrompt = document.getElementById('systemPrompt');
+            if (systemPrompt) systemPrompt.onchange = () => updateNodeData(nodeId, { systemPrompt: systemPrompt.value });
+
+            const tempSlider = document.getElementById('temperature');
+            if (tempSlider) {
+                tempSlider.oninput = (e) => {
+                    document.getElementById('tempValue').textContent = e.target.value;
+                    updateNodeData(nodeId, { temperature: parseFloat(e.target.value) });
+                };
+            }
+
+            const maxTokens = document.getElementById('maxTokens');
+            if (maxTokens) maxTokens.onchange = () => updateNodeData(nodeId, { maxTokens: maxTokens.value });
+
+            const topPSlider = document.getElementById('topP');
+            if (topPSlider) {
+                topPSlider.oninput = (e) => {
+                    document.getElementById('topPValue').textContent = e.target.value;
+                    updateNodeData(nodeId, { topP: parseFloat(e.target.value) });
+                };
+            }
+
+            const stopSequences = document.getElementById('stopSequences');
+            if (stopSequences) stopSequences.onchange = () => updateNodeData(nodeId, { stopSequences: stopSequences.value });
+
+            const frequencyPenaltySlider = document.getElementById('frequencyPenalty');
+            if (frequencyPenaltySlider) {
+                frequencyPenaltySlider.oninput = (e) => {
+                    document.getElementById('frequencyPenaltyValue').textContent = e.target.value;
+                    updateNodeData(nodeId, { frequencyPenalty: parseFloat(e.target.value) });
+                };
+            }
+
+            const presencePenaltySlider = document.getElementById('presencePenalty');
+            if (presencePenaltySlider) {
+                presencePenaltySlider.oninput = (e) => {
+                    document.getElementById('presencePenaltyValue').textContent = e.target.value;
+                    updateNodeData(nodeId, { presencePenalty: parseFloat(e.target.value) });
+                };
+            }
+
+            const seed = document.getElementById('seed');
+            if (seed) seed.onchange = () => updateNodeData(nodeId, { seed: parseInt(seed.value) || null });
+
+            const responseFormat = document.getElementById('responseFormat');
+            if (responseFormat) responseFormat.onchange = () => updateNodeData(nodeId, { responseFormat: responseFormat.value });
+
+            const streaming = document.getElementById('streaming');
+            if (streaming) streaming.onchange = () => updateNodeData(nodeId, { streaming: streaming.value === 'true' });
+
+            const contextMode = document.getElementById('contextMode');
+            if (contextMode) contextMode.onchange = () => updateNodeData(nodeId, { contextMode: contextMode.value });
+
+            // Conditional node handlers
+            const conditionType = document.getElementById('conditionType');
+            if (conditionType) conditionType.onchange = () => updateNodeData(nodeId, { conditionType: conditionType.value });
+
+            const conditionValue = document.getElementById('conditionValue');
+            if (conditionValue) conditionValue.onchange = () => updateNodeData(nodeId, { conditionValue: conditionValue.value });
+
+            const truePath = document.getElementById('truePath');
+            if (truePath) truePath.onchange = () => updateNodeData(nodeId, { truePath: truePath.value });
+
+            const falsePath = document.getElementById('falsePath');
+            if (falsePath) falsePath.onchange = () => updateNodeData(nodeId, { falsePath: falsePath.value });
+
+            // Loop node handlers
+            const loopType = document.getElementById('loopType');
+            if (loopType) {
+                loopType.onchange = () => {
+                    updateNodeData(nodeId, { loopType: loopType.value });
+                    updateLoopTypeDisplay(loopType.value);
+                };
+            }
+
+            const loopCount = document.getElementById('loopCount');
+            if (loopCount) loopCount.onchange = () => updateNodeData(nodeId, { loopCount: parseInt(loopCount.value) });
+
+            const loopItems = document.getElementById('loopItems');
+            if (loopItems) loopItems.onchange = () => updateNodeData(nodeId, { loopItems: loopItems.value });
+
+            const loopCondition = document.getElementById('loopCondition');
+            if (loopCondition) loopCondition.onchange = () => updateNodeData(nodeId, { loopCondition: loopCondition.value });
+
+            const maxIterations = document.getElementById('maxIterations');
+            if (maxIterations) maxIterations.onchange = () => updateNodeData(nodeId, { maxIterations: parseInt(maxIterations.value) });
+
+            // Parallel node handlers
+            const parallelMode = document.getElementById('parallelMode');
+            if (parallelMode) parallelMode.onchange = () => updateNodeData(nodeId, { parallelMode: parallelMode.value });
+
+            const branchCount = document.getElementById('branchCount');
+            if (branchCount) branchCount.onchange = () => updateNodeData(nodeId, { branchCount: parseInt(branchCount.value) });
+
+            const mergeStrategy = document.getElementById('mergeStrategy');
+            if (mergeStrategy) mergeStrategy.onchange = () => updateNodeData(nodeId, { mergeStrategy: mergeStrategy.value });
+
+            const parallelTimeout = document.getElementById('parallelTimeout');
+            if (parallelTimeout) parallelTimeout.onchange = () => updateNodeData(nodeId, { parallelTimeout: parseInt(parallelTimeout.value) });
+
+            // Output node handlers
+            const outputFormat = document.getElementById('outputFormat');
+            if (outputFormat) outputFormat.onchange = () => updateNodeData(nodeId, { outputFormat: outputFormat.value });
+
+            const outputFile = document.getElementById('outputFile');
+            if (outputFile) outputFile.onchange = () => updateNodeData(nodeId, { outputFile: outputFile.value });
+
+            const outputDisplay = document.getElementById('outputDisplay');
+            if (outputDisplay) outputDisplay.onchange = () => updateNodeData(nodeId, { outputDisplay: outputDisplay.value });
+        }
+
+        function updateNodeData(nodeId, newData) {
+            if (!appState.reactFlowInstance) {
+                console.warn('⚠️ React Flow instance not ready');
+                return;
+            }
+
+            const nodes = appState.reactFlowInstance.getNodes();
+            const updatedNodes = nodes.map(node => {
+                if (node.id === nodeId) {
+                    return {
+                        ...node,
+                        data: { ...node.data, ...newData }
+                    };
+                }
+                return node;
+            });
+
+            appState.reactFlowInstance.setNodes(updatedNodes);
+            console.log('Node updated:', nodeId, newData);
+        }
+
+        // ============================================
+        // WORKFLOW MANAGEMENT
+        // ============================================
+
+        window.workflowApp = {
+            saveWorkflow: function() {
+                if (!appState.reactFlowInstance) {
+                    alert('Workflow not initialized yet');
+                    return;
+                }
+
+                const name = prompt('Enter a name for this workflow:', 'My Workflow');
+                if (!name) return;
+
+                const workflow = {
+                    id: `wf_${Date.now()}`,
+                    name: name,
+                    nodes: appState.nodes,
+                    edges: appState.edges,
+                    version: '1.0',
+                    created: new Date().toISOString(),
+                    updated: new Date().toISOString()
+                };
+
+                // Load existing workflows
+                let workflows = {};
+                const stored = localStorage.getItem('facilitair_workflows');
+                if (stored) {
+                    try {
+                        workflows = JSON.parse(stored);
+                    } catch (e) {
+                        console.error('Failed to parse workflows:', e);
+                    }
+                }
+
+                // Add new workflow
+                workflows[workflow.id] = workflow;
+                localStorage.setItem('facilitair_workflows', JSON.stringify(workflows));
+
+                console.log('Workflow saved:', workflow);
+                alert('Workflow saved to "My Workflows"');
+                refreshWorkflowsList();
+            },
+
+            exportWorkflow: function() {
+                if (!appState.reactFlowInstance) {
+                    alert('Workflow not initialized yet');
+                    return;
+                }
+
+                const workflow = {
+                    nodes: appState.nodes,
+                    edges: appState.edges,
+                    version: '1.0',
+                    timestamp: new Date().toISOString()
+                };
+
+                const blob = new Blob([JSON.stringify(workflow, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `facilitair-workflow-${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                console.log('Workflow exported:', workflow);
+            },
+
+            loadTemplate: function() {
+                if (!appState.reactFlowInstance) {
+                    alert('Workflow not initialized yet');
+                    return;
+                }
+
+                const sampleNodes = [
+                    {
+                        id: 'node_1',
+                        type: 'custom',
+                        position: { x: 250, y: 100 },
+                        data: {
+                            nodeType: 'input',
+                            customLabel: 'User Input'
+                        }
+                    },
+                    {
+                        id: 'node_2',
+                        type: 'custom',
+                        position: { x: 250, y: 250 },
+                        data: {
+                            nodeType: 'model',
+                            customLabel: 'Code Review',
+                            model: 'anthropic/claude-3.5-sonnet',
+                            temperature: 1.0,
+                            maxTokens: '',
+                            systemPrompt: 'You are an expert code reviewer. Review the code for bugs, improvements, and best practices.'
+                        }
+                    },
+                    {
+                        id: 'node_3',
+                        type: 'custom',
+                        position: { x: 250, y: 400 },
+                        data: {
+                            nodeType: 'output',
+                            customLabel: 'Final Output'
+                        }
+                    }
+                ];
+
+                const sampleEdges = [
+                    {
+                        id: 'e1-2',
+                        source: 'node_1',
+                        target: 'node_2',
+                        animated: true,
+                        style: { stroke: '#5CE1E6', strokeWidth: 2 }
+                    },
+                    {
+                        id: 'e2-3',
+                        source: 'node_2',
+                        target: 'node_3',
+                        animated: true,
+                        style: { stroke: '#5CE1E6', strokeWidth: 2 }
+                    }
+                ];
+
+                appState.reactFlowInstance.setNodes(sampleNodes);
+                appState.reactFlowInstance.setEdges(sampleEdges);
+                appState.nodeIdCounter = 3;
+
+                console.log('Template loaded');
+                alert('Template loaded: Simple code review workflow');
+            },
+
+            executeWorkflow: async function() {
+                if (!appState.reactFlowInstance) {
+                    alert('Workflow not initialized yet');
+                    return;
+                }
+
+                const nodes = appState.nodes;
+                const edges = appState.edges;
+
+                if (nodes.length === 0) {
+                    alert('Workflow is empty - Add some nodes first');
+                    return;
+                }
+
+                // Find input node
+                const inputNode = nodes.find(n => n.data.nodeType === 'input');
+                if (!inputNode) {
+                    alert('Workflow must have at least one Input node');
+                    return;
+                }
+
+                // Get input prompt
+                const inputPrompt = inputNode.data.inputText || inputNode.data.inputFileContent || '';
+                if (!inputPrompt.trim()) {
+                    alert('Input node must have text or file content');
+                    return;
+                }
+
+                console.log('Executing workflow:', { nodes, edges });
+
+                // Build workflow execution request using the /execute endpoint
+                const API_BASE = 'http://localhost:8000';
+
+                try {
+                    const response = await fetch(`${API_BASE}/execute`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            prompt: inputPrompt
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Build result message
+                        let resultMsg = 'Workflow executed successfully!\n\n';
+                        resultMsg += `Result: ${data.result || data.output || 'Completed'}\n\n`;
+
+                        if (data.routing) {
+                            resultMsg += `Strategy: ${data.routing.strategy || 'N/A'}\n`;
+                            resultMsg += `Provider: ${data.routing.sponsor || data.routing.provider || 'N/A'}\n`;
+                        }
+
+                        if (data.duration_seconds) {
+                            resultMsg += `Duration: ${data.duration_seconds.toFixed(2)}s`;
+                        }
+
+                        alert(resultMsg);
+                        console.log('Workflow execution completed:', data);
+                    } else {
+                        alert(`Error executing workflow: ${data.error || data.detail || JSON.stringify(data)}`);
+                    }
+                } catch (error) {
+                    alert(`Connection error: ${error.message}\n\nMake sure the Facilitair backend is running on localhost:8000`);
+                    console.error('Workflow execution error:', error);
+                }
+            }
+        };
+
+        // ============================================
+        // LOAD MODELS
+        // ============================================
+
+        function loadModels() {
+            // Try multiple possible paths
+            const paths = [
+                'data/openrouter_models_list.json',
+                './data/openrouter_models_list.json',
+                '../data/openrouter_models_list.json',
+                './frontend/data/openrouter_models_list.json'
+            ];
+
+            async function tryPath(path) {
+                try {
+                    const response = await fetch(path);
+                    if (!response.ok) return null;
+                    return await response.json();
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            (async () => {
+                let models = null;
+                for (const path of paths) {
+                    models = await tryPath(path);
+                    if (models) {
+                        console.log(`Models loaded from: ${path}`);
+                        break;
+                    }
+                }
+
+                if (!models) {
+                    console.error('Could not load models from any path. Using fallback models.');
+                    // Fallback to popular models
+                    models = [
+                        { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'anthropic', free: false, input_price: 0.003, output_price: 0.015 },
+                        { id: 'openai/gpt-4o', name: 'GPT-4o', provider: 'openai', free: false, input_price: 0.0025, output_price: 0.010 },
+                        { id: 'google/gemini-pro-1.5', name: 'Gemini Pro 1.5', provider: 'google', free: false, input_price: 0.00125, output_price: 0.005 },
+                        { id: 'deepseek/deepseek-chat', name: 'DeepSeek Chat', provider: 'deepseek', free: true, input_price: 0, output_price: 0 },
+                        { id: 'meta-llama/llama-3.3-70b-instruct', name: 'Llama 3.3 70B', provider: 'meta', free: true, input_price: 0, output_price: 0 }
+                    ];
+                } else {
+                    console.log(`Successfully loaded ${models.length} models`);
+                }
+
+                // Add Facilitair's own models at the beginning
+                const facilitairModels = [
+                    { id: 'facilitair/v13', name: 'Facilitair V13 (Auto-Routing)', provider: 'facilitair', free: false, input_price: 0, output_price: 0, description: 'Intelligent routing across 341+ models' },
+                    { id: 'facilitair/v13-enhanced', name: 'Facilitair V13 Enhanced', provider: 'facilitair', free: false, input_price: 0, output_price: 0, description: 'Enhanced multi-label routing' },
+                    { id: 'facilitair/corch', name: 'Corch Orchestrator', provider: 'facilitair', free: false, input_price: 0, output_price: 0, description: 'Multi-step task orchestration' }
+                ];
+
+                // Prepend Facilitair models
+                models = [...facilitairModels, ...models];
+
+                appState.allModels = models;
+                populateModelDropdown(models);
+
+                // Log initial state
+                console.log('Model dropdown populated with', models.length, 'models');
+            })();
+        }
+
+        // ============================================
+        // LOAD TOOLS
+        // ============================================
+
+        // Global tool/MCP state
+        appState.pipedreamTools = [];
+        appState.metorialTools = [];
+
+        function loadPipedreamTools() {
+            const paths = [
+                'data/pipedream_tools_list.json',
+                './data/pipedream_tools_list.json'
+            ];
+
+            (async () => {
+                let tools = null;
+                for (const path of paths) {
+                    try {
+                        const response = await fetch(path);
+                        if (response.ok) {
+                            tools = await response.json();
+                            console.log(`Pipedream tools loaded from: ${path}`);
+                            break;
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
+
+                if (tools) {
+                    appState.pipedreamTools = tools;
+                    console.log(`✓ Loaded ${tools.length} Pipedream tools`);
+                } else {
+                    console.error('Failed to load Pipedream tools');
+                }
+            })();
+        }
+
+        function loadMetorialTools() {
+            const paths = [
+                'data/metorial_mcp_tools_list.json',
+                './data/metorial_mcp_tools_list.json'
+            ];
+
+            (async () => {
+                let tools = null;
+                for (const path of paths) {
+                    try {
+                        const response = await fetch(path);
+                        if (response.ok) {
+                            tools = await response.json();
+                            console.log(`Metorial tools loaded from: ${path}`);
+                            break;
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
+
+                if (tools) {
+                    appState.metorialTools = tools;
+                    console.log(`✓ Loaded ${tools.length} Metorial MCP tools`);
+                } else {
+                    console.error('Failed to load Metorial tools');
+                }
+            })();
+        }
+
+        // ============================================
+        // TOOL PROVIDER HANDLERS
+        // ============================================
+
+        function onToolProviderChange(provider) {
+            const pipedreamSection = document.getElementById('pipedreamToolSelection');
+            const customSection = document.getElementById('customApiConfig');
+
+            pipedreamSection.style.display = provider === 'pipedream' ? 'block' : 'none';
+            customSection.style.display = provider === 'custom' ? 'block' : 'none';
+
+            if (provider === 'pipedream') {
+                populatePipedreamTools();
+            }
+        }
+
+        function populatePipedreamTools(searchTerm = '') {
+            const select = document.getElementById('pipedreamToolSelect');
+            const count = document.getElementById('pipedreamToolCount');
+
+            if (!appState.pipedreamTools || appState.pipedreamTools.length === 0) {
+                select.innerHTML = '<option value="">No tools loaded</option>';
+                count.textContent = '0';
+                return;
+            }
+
+            // Filter by search
+            let filtered = appState.pipedreamTools;
+            if (searchTerm && searchTerm.trim()) {
+                const term = searchTerm.toLowerCase();
+                filtered = filtered.filter(t =>
+                    t.name.toLowerCase().includes(term) ||
+                    t.description.toLowerCase().includes(term) ||
+                    t.category.toLowerCase().includes(term)
+                );
+            }
+
+            // Group by category
+            const byCategory = {};
+            filtered.forEach(tool => {
+                if (!byCategory[tool.category]) byCategory[tool.category] = [];
+                byCategory[tool.category].push(tool);
+            });
+
+            select.innerHTML = '<option value="">-- Select Tool --</option>';
+
+            Object.keys(byCategory).sort().forEach(category => {
+                const group = document.createElement('optgroup');
+                group.label = `${category} (${byCategory[category].length})`;
+                byCategory[category].forEach(tool => {
+                    const opt = document.createElement('option');
+                    opt.value = tool.id;
+                    opt.textContent = `${tool.name} - ${tool.description}`;
+                    group.appendChild(opt);
+                });
+                select.appendChild(group);
+            });
+
+            count.textContent = filtered.length;
+        }
+
+        function filterPipedreamTools(searchTerm) {
+            populatePipedreamTools(searchTerm);
+        }
+
+        function onPipedreamToolChange(toolId) {
+            const actionGroup = document.getElementById('pipedreamActionGroup');
+            const actionSelect = document.getElementById('pipedreamAction');
+
+            if (!toolId) {
+                actionGroup.style.display = 'none';
+                return;
+            }
+
+            const tool = appState.pipedreamTools.find(t => t.id === toolId);
+            if (tool && tool.capabilities) {
+                actionGroup.style.display = 'block';
+                actionSelect.innerHTML = '<option value="">-- Select Action --</option>';
+                tool.capabilities.forEach(cap => {
+                    const opt = document.createElement('option');
+                    opt.value = cap;
+                    opt.textContent = cap.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    actionSelect.appendChild(opt);
+                });
+            }
+        }
+
+        // ============================================
+        // MCP PROVIDER HANDLERS
+        // ============================================
+
+        function onMcpProviderChange(provider) {
+            const metorialSection = document.getElementById('metorialToolSelection');
+            const customSection = document.getElementById('customMcpConfig');
+
+            metorialSection.style.display = provider === 'metorial' ? 'block' : 'none';
+            customSection.style.display = provider === 'custom' ? 'block' : 'none';
+
+            if (provider === 'metorial') {
+                populateMetorialTools();
+            }
+        }
+
+        function populateMetorialTools(searchTerm = '') {
+            const select = document.getElementById('metorialToolSelect');
+            const count = document.getElementById('metorialToolCount');
+
+            if (!appState.metorialTools || appState.metorialTools.length === 0) {
+                select.innerHTML = '<option value="">No tools loaded</option>';
+                count.textContent = '0';
+                return;
+            }
+
+            // Filter and populate similarly to Pipedream
+            let filtered = appState.metorialTools;
+            if (searchTerm && searchTerm.trim()) {
+                const term = searchTerm.toLowerCase();
+                filtered = filtered.filter(t =>
+                    t.name.toLowerCase().includes(term) ||
+                    t.description.toLowerCase().includes(term)
+                );
+            }
+
+            const byCategory = {};
+            filtered.forEach(tool => {
+                if (!byCategory[tool.category]) byCategory[tool.category] = [];
+                byCategory[tool.category].push(tool);
+            });
+
+            select.innerHTML = '<option value="">-- Select Tool --</option>';
+
+            Object.keys(byCategory).sort().forEach(category => {
+                const group = document.createElement('optgroup');
+                group.label = `${category} (${byCategory[category].length})`;
+                byCategory[category].forEach(tool => {
+                    const opt = document.createElement('option');
+                    opt.value = tool.id;
+                    opt.textContent = `${tool.name} - ${tool.description}`;
+                    group.appendChild(opt);
+                });
+                select.appendChild(group);
+            });
+
+            count.textContent = filtered.length;
+        }
+
+        function filterMetorialTools(searchTerm) {
+            populateMetorialTools(searchTerm);
+        }
+
+        function onMetorialToolChange(toolId) {
+            const actionSelect = document.getElementById('mcpTool');
+
+            if (!toolId) return;
+
+            const tool = appState.metorialTools.find(t => t.id === toolId);
+            if (tool && tool.actions) {
+                actionSelect.innerHTML = '<option value="">-- Select Action --</option>';
+                tool.actions.forEach(action => {
+                    const opt = document.createElement('option');
+                    opt.value = action.id;
+                    opt.textContent = `${action.name} - ${action.description}`;
+                    actionSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function populateModelDropdown(models, searchTerm = '') {
+            const select = document.getElementById('modelSelect');
+            const modelCount = document.getElementById('modelCount');
+
+            if (!models || models.length === 0) {
+                select.innerHTML = '<option value="">No models available</option>';
+                if (modelCount) modelCount.textContent = '0';
+                return;
+            }
+
+            // Filter models by search term
+            let filteredModels = models;
+            if (searchTerm && searchTerm.trim().length > 0) {
+                const term = searchTerm.toLowerCase().trim();
+                filteredModels = models.filter(m =>
+                    m.name.toLowerCase().includes(term) ||
+                    m.id.toLowerCase().includes(term) ||
+                    (m.provider && m.provider.toLowerCase().includes(term))
+                );
+            }
+
+            select.innerHTML = '';
+
+            if (filteredModels.length === 0) {
+                select.innerHTML = '<option value="">No models match your search</option>';
+                if (modelCount) modelCount.textContent = '0';
+                return;
+            }
+
+            select.innerHTML = '<option value="">-- Select a model --</option>';
+
+            // Add Facilitair models first (special group at top)
+            const facilitairModels = filteredModels.filter(m => m.provider === 'facilitair');
+            if (facilitairModels.length > 0) {
+                const facilitairGroup = document.createElement('optgroup');
+                facilitairGroup.label = '⭐ Facilitair Models (Recommended)';
+                facilitairModels.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.id;
+                    opt.textContent = m.name;
+                    opt.title = m.description || 'Facilitair intelligent routing';
+                    facilitairGroup.appendChild(opt);
+                });
+                select.appendChild(facilitairGroup);
+            }
+
+            // Add free models
+            const freeModels = filteredModels.filter(m => m.free && m.provider !== 'facilitair');
+            if (freeModels.length > 0) {
+                const freeGroup = document.createElement('optgroup');
+                freeGroup.label = `Free Models (${freeModels.length})`;
+                freeModels.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.id;
+                    opt.textContent = `${m.name} [${m.provider}]`;
+                    opt.title = `Context: ${m.context || 'N/A'} tokens`;
+                    freeGroup.appendChild(opt);
+                });
+                select.appendChild(freeGroup);
+            }
+
+            // Group by provider
+            const byProvider = {};
+            filteredModels.forEach(m => {
+                if (!m.free && m.provider !== 'facilitair') {
+                    if (!byProvider[m.provider]) byProvider[m.provider] = [];
+                    byProvider[m.provider].push(m);
+                }
+            });
+
+            // Sort providers alphabetically
+            Object.keys(byProvider).sort().forEach(provider => {
+                const providerModels = byProvider[provider];
+                const group = document.createElement('optgroup');
+                group.label = `${provider.charAt(0).toUpperCase() + provider.slice(1)} (${providerModels.length})`;
+                providerModels.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.id;
+
+                    // Format pricing more compactly
+                    let displayText = m.name;
+                    if (m.input_price !== undefined && m.input_price > 0) {
+                        const inputPrice = m.input_price >= 0.001 ? m.input_price.toFixed(3) : m.input_price.toFixed(5);
+                        const outputPrice = m.output_price >= 0.001 ? m.output_price.toFixed(3) : m.output_price.toFixed(5);
+                        displayText = `${m.name} ($${inputPrice}/$${outputPrice})`;
+                    }
+
+                    opt.textContent = displayText;
+
+                    // Add full details in tooltip
+                    const contextInfo = m.context ? `Context: ${m.context} tokens` : '';
+                    const priceInfo = m.input_price ? `Price: $${m.input_price}/M in, $${m.output_price}/M out` : '';
+                    opt.title = [m.name, priceInfo, contextInfo].filter(x => x).join(' | ');
+                    group.appendChild(opt);
+                });
+                select.appendChild(group);
+            });
+
+            if (modelCount) modelCount.textContent = filteredModels.length;
+            console.log(`Displayed ${filteredModels.length}/${models.length} models`);
+        }
+
+        // Setup model search
+        function setupModelSearch() {
+            const searchInput = document.getElementById('modelSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const searchValue = e.target.value || '';
+                    populateModelDropdown(appState.allModels, searchValue);
+                });
+
+                // Also handle when search is cleared
+                searchInput.addEventListener('keyup', (e) => {
+                    if (e.target.value === '') {
+                        populateModelDropdown(appState.allModels, '');
+                    }
+                });
+            }
+        }
+
+        // ============================================
+        // FILE UPLOAD HANDLING
+        // ============================================
+
+        let selectedFile = null;
+
+        function setupFileUpload() {
+            const dropZone = document.getElementById('fileDropZone');
+            const fileInput = document.getElementById('inputFileInput');
+
+            if (!dropZone || !fileInput) return;
+
+            // Click to browse
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // File selected via input
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileSelect(e.target.files[0]);
+                }
+            });
+
+            // Drag and drop handlers
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.borderColor = '#5CE1E6';
+                dropZone.style.background = 'rgba(92, 225, 230, 0.15)';
+            });
+
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.borderColor = 'var(--facilitair-teal)';
+                dropZone.style.background = 'rgba(92, 225, 230, 0.05)';
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.borderColor = 'var(--facilitair-teal)';
+                dropZone.style.background = 'rgba(92, 225, 230, 0.05)';
+
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelect(e.dataTransfer.files[0]);
+                }
+            });
+        }
+
+        function handleFileSelect(file) {
+            selectedFile = file;
+
+            // Update UI to show selected file
+            document.getElementById('selectedFileName').style.display = 'block';
+            document.getElementById('fileNameDisplay').textContent = file.name;
+
+            // Read file content and store in node data
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+
+                // Update current selected node if it's an input node
+                if (appState.selectedNodeId && appState.reactFlowInstance) {
+                    const nodes = appState.reactFlowInstance.getNodes();
+                    const currentNode = nodes.find(n => n.id === appState.selectedNodeId);
+
+                    if (currentNode && currentNode.data.nodeType === 'input') {
+                        updateNodeData(appState.selectedNodeId, {
+                            inputFilePath: file.name,
+                            inputFileContent: content,
+                            inputFileSize: file.size,
+                            inputFileType: file.type
+                        });
+                    }
+                }
+
+                console.log('File loaded:', file.name, `(${(file.size / 1024).toFixed(2)} KB)`);
+            };
+
+            reader.readAsText(file);
+        }
+
+        function clearSelectedFile() {
+            selectedFile = null;
+            document.getElementById('selectedFileName').style.display = 'none';
+            document.getElementById('fileNameDisplay').textContent = '';
+            document.getElementById('inputFileInput').value = '';
+
+            // Clear file data from node
+            if (appState.selectedNodeId) {
+                updateNodeData(appState.selectedNodeId, {
+                    inputFilePath: '',
+                    inputFileContent: '',
+                    inputFileSize: 0,
+                    inputFileType: ''
+                });
+            }
+        }
+
+        // ============================================
+        // INTERFACE SWITCHING
+        // ============================================
+
+        function switchToChat() {
+            // Check if there's unsaved work
+            if (hasUnsavedChanges()) {
+                const confirmed = confirm('You have unsaved changes in your workflow. Do you want to save before navigating away?');
+                if (confirmed) {
+                    autoSaveWorkflow();
+                }
+            }
+            // Navigate to the chat interface
+            window.location.href = './index.html';
+        }
+
+        function hasUnsavedChanges() {
+            if (!appState.reactFlowInstance) return false;
+            const nodes = appState.reactFlowInstance.getNodes();
+            const edges = appState.reactFlowInstance.getEdges();
+            return nodes.length > 0 || edges.length > 0;
+        }
+
+        function autoSaveWorkflow() {
+            if (!appState.reactFlowInstance) return;
+
+            const workflow = {
+                nodes: appState.nodes,
+                edges: appState.edges,
+                version: '1.0',
+                timestamp: new Date().toISOString()
+            };
+
+            localStorage.setItem('facilitair_workflow_draft', JSON.stringify(workflow));
+            console.log('✓ Workflow auto-saved');
+        }
+
+        function loadDraftWorkflow() {
+            const draft = localStorage.getItem('facilitair_workflow_draft');
+            if (!draft) return false;
+
+            try {
+                const workflow = JSON.parse(draft);
+                if (workflow.nodes && workflow.nodes.length > 0) {
+                    return workflow;
+                }
+            } catch (e) {
+                console.error('Failed to parse draft workflow:', e);
+            }
+            return false;
+        }
+
+        function clearDraftWorkflow() {
+            localStorage.removeItem('facilitair_workflow_draft');
+            console.log('✓ Draft workflow cleared');
+        }
+
+        // ============================================
+        // COLLAPSIBLE CONFIG SECTIONS
+        // ============================================
+
+        function toggleConfigSection(sectionId) {
+            const content = document.getElementById(sectionId);
+            const headers = document.querySelectorAll('.config-section-header');
+
+            // Find the header that was clicked
+            let clickedHeader = null;
+            headers.forEach(header => {
+                const nextSibling = header.nextElementSibling;
+                if (nextSibling && nextSibling.id === sectionId) {
+                    clickedHeader = header;
+                }
+            });
+
+            if (content && clickedHeader) {
+                const isCollapsed = content.classList.contains('collapsed');
+
+                if (isCollapsed) {
+                    // Expand
+                    content.classList.remove('collapsed');
+                    clickedHeader.classList.remove('collapsed');
+                } else {
+                    // Collapse
+                    content.classList.add('collapsed');
+                    clickedHeader.classList.add('collapsed');
+                }
+            }
+        }
+
+        // Toggle properties panel minimize/expand
+        function togglePropertiesPanel() {
+            const panel = document.getElementById('propertiesPanel');
+            const icon = document.getElementById('panelToggleIcon');
+
+            if (panel.classList.contains('minimized')) {
+                // Expand
+                panel.classList.remove('minimized');
+                icon.textContent = '_';
+            } else {
+                // Minimize
+                panel.classList.add('minimized');
+                icon.textContent = '☰';
+            }
+        }
+
+        // ============================================
+        // MEDIA UPLOAD FOR MODEL NODES
+        // ============================================
+
+        function setupModelMediaUpload() {
+            const mediaInput = document.getElementById('modelMediaInput');
+            if (!mediaInput) return;
+
+            mediaInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                if (files.length === 0) return;
+
+                handleModelMediaFiles(files);
+            });
+        }
+
+        async function handleModelMediaFiles(files) {
+            if (!appState.selectedNodeId) return;
+
+            const mediaData = [];
+            const preview = document.getElementById('modelMediaPreview');
+            const list = document.getElementById('modelMediaList');
+
+            // Read files as base64
+            for (const file of files) {
+                try {
+                    const base64 = await fileToBase64(file);
+                    mediaData.push({
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: base64
+                    });
+                } catch (err) {
+                    console.error('Error reading file:', err);
+                }
+            }
+
+            // Update node data
+            updateNodeData(appState.selectedNodeId, { mediaFiles: mediaData });
+
+            // Update preview
+            if (mediaData.length > 0) {
+                preview.style.display = 'block';
+                list.innerHTML = mediaData.map(file => `
+                    <div style="padding: 5px 0; display: flex; justify-content: space-between; align-items: center;">
+                        <span>
+                            ${file.type.startsWith('image/') ? '🖼️' : '🎥'} ${file.name}
+                        </span>
+                        <span style="color: var(--facilitair-gray); font-size: 0.8em;">
+                            ${(file.size / 1024).toFixed(1)} KB
+                        </span>
+                    </div>
+                `).join('');
+            } else {
+                preview.style.display = 'none';
+            }
+
+            console.log('Media files uploaded:', mediaData.length);
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function clearModelMedia() {
+            if (!appState.selectedNodeId) return;
+
+            updateNodeData(appState.selectedNodeId, { mediaFiles: [] });
+
+            const mediaInput = document.getElementById('modelMediaInput');
+            const preview = document.getElementById('modelMediaPreview');
+
+            if (mediaInput) mediaInput.value = '';
+            if (preview) preview.style.display = 'none';
+
+            console.log('Media files cleared');
+        }
+
+        // ============================================
+        // CONTEXT MENU & NODE OPERATIONS
+        // ============================================
+
+        let contextMenuTarget = null;
+        let contextMenuTargetEdge = null;
+        let clipboard = null;
+
+        function setupContextMenu() {
+            const nodeContextMenu = document.getElementById('contextMenu');
+            const edgeContextMenu = document.getElementById('edgeContextMenu');
+            const reactFlowRoot = document.getElementById('reactflow-root');
+
+            // Add right-click handler to canvas
+            reactFlowRoot.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+
+                // Check if clicked on an edge first
+                const edgeTarget = e.target.closest('.react-flow__edge');
+                if (edgeTarget) {
+                    const edgeId = edgeTarget.getAttribute('data-id');
+                    if (edgeId) {
+                        contextMenuTargetEdge = edgeId;
+                        contextMenuTarget = null;
+                        showEdgeContextMenu(e.clientX, e.clientY);
+                        return;
+                    }
+                }
+
+                // Check if clicked on a node
+                const nodeTarget = e.target.closest('.react-flow__node');
+                if (nodeTarget) {
+                    const nodeId = nodeTarget.getAttribute('data-id');
+                    if (nodeId) {
+                        contextMenuTarget = nodeId;
+                        contextMenuTargetEdge = null;
+                        showNodeContextMenu(e.clientX, e.clientY);
+                        return;
+                    }
+                }
+
+                // Clicked elsewhere
+                hideAllContextMenus();
+            });
+
+            // Hide context menus when clicking elsewhere
+            document.addEventListener('click', (e) => {
+                if (!nodeContextMenu.contains(e.target) && !edgeContextMenu.contains(e.target)) {
+                    hideAllContextMenus();
+                }
+            });
+
+            // Hide on scroll
+            reactFlowRoot.addEventListener('wheel', hideAllContextMenus);
+        }
+
+        function showNodeContextMenu(x, y) {
+            hideAllContextMenus();
+            const contextMenu = document.getElementById('contextMenu');
+            contextMenu.style.left = x + 'px';
+            contextMenu.style.top = y + 'px';
+            contextMenu.classList.add('show');
+        }
+
+        function showEdgeContextMenu(x, y) {
+            hideAllContextMenus();
+            const edgeContextMenu = document.getElementById('edgeContextMenu');
+            edgeContextMenu.style.left = x + 'px';
+            edgeContextMenu.style.top = y + 'px';
+            edgeContextMenu.classList.add('show');
+        }
+
+        function hideAllContextMenus() {
+            document.getElementById('contextMenu').classList.remove('show');
+            document.getElementById('edgeContextMenu').classList.remove('show');
+        }
+
+        function hideContextMenu() {
+            hideAllContextMenus();
+        }
+
+        function contextMenuAction(action) {
+            if (!contextMenuTarget || !appState.reactFlowInstance) {
+                hideContextMenu();
+                return;
+            }
+
+            const nodes = appState.reactFlowInstance.getNodes();
+            const node = nodes.find(n => n.id === contextMenuTarget);
+            if (!node) {
+                hideContextMenu();
+                return;
+            }
+
+            switch (action) {
+                case 'name':
+                    const newLabel = prompt('Enter label for this node:', node.data.customLabel || '');
+                    if (newLabel) {
+                        updateNodeData(contextMenuTarget, { customLabel: newLabel });
+                    }
+                    break;
+
+                case 'duplicate':
+                    duplicateNode(node);
+                    break;
+
+                case 'copy':
+                    clipboard = JSON.parse(JSON.stringify(node));
+                    console.log('Node copied to clipboard');
+                    break;
+
+                case 'cut':
+                    clipboard = JSON.parse(JSON.stringify(node));
+                    deleteNode(contextMenuTarget);
+                    console.log('Node cut to clipboard');
+                    break;
+
+                case 'delete':
+                    if (confirm('Delete this node?')) {
+                        deleteNode(contextMenuTarget);
+                    }
+                    break;
+            }
+
+            hideContextMenu();
+            contextMenuTarget = null;
+        }
+
+        function duplicateNode(node) {
+            if (!appState.reactFlowInstance) return;
+
+            const newNode = {
+                id: `node_${++appState.nodeIdCounter}`,
+                type: node.type,
+                position: {
+                    x: node.position.x + 50,
+                    y: node.position.y + 50
+                },
+                data: { ...node.data, customLabel: (node.data.customLabel || '') + ' (Copy)' }
+            };
+
+            const nodes = appState.reactFlowInstance.getNodes();
+            appState.reactFlowInstance.setNodes([...nodes, newNode]);
+            console.log('Node duplicated:', newNode.id);
+        }
+
+        function deleteNode(nodeId) {
+            if (!appState.reactFlowInstance) return;
+
+            const nodes = appState.reactFlowInstance.getNodes();
+            const edges = appState.reactFlowInstance.getEdges();
+
+            // Remove node
+            const filteredNodes = nodes.filter(n => n.id !== nodeId);
+
+            // Remove connected edges
+            const filteredEdges = edges.filter(e => e.source !== nodeId && e.target !== nodeId);
+
+            appState.reactFlowInstance.setNodes(filteredNodes);
+            appState.reactFlowInstance.setEdges(filteredEdges);
+
+            // Reset selection UI if this was the selected node
+            if (appState.selectedNodeId === nodeId) {
+                appState.selectedNodeId = null;
+                document.getElementById('node-config').style.display = 'none';
+                document.getElementById('no-selection').style.display = 'block';
+            }
+
+            console.log('Node deleted:', nodeId);
+        }
+
+        // Paste function (can be called with Ctrl+V later)
+        function pasteNode() {
+            if (!clipboard || !appState.reactFlowInstance) return;
+
+            const newNode = {
+                id: `node_${++appState.nodeIdCounter}`,
+                type: clipboard.type,
+                position: {
+                    x: clipboard.position.x + 100,
+                    y: clipboard.position.y + 100
+                },
+                data: { ...clipboard.data }
+            };
+
+            const nodes = appState.reactFlowInstance.getNodes();
+            appState.reactFlowInstance.setNodes([...nodes, newNode]);
+            console.log('Node pasted:', newNode.id);
+        }
+
+        // ============================================
+        // EDGE/CONNECTOR OPERATIONS
+        // ============================================
+
+        function edgeContextMenuAction(action) {
+            if (!contextMenuTargetEdge || !appState.reactFlowInstance) {
+                hideContextMenu();
+                return;
+            }
+
+            const edges = appState.reactFlowInstance.getEdges();
+            const edge = edges.find(e => e.id === contextMenuTargetEdge);
+            if (!edge) {
+                hideContextMenu();
+                return;
+            }
+
+            switch (action) {
+                case 'label':
+                    const label = prompt('Enter label for this connector:', edge.label || '');
+                    if (label !== null) {
+                        updateEdgeData(contextMenuTargetEdge, {
+                            label: label,
+                            labelStyle: { fill: '#5CE1E6', fontWeight: 600 },
+                            labelBgStyle: { fill: '#1F2937', fillOpacity: 0.9 }
+                        });
+                    }
+                    break;
+
+                case 'style':
+                    const style = prompt('Choose style:\n1 = Solid\n2 = Dashed\n3 = Dotted\n4 = Animated', '1');
+                    if (style) {
+                        const styleMap = {
+                            '1': { strokeDasharray: '0', animated: false },
+                            '2': { strokeDasharray: '5, 5', animated: false },
+                            '3': { strokeDasharray: '1, 3', animated: false },
+                            '4': { strokeDasharray: '0', animated: true }
+                        };
+                        const edgeStyle = styleMap[style] || styleMap['1'];
+                        updateEdgeData(contextMenuTargetEdge, {
+                            style: { strokeDasharray: edgeStyle.strokeDasharray },
+                            animated: edgeStyle.animated
+                        });
+                    }
+                    break;
+
+                case 'duplicate':
+                    const duplicateEdge = {
+                        id: `edge_${Date.now()}`,
+                        source: edge.source,
+                        target: edge.target,
+                        label: edge.label ? edge.label + ' (Copy)' : '',
+                        style: edge.style,
+                        animated: edge.animated
+                    };
+                    appState.reactFlowInstance.setEdges([...edges, duplicateEdge]);
+                    console.log('Edge duplicated:', duplicateEdge.id);
+                    break;
+
+                case 'delete':
+                    if (confirm('Delete this connector?')) {
+                        const filteredEdges = edges.filter(e => e.id !== contextMenuTargetEdge);
+                        appState.reactFlowInstance.setEdges(filteredEdges);
+                        console.log('Edge deleted:', contextMenuTargetEdge);
+                    }
+                    break;
+            }
+
+            hideContextMenu();
+            contextMenuTargetEdge = null;
+        }
+
+        function updateEdgeData(edgeId, updates) {
+            if (!appState.reactFlowInstance) return;
+
+            const edges = appState.reactFlowInstance.getEdges();
+            const updatedEdges = edges.map(edge => {
+                if (edge.id === edgeId) {
+                    return { ...edge, ...updates };
+                }
+                return edge;
+            });
+
+            appState.reactFlowInstance.setEdges(updatedEdges);
+            console.log('Edge updated:', edgeId, updates);
+        }
+
+        // ============================================
+        // MY WORKFLOWS MANAGEMENT
+        // ============================================
+
+        function refreshWorkflowsList() {
+            const list = document.getElementById('myWorkflowsList');
+            const stored = localStorage.getItem('facilitair_workflows');
+
+            if (!stored) {
+                list.innerHTML = '<div style="color: var(--facilitair-gray);">No saved workflows yet</div>';
+                return;
+            }
+
+            let workflows = {};
+            try {
+                workflows = JSON.parse(stored);
+            } catch (e) {
+                console.error('Failed to parse workflows:', e);
+                list.innerHTML = '<div style="color: var(--error-red);">Error loading workflows</div>';
+                return;
+            }
+
+            const workflowsArray = Object.values(workflows).sort((a, b) =>
+                new Date(b.updated) - new Date(a.updated)
+            );
+
+            if (workflowsArray.length === 0) {
+                list.innerHTML = '<div style="color: var(--facilitair-gray);">No saved workflows yet</div>';
+                return;
+            }
+
+            list.innerHTML = workflowsArray.map(wf => {
+                const date = new Date(wf.updated);
+                const dateStr = date.toLocaleDateString();
+                const nodeCount = wf.nodes.length;
+
+                return `
+                    <div class="workflow-item" onclick="loadWorkflow('${wf.id}')">
+                        <button class="workflow-delete" onclick="event.stopPropagation(); deleteWorkflow('${wf.id}')">🗑</button>
+                        <div class="workflow-name">${wf.name}</div>
+                        <div class="workflow-meta">
+                            <span>${nodeCount} nodes</span>
+                            <span>${dateStr}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadWorkflow(workflowId) {
+            const stored = localStorage.getItem('facilitair_workflows');
+            if (!stored) return;
+
+            let workflows = {};
+            try {
+                workflows = JSON.parse(stored);
+            } catch (e) {
+                console.error('Failed to parse workflows:', e);
+                return;
+            }
+
+            const workflow = workflows[workflowId];
+            if (!workflow || !appState.reactFlowInstance) return;
+
+            const confirmed = confirm(`Load workflow "${workflow.name}"? This will replace your current workflow.`);
+            if (!confirmed) return;
+
+            appState.reactFlowInstance.setNodes(workflow.nodes);
+            appState.reactFlowInstance.setEdges(workflow.edges);
+
+            console.log('Workflow loaded:', workflow.name);
+            alert(`Workflow "${workflow.name}" loaded successfully`);
+        }
+
+        function deleteWorkflow(workflowId) {
+            const stored = localStorage.getItem('facilitair_workflows');
+            if (!stored) return;
+
+            let workflows = {};
+            try {
+                workflows = JSON.parse(stored);
+            } catch (e) {
+                console.error('Failed to parse workflows:', e);
+                return;
+            }
+
+            const workflow = workflows[workflowId];
+            if (!workflow) return;
+
+            const confirmed = confirm(`Delete workflow "${workflow.name}"?`);
+            if (!confirmed) return;
+
+            delete workflows[workflowId];
+            localStorage.setItem('facilitair_workflows', JSON.stringify(workflows));
+
+            console.log('Workflow deleted:', workflow.name);
+            refreshWorkflowsList();
+        }
+
+        // ============================================
+        // PANEL RESIZING
+        // ============================================
+
+        function setupPanelResizing() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarResizer = document.getElementById('sidebarResizer');
+            const propertiesPanel = document.getElementById('propertiesPanel');
+            const propertiesResizer = document.getElementById('propertiesResizer');
+
+            let isResizingSidebar = false;
+            let isResizingProperties = false;
+
+            // Sidebar resizing
+            sidebarResizer.addEventListener('mousedown', (e) => {
+                isResizingSidebar = true;
+                sidebarResizer.classList.add('resizing');
+                document.body.style.cursor = 'ew-resize';
+                e.preventDefault();
+            });
+
+            // Properties panel resizing
+            propertiesResizer.addEventListener('mousedown', (e) => {
+                isResizingProperties = true;
+                propertiesResizer.classList.add('resizing');
+                document.body.style.cursor = 'ew-resize';
+                e.preventDefault();
+            });
+
+            // Mouse move handler
+            document.addEventListener('mousemove', (e) => {
+                if (isResizingSidebar) {
+                    const newWidth = e.clientX;
+                    if (newWidth >= 200 && newWidth <= 500) {
+                        sidebar.style.width = newWidth + 'px';
+                    }
+                }
+
+                if (isResizingProperties) {
+                    const containerWidth = document.querySelector('.container').offsetWidth;
+                    const newWidth = containerWidth - e.clientX;
+                    if (newWidth >= 250 && newWidth <= 600) {
+                        propertiesPanel.style.width = newWidth + 'px';
+                    }
+                }
+            });
+
+            // Mouse up handler
+            document.addEventListener('mouseup', () => {
+                if (isResizingSidebar) {
+                    isResizingSidebar = false;
+                    sidebarResizer.classList.remove('resizing');
+                    document.body.style.cursor = 'default';
+                }
+                if (isResizingProperties) {
+                    isResizingProperties = false;
+                    propertiesResizer.classList.remove('resizing');
+                    document.body.style.cursor = 'default';
+                }
+            });
+        }
+
+        // ============================================
+        // INITIALIZE APP
+        // ============================================
+
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing...');
+
+            // Initialize React Flow
+            const root = document.getElementById('reactflow-root');
+            if (root && typeof ReactDOM !== 'undefined' && typeof React !== 'undefined') {
+                const reactRoot = ReactDOM.createRoot(root);
+                reactRoot.render(React.createElement(WorkflowBuilder));
+                console.log('React Flow mounted');
+            } else {
+                console.error('Cannot mount React Flow - missing dependencies or root element');
+            }
+
+            // Setup drag and drop
+            setupDragAndDrop();
+
+            // Setup file upload
+            setupFileUpload();
+
+            // Setup model search
+            setupModelSearch();
+
+            // Load models
+            loadModels();
+
+            // Load tools and MCP providers
+            loadPipedreamTools();
+            loadMetorialTools();
+
+            // Setup panel resizing
+            setupPanelResizing();
+
+            // Setup context menu
+            setupContextMenu();
+
+            // Setup model media upload
+            setupModelMediaUpload();
+
+            // Load saved workflows list
+            refreshWorkflowsList();
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + C = Copy
+                if ((e.ctrlKey || e.metaKey) && e.key === 'c' && appState.selectedNodeId) {
+                    const nodes = appState.reactFlowInstance?.getNodes();
+                    const node = nodes?.find(n => n.id === appState.selectedNodeId);
+                    if (node) {
+                        clipboard = JSON.parse(JSON.stringify(node));
+                        console.log('Node copied via keyboard');
+                    }
+                }
+                // Ctrl/Cmd + V = Paste
+                else if ((e.ctrlKey || e.metaKey) && e.key === 'v' && clipboard) {
+                    e.preventDefault();
+                    pasteNode();
+                }
+                // Delete/Backspace = Delete selected node
+                else if ((e.key === 'Delete' || e.key === 'Backspace') && appState.selectedNodeId) {
+                    e.preventDefault();
+                    if (confirm('Delete selected node?')) {
+                        deleteNode(appState.selectedNodeId);
+                    }
+                }
+            });
+
+            // Check for draft workflow
+            const draft = loadDraftWorkflow();
+            if (draft) {
+                const restore = confirm('You have an unsaved workflow. Would you like to restore it?');
+                if (restore && appState.reactFlowInstance) {
+                    appState.reactFlowInstance.setNodes(draft.nodes);
+                    appState.reactFlowInstance.setEdges(draft.edges);
+                    console.log('✓ Draft workflow restored');
+                } else {
+                    clearDraftWorkflow();
+                }
+            }
+
+            // Add beforeunload protection
+            window.addEventListener('beforeunload', (e) => {
+                if (hasUnsavedChanges()) {
+                    autoSaveWorkflow();
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
+
+            // Auto-save periodically (every 30 seconds)
+            setInterval(() => {
+                if (hasUnsavedChanges()) {
+                    autoSaveWorkflow();
+                }
+            }, 30000);
+
+            console.log('Facilitair Workflow Builder ready');
+        });
+    </script>
+</body>
+</html>
