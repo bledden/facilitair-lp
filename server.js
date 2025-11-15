@@ -49,7 +49,11 @@ app.use((req, res, next) => {
     // If URL doesn't have .html and the file exists with .html, serve it
     const htmlPath = path.join(__dirname, req.path + '.html');
 
+    console.log(`[URL Rewrite] Checking: ${req.path} -> ${htmlPath}`);
+    console.log(`[URL Rewrite] File exists: ${fs.existsSync(htmlPath)}`);
+
     if (fs.existsSync(htmlPath)) {
+        console.log(`[URL Rewrite] Serving: ${htmlPath}`);
         return res.sendFile(htmlPath);
     }
 
@@ -75,6 +79,19 @@ app.get('/', (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname)));
+
+// Explicit routes for dashboard pages (extension-less URLs)
+app.get('/workflow-builder', (req, res) => {
+    res.sendFile(path.join(__dirname, 'workflow-builder.html'));
+});
+
+app.get('/dashboards/orchestration_dashboard_v2', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboards', 'orchestration_dashboard_v2.html'));
+});
+
+app.get('/dashboards/credits-purchase', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboards', 'credits-purchase.html'));
+});
 
 // Initialize SQLite database
 // Use Railway volume path if available, otherwise local path
