@@ -93,6 +93,10 @@ app.get('/dashboards/credits-purchase', (req, res) => {
     res.sendFile(path.join(__dirname, 'dashboards', 'credits-purchase.html'));
 });
 
+app.get('/dashboards/buy-credits', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboards', 'buy-credits.html'));
+});
+
 // Initialize SQLite database
 // Use Railway volume path if available, otherwise local path
 const dbPath = process.env.RAILWAY_VOLUME_MOUNT_PATH
