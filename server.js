@@ -41,9 +41,13 @@ app.use((req, res, next) => {
     }
 
     // If URL ends with .html, redirect to extensionless version (301 permanent)
+    // Preserve query string parameters during redirect
     if (req.path.endsWith('.html')) {
         const newPath = req.path.slice(0, -5); // Remove .html
-        return res.redirect(301, newPath);
+        const queryString = req.originalUrl.includes('?')
+            ? req.originalUrl.substring(req.originalUrl.indexOf('?'))
+            : '';
+        return res.redirect(301, newPath + queryString);
     }
 
     // If URL doesn't have .html and the file exists with .html, serve it
