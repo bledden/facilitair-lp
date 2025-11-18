@@ -952,6 +952,9 @@ section {
     align-items: center;
     margin-top: var(--space-8);
     max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
 }
 
 /* Mobile: 1 column (1x10) */
@@ -959,6 +962,7 @@ section {
     .frameworks-grid {
         grid-template-columns: 1fr;
         gap: var(--space-3);
+        width: 100%;
     }
 }
 
@@ -967,6 +971,7 @@ section {
     .frameworks-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: var(--space-4);
+        width: fit-content;
     }
 }
 
@@ -975,6 +980,7 @@ section {
     .frameworks-grid {
         grid-template-columns: repeat(5, 1fr);
         gap: var(--space-4);
+        width: fit-content;
     }
 }
 
@@ -983,6 +989,7 @@ section {
     .frameworks-grid {
         grid-template-columns: repeat(10, 1fr);
         gap: var(--space-4);
+        width: fit-content;
     }
 }
 
