@@ -900,6 +900,46 @@ app.get('/api/subscribers', (req, res) => {
     }
 });
 
+// API endpoint: Force confirm subscriber and get token (admin only)
+app.post('/api/admin/confirm-subscriber', (req, res) => {
+    try {
+        const apiKey = req.get('X-API-Key');
+        if (apiKey !== process.env.ADMIN_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const { email } = req.body;
+
+        // Get subscriber
+        const subscriber = db.prepare('SELECT * FROM subscribers WHERE email = ?').get(email);
+
+        if (!subscriber) {
+            return res.status(404).json({ error: 'Subscriber not found' });
+        }
+
+        // Force confirm and reset survey
+        db.prepare(`
+            UPDATE subscribers
+            SET confirmed = 1,
+                confirmed_at = datetime('now'),
+                survey_completed = 0
+            WHERE email = ?
+        `).run(email);
+
+        // Get updated subscriber
+        const updated = db.prepare('SELECT email, confirmed, unsubscribe_token, survey_completed FROM subscribers WHERE email = ?').get(email);
+
+        res.json({
+            success: true,
+            message: 'Subscriber confirmed',
+            subscriber: updated
+        });
+    } catch (error) {
+        console.error('Admin confirm error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // API endpoint: Delete subscriber (admin only)
 app.delete('/api/subscribers/:id', (req, res) => {
     try {
