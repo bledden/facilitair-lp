@@ -110,8 +110,7 @@
                     Reduced Hallucinations
                 </h2>
                 <p class="section-description text-center">
-                    Facilitair is the platform for multi-model collaboration, enabling seamless AI agent coordination
-                    with multiple windows for bouncing between models, intelligent routing, and enhanced quality through collaboration.
+                    Facilitair is the platform for multi-model collaboration, featuring a visual workflow builder, token-based credit system, and custom-built MCP tooling. Enabling seamless AI agent coordination with intelligent routing powered by our dual foundation model system (87.30% avg accuracy).
                 </p>
 
                 <div class="features-grid" style="justify-items: center;">
@@ -614,12 +613,11 @@
                             <h3 class="card-title">Multi-Model Support</h3>
                         </div>
                         <p class="card-preview">
-                            OpenRouter integration provides access to 200+ models including GPT-5, Claude Sonnet 4.5,
-                            DeepSeek v3, Qwen 2.5, and more.
+                            OpenRouter integration provides access to 343+ models orchestrated via our dual foundation model system (87.30% avg accuracy, 100% domain/capability).
                         </p>
                         <div class="card-expanded-content">
                             <h4>Why OpenRouter?</h4>
-                            <p>Single API for 200+ models from OpenAI, Anthropic, Google, Meta, Alibaba, and open-source providers. No vendor lock-in, automatic fallbacks, and unified billing.</p>
+                            <p>Single API for 343+ models from OpenAI, Anthropic, Google, Meta, Alibaba, and open-source providers. Orchestrated via V13 foundation model (87.30% avg, 100% domain/capability) plus dual-model routing system. No vendor lock-in, automatic fallbacks, and unified billing.</p>
 
                             <h4>Supported Models</h4>
                             <ul>
@@ -628,7 +626,7 @@
                                 <li>DeepSeek v3.2 (DeepSeek) - Best for code review and refactoring</li>
                                 <li>Qwen 2.5 Coder (Alibaba) - Best for documentation</li>
                                 <li>Grok-4 (xAI) - Best for testing and edge cases</li>
-                                <li>200+ more models via OpenRouter</li>
+                                <li>343+ more models via OpenRouter</li>
                             </ul>
 
                             <h4>Flexibility</h4>
@@ -637,7 +635,7 @@
                             <div class="card-stats">
                                 <div class="card-stat">
                                     <span class="stat-label">Available Models</span>
-                                    <span class="stat-value">400+</span>
+                                    <span class="stat-value">343+</span>
                                 </div>
                                 <div class="card-stat">
                                     <span class="stat-label">Integration Status</span>
@@ -936,6 +934,52 @@
                             </svg>
                         </button>
                     </div>
+
+                    <div class="expandable-card glass-dark" data-card="foundation-platform">
+                        <div class="card-header">
+                            <h3 class="card-title">Foundation Model & Platform</h3>
+                        </div>
+                        <p class="card-preview">
+                            Dual foundation model system (87.30% avg accuracy, 100% domain/capability), visual workflow builder, token-based credits, and custom-built MCP tooling with 22+ native Rust implementations.
+                        </p>
+                        <div class="card-expanded-content">
+                            <h4>Dual Foundation Model System</h4>
+                            <p>Our current version uses two complementary models: V13 Balanced foundation model achieving 87.30% average accuracy with perfect domain (100%) and capability (100%) classification, plus a dual-model routing system for optimal task distribution.</p>
+
+                            <h4>Visual Workflow Builder</h4>
+                            <p>Drag-and-drop interface for building complex multi-step AI workflows. Create conditional logic, parallel execution paths, and reusable templates without writing code. Export workflows as JSON for version control and sharing.</p>
+
+                            <h4>Token-Based Credit System</h4>
+                            <p>Prepaid credit system with token-level precision: 1 credit = $0.000001. Purchase Starter ($10), Growth ($40), or Pro ($150) packages. Credits deducted automatically per task execution with transparent cost breakdowns.</p>
+
+                            <h4>Custom-Built MCP Tooling</h4>
+                            <p>Native Rust MCP server with 22+ custom tool implementations including Slack, GitHub, Gmail, Notion, Linear, Jira, Asana, Trello, Salesforce, HubSpot, Stripe, Shopify, Mailchimp, Twitter/X, LinkedIn, Facebook, Instagram, Threads, Discord, Teams, Google Calendar, and more. All tools built from scratch for optimal performance and reliability.</p>
+
+                            <div class="card-stats">
+                                <div class="card-stat">
+                                    <span class="stat-label">Foundation Model Accuracy</span>
+                                    <span class="stat-value">87.30%</span>
+                                </div>
+                                <div class="card-stat">
+                                    <span class="stat-label">Domain/Capability Accuracy</span>
+                                    <span class="stat-value">100%</span>
+                                </div>
+                                <div class="card-stat">
+                                    <span class="stat-label">Custom MCP Tools</span>
+                                    <span class="stat-value">22+</span>
+                                </div>
+                                <div class="card-stat">
+                                    <span class="stat-label">Models Orchestrated</span>
+                                    <span class="stat-value">343+</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="expand-btn" aria-label="Expand card">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="frameworks-section">
@@ -949,69 +993,7 @@
                         <a href="https://www.truefoundry.com/" target="_blank" class="framework-badge glass-light">TrueFoundry</a>
                         <a href="https://redpanda.com/" target="_blank" class="framework-badge glass-light">Redpanda</a>
                         <a href="https://sentry.io/" target="_blank" class="framework-badge glass-light">Sentry</a>
-                        <a href="https://pipedream.com/" target="_blank" class="framework-badge glass-light">Pipedream</a>
                         <a href="https://www.stack-ai.com/" target="_blank" class="framework-badge glass-light">Stack AI</a>
-                    </div>
-                </div>
-
-                <!-- Pipedream Integration -->
-                <div class="pipedream-section">
-                    <div class="integration-card glass-dark">
-                        <div class="integration-header">
-                            <h3 class="integration-title">Automate with Pipedream</h3>
-                            <span class="integration-badge">API Integration</span>
-                        </div>
-                        <p class="integration-description">
-                            Connect FACILITAIR's multi-agent workflows to 2,100+ apps with Pipedream's low-code automation platform.
-                            Trigger code generation from Slack, route anomaly detections to PagerDuty, or sync quality metrics to your data warehouse—all without writing boilerplate.
-                        </p>
-                        <div class="integration-features">
-                            <div class="integration-feature">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--facilitair-teal);">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <div class="feature-content">
-                                    <strong>Pre-built FACILITAIR actions & triggers</strong>
-                                    <p>Ready-to-use workflow components for code generation, anomaly detection, and quality validation—no API calls to write.</p>
-                                </div>
-                            </div>
-                            <div class="integration-feature">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--facilitair-teal);">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <div class="feature-content">
-                                    <strong>Connect to Slack, GitHub, Jira, and 2,100+ apps</strong>
-                                    <p>Drag-and-drop integration builder connects FACILITAIR to your entire tech stack with visual workflow automation.</p>
-                                </div>
-                            </div>
-                            <div class="integration-feature">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--facilitair-teal);">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <div class="feature-content">
-                                    <strong>Real-time webhooks for instant workflow automation</strong>
-                                    <p>Event-driven triggers fire within milliseconds—get Slack alerts when anomalies detected or push code to GitHub on completion.</p>
-                                </div>
-                            </div>
-                            <div class="integration-feature">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--facilitair-teal);">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <div class="feature-content">
-                                    <strong>Zero infrastructure—managed hosting included</strong>
-                                    <p>No servers to maintain, no scaling concerns, no DevOps overhead—Pipedream handles execution, monitoring, and reliability.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="integration-cta">
-                            <a href="https://pipedream.com/apps/facilitair" target="_blank" class="btn-primary">
-                                View Pipedream Integration
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: var(--space-2);">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
