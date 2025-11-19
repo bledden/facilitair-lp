@@ -990,6 +990,37 @@ app.post('/api/admin/migrate-survey-schema', (req, res) => {
     }
 });
 
+// API endpoint: Get survey responses (admin only)
+app.get('/api/admin/survey-responses', (req, res) => {
+    try {
+        const apiKey = req.get('X-API-Key');
+        if (apiKey !== process.env.ADMIN_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const email = req.query.email;
+
+        let query = `
+            SELECT us.*, s.email
+            FROM user_surveys us
+            JOIN subscribers s ON us.subscriber_id = s.id
+        `;
+
+        if (email) {
+            query += ` WHERE s.email = ?`;
+            const responses = db.prepare(query).all(email);
+            res.json({ success: true, responses });
+        } else {
+            query += ` ORDER BY us.submitted_at DESC LIMIT 50`;
+            const responses = db.prepare(query).all();
+            res.json({ success: true, responses });
+        }
+    } catch (error) {
+        console.error('Get survey responses error:', error);
+        res.status(500).json({ error: 'Server error', debug: error.message });
+    }
+});
+
 // API endpoint: Delete subscriber (admin only)
 app.delete('/api/subscribers/:id', (req, res) => {
     try {
