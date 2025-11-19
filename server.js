@@ -1025,6 +1025,27 @@ app.get('/api/admin/survey-responses', (req, res) => {
     }
 });
 
+// API endpoint: Get all confirmed subscribers (admin only)
+app.get('/api/admin/subscribers', (req, res) => {
+    try {
+        const apiKey = req.get('X-API-Key');
+        if (apiKey !== process.env.ADMIN_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const subscribers = db.prepare(`
+            SELECT email, unsubscribe_token, survey_completed
+            FROM subscribers
+            WHERE confirmed = 1
+        `).all();
+
+        res.json({ success: true, subscribers, count: subscribers.length });
+    } catch (error) {
+        console.error('Get subscribers error:', error);
+        res.status(500).json({ error: 'Server error', debug: error.message });
+    }
+});
+
 // API endpoint: Delete subscriber (admin only)
 app.delete('/api/subscribers/:id', (req, res) => {
     try {
