@@ -715,11 +715,9 @@ app.post('/api/survey', (req, res) => {
         });
     } catch (error) {
         console.error('Survey submission error:', error);
-        console.error('Error details:', error.message, error.code);
         res.status(500).json({
             success: false,
-            message: 'Server error. Please try again later.',
-            debug: error.message // Temporary for debugging
+            message: 'Server error. Please try again later.'
         });
     }
 });
