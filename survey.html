@@ -413,6 +413,22 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="monthly-budget">
+                        What's your monthly budget for AI tools? <span class="optional">(Optional)</span>
+                    </label>
+                    <select id="monthly-budget" name="monthlyBudget">
+                        <option value="">Select...</option>
+                        <option value="0-20">$0 - $20/month</option>
+                        <option value="20-100">$20 - $100/month</option>
+                        <option value="100-250">$100 - $250/month</option>
+                        <option value="250-600">$250 - $600/month</option>
+                        <option value="600+">$600+/month</option>
+                        <option value="not_sure">Not sure yet</option>
+                    </select>
+                    <div class="hint">Helps us design pricing tiers that work for you.</div>
+                </div>
+
+                <div class="form-group">
                     <label for="byok">
                         Would you bring your own API keys? <span class="optional">(Optional)</span>
                     </label>
@@ -489,6 +505,7 @@
                 currentServices: getCheckedValues('currentServices'),
                 painPoints: document.getElementById('pain-points').value,
                 valueProps: getCheckedValues('valueProps'),
+                monthlyBudget: document.getElementById('monthly-budget').value,
                 byok: document.getElementById('byok').value,
                 additionalInfo: document.getElementById('additional-info').value
             };

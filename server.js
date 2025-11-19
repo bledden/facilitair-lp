@@ -645,6 +645,7 @@ app.post('/api/survey', (req, res) => {
             currentServices,
             painPoints,
             valueProps,
+            monthlyBudget,
             byok,
             additionalInfo
         } = req.body;
@@ -685,10 +686,11 @@ app.post('/api/survey', (req, res) => {
                 current_services,
                 pain_points,
                 value_props,
+                monthly_budget,
                 byok,
                 additional_info
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
         insertStmt.run(
             subscriber.id,
@@ -701,6 +703,7 @@ app.post('/api/survey', (req, res) => {
             currentServicesJson,
             painPoints || null,
             valuePropsJson,
+            monthlyBudget || null,
             byok || null,
             additionalInfo || null
         );
@@ -961,6 +964,7 @@ app.post('/api/admin/migrate-survey-schema', (req, res) => {
             'current_services TEXT',
             'pain_points TEXT',
             'value_props TEXT',
+            'monthly_budget TEXT',
             'byok TEXT'
         ];
 
