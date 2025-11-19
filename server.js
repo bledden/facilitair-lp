@@ -942,6 +942,56 @@ app.post('/api/admin/confirm-subscriber', (req, res) => {
     }
 });
 
+// API endpoint: Migrate database schema (admin only)
+app.post('/api/admin/migrate-survey-schema', (req, res) => {
+    try {
+        const apiKey = req.get('X-API-Key');
+        if (apiKey !== process.env.ADMIN_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const results = [];
+
+        // Get current columns
+        const tableInfo = db.prepare("PRAGMA table_info(user_surveys)").all();
+        const existingColumns = tableInfo.map(col => col.name);
+
+        const columnsToAdd = [
+            'task_types TEXT',
+            'domains TEXT',
+            'role TEXT',
+            'current_services TEXT',
+            'pain_points TEXT',
+            'value_props TEXT',
+            'byok TEXT'
+        ];
+
+        for (const columnDef of columnsToAdd) {
+            const columnName = columnDef.split(' ')[0];
+            if (!existingColumns.includes(columnName)) {
+                try {
+                    db.exec(`ALTER TABLE user_surveys ADD COLUMN ${columnDef}`);
+                    results.push(`Added column: ${columnName}`);
+                } catch (err) {
+                    results.push(`Failed to add ${columnName}: ${err.message}`);
+                }
+            } else {
+                results.push(`Column already exists: ${columnName}`);
+            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Migration complete',
+            results: results,
+            currentColumns: existingColumns
+        });
+    } catch (error) {
+        console.error('Migration error:', error);
+        res.status(500).json({ error: 'Server error', debug: error.message });
+    }
+});
+
 // API endpoint: Delete subscriber (admin only)
 app.delete('/api/subscribers/:id', (req, res) => {
     try {
