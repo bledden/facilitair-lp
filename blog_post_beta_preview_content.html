@@ -1,0 +1,656 @@
+<!-- Facilitair Beta Preview: Full Post Content -->
+<!-- This content is dynamically loaded into the blog card -->
+
+<style>
+    .beta-feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-6);
+        margin: var(--space-6) 0;
+    }
+
+    .beta-feature-card {
+        background: rgba(92, 225, 230, 0.05);
+        border: 1px solid rgba(92, 225, 230, 0.2);
+        border-radius: 12px;
+        padding: var(--space-6);
+    }
+
+    .beta-feature-card h4 {
+        color: var(--facilitair-teal);
+        margin-bottom: var(--space-3);
+        font-size: 1.1rem;
+    }
+
+    .tool-category {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 10px;
+        padding: var(--space-5);
+        margin: var(--space-4) 0;
+    }
+
+    .tool-category h4 {
+        color: #10b981;
+        margin-bottom: var(--space-3);
+    }
+
+    .tool-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .tool-badge {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: rgba(250, 250, 250, 0.9);
+    }
+
+    .interface-section {
+        background: rgba(92, 225, 230, 0.03);
+        border-left: 3px solid var(--facilitair-teal);
+        padding: var(--space-5);
+        margin: var(--space-6) 0;
+        border-radius: 0 10px 10px 0;
+    }
+
+    .code-example {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(92, 225, 230, 0.2);
+        border-radius: 8px;
+        padding: var(--space-4);
+        overflow-x: auto;
+        font-family: 'Fira Code', 'Monaco', monospace;
+        font-size: 0.9rem;
+        margin: var(--space-4) 0;
+    }
+
+    .code-example code {
+        color: #5CE1E6;
+    }
+
+    .code-example .comment {
+        color: rgba(250, 250, 250, 0.5);
+    }
+
+    .code-example .keyword {
+        color: #f59e0b;
+    }
+
+    .code-example .string {
+        color: #10b981;
+    }
+
+    .stat-highlight {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(92, 225, 230, 0.2), rgba(92, 225, 230, 0.1));
+        border: 1px solid rgba(92, 225, 230, 0.3);
+        padding: var(--space-2) var(--space-4);
+        border-radius: 6px;
+        font-weight: 600;
+        color: var(--facilitair-teal);
+        margin: var(--space-1);
+    }
+
+    .funding-callout {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+        border: 2px solid rgba(245, 158, 11, 0.4);
+        border-radius: 16px;
+        padding: var(--space-8);
+        margin: var(--space-8) 0;
+        text-align: center;
+    }
+
+    .funding-callout h3 {
+        color: #f59e0b;
+        margin-bottom: var(--space-4);
+    }
+
+    .model-ranking-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: var(--space-4) 0;
+        font-size: 0.9rem;
+    }
+
+    .model-ranking-table th,
+    .model-ranking-table td {
+        padding: var(--space-3);
+        text-align: left;
+        border-bottom: 1px solid rgba(92, 225, 230, 0.2);
+    }
+
+    .model-ranking-table th {
+        color: var(--facilitair-teal);
+        font-weight: 600;
+    }
+
+    .model-ranking-table tr:hover {
+        background: rgba(92, 225, 230, 0.05);
+    }
+</style>
+
+<h3 id="introduction">Introduction</h3>
+
+<p>Today we're opening the doors to <strong>Facilitair Beta</strong> - an AI orchestration platform that goes beyond simple API proxying. We've built something different: a system that intelligently routes your tasks across 350+ AI models from every major provider, equipped with 200+ integrated tools, and capable of everything from simple completions to full model fine-tuning.</p>
+
+<p>Whether you're a developer looking to switch models without rewriting code, an AI team wanting to compare model performance, or an enterprise needing production-grade orchestration with cost controls - Facilitair provides a unified interface to the entire AI ecosystem.</p>
+
+<p>This post walks through what we've built, shows real examples of each interface, and explains why we're raising to take this further.</p>
+
+<h3 id="what-is-facilitair">What is Facilitair?</h3>
+
+<p>Facilitair is an <strong>AI orchestration platform</strong> that sits between your application and the AI providers. But unlike simple routing proxies, we provide:</p>
+
+<div class="beta-feature-grid">
+    <div class="beta-feature-card">
+        <h4>Intelligent Model Routing</h4>
+        <p>Our V13 routing model analyzes your task and selects the optimal model based on quality requirements, cost constraints, and latency needs. Not a lookup table - an actual ML model trained on 10,000+ task executions.</p>
+    </div>
+
+    <div class="beta-feature-card">
+        <h4>350+ Models, One API</h4>
+        <p>Access OpenAI, Anthropic, Google, Mistral, DeepSeek, Grok, Llama, Qwen, and dozens more through a single endpoint. Switch providers without changing code.</p>
+    </div>
+
+    <div class="beta-feature-card">
+        <h4>200+ Integrated Tools</h4>
+        <p>MCP-compatible tools for Slack, Jira, Salesforce, Stripe, GitHub, databases, cloud providers, and more. Your AI can take real-world actions.</p>
+    </div>
+
+    <div class="beta-feature-card">
+        <h4>Built-in Fine-Tuning</h4>
+        <p>Train custom models on your data with GPU provisioning handled automatically. Upload datasets, configure training, monitor progress - all through the same interface.</p>
+    </div>
+
+    <div class="beta-feature-card">
+        <h4>BYOK (Bring Your Own Keys)</h4>
+        <p>Use your own API keys for direct provider access with our orchestration layer on top. Pay providers directly, pay us only for orchestration.</p>
+    </div>
+
+    <div class="beta-feature-card">
+        <h4>Cost Controls & Budgets</h4>
+        <p>Set per-task and monthly budgets. Real-time cost tracking across all providers. Never get surprised by a runaway API bill again.</p>
+    </div>
+</div>
+
+<h3 id="four-ways-to-use">Four Ways to Use Facilitair</h3>
+
+<p>Everything in Facilitair is accessible through multiple interfaces. Choose what fits your workflow:</p>
+
+<div class="interface-section">
+    <h4>1. Web Dashboard</h4>
+    <p>The fastest way to explore. Visual model comparison, real-time routing visualization, training job monitoring, and interactive task execution.</p>
+    <p><strong>Best for:</strong> Exploration, monitoring, one-off tasks, team collaboration</p>
+    <p><strong>URL:</strong> <a href="https://beta.facilitair.ai/dashboard" target="_blank">beta.facilitair.ai/dashboard</a></p>
+</div>
+
+<div class="interface-section">
+    <h4>2. CLI (corch)</h4>
+    <p>Full-featured command-line interface for developers who live in the terminal. Supports streaming, file uploads, training jobs, and shell completion.</p>
+
+    <div class="code-example">
+        <code><span class="comment"># Install</span>
+pip install facilitair
+
+<span class="comment"># Run a task with intelligent routing</span>
+corch run <span class="string">"Generate a React component for user authentication"</span> --strategy auto
+
+<span class="comment"># Force a specific model</span>
+corch run <span class="string">"Explain quantum entanglement"</span> --model anthropic/claude-opus-4.5
+
+<span class="comment"># List available models with rankings</span>
+corch models --category coding --limit 10
+
+<span class="comment"># Start a training job</span>
+corch training create --base-model meta-llama/llama-3.1-8b --dataset my_data.jsonl
+
+<span class="comment"># Stream logs from running training</span>
+corch training logs job_abc123 --follow
+
+<span class="comment"># Execute MCP tools</span>
+corch services execute slack --action post_message --channel general --message <span class="string">"Deployment complete"</span></code>
+    </div>
+    <p><strong>Best for:</strong> Automation, scripting, CI/CD integration, power users</p>
+</div>
+
+<div class="interface-section">
+    <h4>3. REST API</h4>
+    <p>OpenAI-compatible API that works as a drop-in replacement. Point your existing code at Facilitair and gain access to all providers.</p>
+
+    <div class="code-example">
+        <code><span class="keyword">POST</span> https://api.facilitair.ai/v1/tasks
+
+{
+  <span class="string">"prompt"</span>: <span class="string">"Write a Python function to detect anomalies in time series data"</span>,
+  <span class="string">"strategy"</span>: <span class="string">"auto"</span>,           <span class="comment">// Let routing model decide</span>
+  <span class="string">"quality_weight"</span>: 0.8,       <span class="comment">// Prioritize quality over cost</span>
+  <span class="string">"budget_cents"</span>: 50,          <span class="comment">// Max spend on this task</span>
+  <span class="string">"tools"</span>: [<span class="string">"github"</span>, <span class="string">"postgresql"</span>]  <span class="comment">// Enable specific MCP tools</span>
+}
+
+<span class="comment">// Response includes model used, cost, tokens, and result</span>
+{
+  <span class="string">"task_id"</span>: <span class="string">"task_xyz789"</span>,
+  <span class="string">"model_used"</span>: <span class="string">"anthropic/claude-sonnet-4.5"</span>,
+  <span class="string">"cost_cents"</span>: 12,
+  <span class="string">"result"</span>: <span class="string">"def detect_anomalies(data, window_size=20, threshold=3.0):..."</span>
+}</code>
+    </div>
+    <p><strong>Best for:</strong> Application integration, backend services, existing OpenAI SDK users</p>
+</div>
+
+<div class="interface-section">
+    <h4>4. Python SDK</h4>
+    <p>Native Python library with async support, streaming, and type hints. Feels like using the official provider SDKs but with superpowers.</p>
+
+    <div class="code-example">
+        <code><span class="keyword">from</span> facilitair <span class="keyword">import</span> Facilitair
+
+client = Facilitair(api_key=<span class="string">"your_key"</span>)
+
+<span class="comment"># Simple completion</span>
+response = client.complete(
+    prompt=<span class="string">"Summarize the key points of this document"</span>,
+    strategy=<span class="string">"auto"</span>,
+    budget_cents=25
+)
+print(response.result)
+print(f<span class="string">"Model: {response.model_used}, Cost: ${response.cost_cents/100:.4f}"</span>)
+
+<span class="comment"># Streaming</span>
+<span class="keyword">async for</span> chunk <span class="keyword">in</span> client.stream(<span class="string">"Write a story about a robot learning to paint"</span>):
+    print(chunk, end=<span class="string">""</span>)
+
+<span class="comment"># Execute MCP tools</span>
+result = client.tools.execute(
+    service=<span class="string">"jira"</span>,
+    action=<span class="string">"create_issue"</span>,
+    params={<span class="string">"project"</span>: <span class="string">"ENG"</span>, <span class="string">"summary"</span>: <span class="string">"Bug: Login timeout"</span>, <span class="string">"type"</span>: <span class="string">"Bug"</span>}
+)
+
+<span class="comment"># Fine-tuning</span>
+job = client.training.create(
+    base_model=<span class="string">"meta-llama/llama-3.1-8b"</span>,
+    dataset_path=<span class="string">"training_data.jsonl"</span>,
+    config={<span class="string">"epochs"</span>: 3, <span class="string">"learning_rate"</span>: 2e-5}
+)
+print(f<span class="string">"Training job started: {job.id}"</span>)</code>
+    </div>
+    <p><strong>Best for:</strong> Python applications, data science workflows, complex orchestration</p>
+</div>
+
+<h3 id="integrated-tools">200+ Integrated Tools</h3>
+
+<p>Facilitair includes a comprehensive MCP (Model Context Protocol) tool library. Connect your AI to real services:</p>
+
+<div class="tool-category">
+    <h4>Communication & Messaging (20 services)</h4>
+    <div class="tool-list">
+        <span class="tool-badge">Slack</span>
+        <span class="tool-badge">Discord</span>
+        <span class="tool-badge">Telegram</span>
+        <span class="tool-badge">Microsoft Teams</span>
+        <span class="tool-badge">Gmail</span>
+        <span class="tool-badge">SendGrid</span>
+        <span class="tool-badge">Twilio</span>
+        <span class="tool-badge">WhatsApp Business</span>
+        <span class="tool-badge">Intercom</span>
+        <span class="tool-badge">Zendesk</span>
+        <span class="tool-badge">PagerDuty</span>
+        <span class="tool-badge">Mailgun</span>
+        <span class="tool-badge">Postmark</span>
+        <span class="tool-badge">Resend</span>
+        <span class="tool-badge">Webhooks</span>
+    </div>
+</div>
+
+<div class="tool-category">
+    <h4>Project Management (15 services)</h4>
+    <div class="tool-list">
+        <span class="tool-badge">Jira</span>
+        <span class="tool-badge">Asana</span>
+        <span class="tool-badge">Trello</span>
+        <span class="tool-badge">Monday.com</span>
+        <span class="tool-badge">ClickUp</span>
+        <span class="tool-badge">Notion</span>
+        <span class="tool-badge">Airtable</span>
+        <span class="tool-badge">Linear</span>
+        <span class="tool-badge">GitHub Issues</span>
+        <span class="tool-badge">GitLab Issues</span>
+        <span class="tool-badge">Todoist</span>
+        <span class="tool-badge">Basecamp</span>
+        <span class="tool-badge">Wrike</span>
+    </div>
+</div>
+
+<div class="tool-category">
+    <h4>CRM & Sales (10 services)</h4>
+    <div class="tool-list">
+        <span class="tool-badge">Salesforce</span>
+        <span class="tool-badge">HubSpot</span>
+        <span class="tool-badge">Pipedrive</span>
+        <span class="tool-badge">Zoho CRM</span>
+        <span class="tool-badge">Close</span>
+        <span class="tool-badge">Copper</span>
+        <span class="tool-badge">Freshsales</span>
+        <span class="tool-badge">Monday Sales</span>
+    </div>
+</div>
+
+<div class="tool-category">
+    <h4>E-commerce & Payments (10 services)</h4>
+    <div class="tool-list">
+        <span class="tool-badge">Stripe</span>
+        <span class="tool-badge">PayPal</span>
+        <span class="tool-badge">Square</span>
+        <span class="tool-badge">Shopify</span>
+        <span class="tool-badge">WooCommerce</span>
+        <span class="tool-badge">BigCommerce</span>
+        <span class="tool-badge">Paddle</span>
+        <span class="tool-badge">Plaid</span>
+    </div>
+</div>
+
+<div class="tool-category">
+    <h4>Code & Development (15 services)</h4>
+    <div class="tool-list">
+        <span class="tool-badge">GitHub</span>
+        <span class="tool-badge">GitLab</span>
+        <span class="tool-badge">Bitbucket</span>
+        <span class="tool-badge">Vercel</span>
+        <span class="tool-badge">Netlify</span>
+        <span class="tool-badge">Railway</span>
+        <span class="tool-badge">Docker Hub</span>
+        <span class="tool-badge">CircleCI</span>
+        <span class="tool-badge">GitHub Actions</span>
+        <span class="tool-badge">Jenkins</span>
+    </div>
+</div>
+
+<div class="tool-category">
+    <h4>Databases & Storage (15 services)</h4>
+    <div class="tool-list">
+        <span class="tool-badge">PostgreSQL</span>
+        <span class="tool-badge">MongoDB</span>
+        <span class="tool-badge">Redis</span>
+        <span class="tool-badge">MySQL</span>
+        <span class="tool-badge">Supabase</span>
+        <span class="tool-badge">Firebase</span>
+        <span class="tool-badge">AWS S3</span>
+        <span class="tool-badge">Google Cloud Storage</span>
+        <span class="tool-badge">Dropbox</span>
+        <span class="tool-badge">Google Drive</span>
+        <span class="tool-badge">Pinecone</span>
+        <span class="tool-badge">Elasticsearch</span>
+    </div>
+</div>
+
+<div class="tool-category">
+    <h4>Search & Knowledge (20 services)</h4>
+    <div class="tool-list">
+        <span class="tool-badge">Google Search (Serper)</span>
+        <span class="tool-badge">Brave Search</span>
+        <span class="tool-badge">Tavily</span>
+        <span class="tool-badge">Exa (Neural Search)</span>
+        <span class="tool-badge">Wikipedia</span>
+        <span class="tool-badge">arXiv</span>
+        <span class="tool-badge">PubMed</span>
+        <span class="tool-badge">Stack Overflow</span>
+        <span class="tool-badge">Wolfram Alpha</span>
+        <span class="tool-badge">Hacker News</span>
+        <span class="tool-badge">Reddit</span>
+    </div>
+</div>
+
+<div class="tool-category">
+    <h4>Cloud & Infrastructure (10 services)</h4>
+    <div class="tool-list">
+        <span class="tool-badge">AWS EC2</span>
+        <span class="tool-badge">GCP Compute</span>
+        <span class="tool-badge">Azure VM</span>
+        <span class="tool-badge">DigitalOcean</span>
+        <span class="tool-badge">Vultr</span>
+        <span class="tool-badge">Hetzner</span>
+        <span class="tool-badge">Kubernetes</span>
+        <span class="tool-badge">Terraform</span>
+    </div>
+</div>
+
+<h3 id="model-rankings">Model Rankings: Data-Driven Selection</h3>
+
+<p>We maintain comprehensive benchmarks across 350+ models. Our routing decisions are informed by real benchmark data, not marketing claims:</p>
+
+<h4>Top Coding Models</h4>
+<table class="model-ranking-table">
+    <tr>
+        <th>Rank</th>
+        <th>Model</th>
+        <th>HumanEval</th>
+        <th>SWE-Bench</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Claude Sonnet 4.5</td>
+        <td>95.0%</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>GPT-5 Codex</td>
+        <td>95.0%</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Claude Opus 4.5</td>
+        <td>93.0%</td>
+        <td>73.5%</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>GPT-5 Pro</td>
+        <td>92.0%</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>Grok 4 Heavy</td>
+        <td>89.0%</td>
+        <td>-</td>
+    </tr>
+</table>
+
+<h4>Top Overall Quality</h4>
+<table class="model-ranking-table">
+    <tr>
+        <th>Rank</th>
+        <th>Model</th>
+        <th>Quality Index</th>
+        <th>MMLU</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Claude Sonnet 4.5</td>
+        <td>91.40</td>
+        <td>91.0%</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Llama 3.1 405B</td>
+        <td>83.04</td>
+        <td>87.3%</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>DeepSeek R1</td>
+        <td>82.20</td>
+        <td>90.8%</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Grok 4</td>
+        <td>81.70</td>
+        <td>91.0%</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>Qwen 2.5 72B</td>
+        <td>81.60</td>
+        <td>88.3%</td>
+    </tr>
+</table>
+
+<p>The <code>corch rankings</code> and <code>corch benchmarks</code> commands give you full access to these rankings, updated as new models release.</p>
+
+<h3 id="intelligent-routing">Intelligent Routing: The V13 Model</h3>
+
+<p>At the heart of Facilitair is our routing model - a classifier trained on 10,000+ task executions that predicts the optimal model for each request. It considers:</p>
+
+<ul>
+    <li><strong>Task Complexity:</strong> Simple Q&A vs multi-step reasoning vs code generation</li>
+    <li><strong>Quality Requirements:</strong> Your specified quality_weight (0.0-1.0)</li>
+    <li><strong>Cost Constraints:</strong> Your budget limits and cost sensitivity</li>
+    <li><strong>Latency Needs:</strong> Real-time vs batch processing</li>
+    <li><strong>Safety Triggers:</strong> Automatic consensus for destructive operations</li>
+</ul>
+
+<p>The routing model achieves <span class="stat-highlight">54.1% improvement</span> in task completion quality compared to single-model approaches, while often reducing cost by routing simple tasks to efficient models.</p>
+
+<h4>Routing Strategies</h4>
+
+<ul>
+    <li><strong>auto:</strong> Let the V13 model decide (recommended)</li>
+    <li><strong>direct:</strong> Fastest, single model, cost-optimized</li>
+    <li><strong>progressive:</strong> Try cheap models first, escalate if needed</li>
+    <li><strong>collaborative:</strong> Multiple models for planning, implementation, testing</li>
+    <li><strong>consensus:</strong> Require agreement from 3+ models (for safety-critical tasks)</li>
+</ul>
+
+<h3 id="training">Fine-Tuning: Train Your Own Models</h3>
+
+<p>Facilitair isn't just for inference - we provide full model training capabilities:</p>
+
+<div class="code-example">
+    <code><span class="comment"># Create a training job</span>
+corch training create \
+  --base-model meta-llama/llama-3.1-8b \
+  --dataset ./customer_support_data.jsonl \
+  --epochs 3 \
+  --learning-rate 2e-5 \
+  --provider facilitair  <span class="comment"># We provision GPU automatically</span>
+
+<span class="comment"># Monitor progress</span>
+corch training logs job_abc123 --follow
+
+<span class="comment"># Check status</span>
+corch training get job_abc123
+
+<span class="comment"># List all jobs</span>
+corch training list --status running</code>
+</div>
+
+<p>Training jobs run on provisioned GPU infrastructure (currently H200 GPUs via DigitalOcean). You can also bring your own compute through Tinker Mode for customers with existing GPU resources.</p>
+
+<h3 id="cost-control">Cost Controls & Transparency</h3>
+
+<p>AI costs can spiral quickly. Facilitair gives you complete control:</p>
+
+<ul>
+    <li><strong>Per-Task Budgets:</strong> Set maximum spend for any single task</li>
+    <li><strong>Monthly Limits:</strong> Hard caps on total spending</li>
+    <li><strong>Real-Time Tracking:</strong> See costs as they accumulate</li>
+    <li><strong>Cost Breakdown:</strong> Understand exactly where money goes</li>
+    <li><strong>BYOK Option:</strong> Use your own API keys, pay providers directly</li>
+</ul>
+
+<div class="code-example">
+    <code><span class="comment"># Check your balance and usage</span>
+corch credits balance
+
+<span class="comment"># View cost breakdown by provider</span>
+corch costs --period month --by-provider
+
+<span class="comment"># Set a task budget</span>
+corch run <span class="string">"Complex analysis task"</span> --budget 100  <span class="comment"># Max $1.00</span></code>
+</div>
+
+<h3 id="beta-features">What's in Beta</h3>
+
+<p>The beta includes access to:</p>
+
+<ul>
+    <li>Full model catalog (350+ models)</li>
+    <li>All routing strategies</li>
+    <li>Complete MCP tool library</li>
+    <li>Training job creation and monitoring</li>
+    <li>CLI, API, SDK, and Dashboard access</li>
+    <li>Cost tracking and budgets</li>
+    <li>OAuth connections for supported services</li>
+</ul>
+
+<p>Beta users receive <span class="stat-highlight">$10 in free credits</span> to explore the platform.</p>
+
+<div class="funding-callout">
+    <h3>We're Raising Pre-Seed/Seed</h3>
+
+    <p style="font-size: 1.1rem; margin-bottom: var(--space-4);">
+        Facilitair is fully functional today, but we're just getting started. We're raising to:
+    </p>
+
+    <ul style="text-align: left; max-width: 600px; margin: 0 auto var(--space-6) auto; line-height: 1.8;">
+        <li><strong>Stress test at scale:</strong> Validate our architecture handles thousands of concurrent requests</li>
+        <li><strong>Bring infrastructure in-house:</strong> Reduce dependency on third-party GPU providers</li>
+        <li><strong>Expand the model catalog:</strong> Add more specialized models and custom fine-tunes</li>
+        <li><strong>Build enterprise features:</strong> SSO, audit logs, dedicated instances, SLAs</li>
+        <li><strong>Grow the team:</strong> Hire ML engineers, infrastructure specialists, and developer advocates</li>
+    </ul>
+
+    <p style="color: rgba(250, 250, 250, 0.8);">
+        If you're an investor interested in AI infrastructure, developer tools, or multi-agent systems,<br>
+        <strong>let's talk: <a href="mailto:blake@facilitair.ai" style="color: #f59e0b;">blake@facilitair.ai</a></strong>
+    </p>
+</div>
+
+<h3 id="getting-started">Getting Started</h3>
+
+<ol>
+    <li><strong>Sign up:</strong> <a href="https://beta.facilitair.ai" target="_blank">beta.facilitair.ai</a></li>
+    <li><strong>Get your API key:</strong> Dashboard > API Keys > Create</li>
+    <li><strong>Install the CLI:</strong> <code>pip install facilitair</code></li>
+    <li><strong>Run your first task:</strong> <code>corch run "Hello, Facilitair!" --strategy auto</code></li>
+</ol>
+
+<p>Documentation is available at <a href="https://docs.facilitair.ai" target="_blank">docs.facilitair.ai</a>, and our team is active on Discord for support.</p>
+
+<h3 id="whats-next">What's Next</h3>
+
+<p>Over the coming months, we're focused on:</p>
+
+<ul>
+    <li><strong>RAG-MCP Integration:</strong> Semantic tool retrieval to handle 200+ tools without prompt bloat</li>
+    <li><strong>Workflow Builder:</strong> Visual editor for multi-step AI pipelines</li>
+    <li><strong>More Training Options:</strong> LoRA, QLoRA, DPO, RLHF support</li>
+    <li><strong>Self-Hosted Option:</strong> Deploy Facilitair in your own infrastructure</li>
+    <li><strong>Agent Mode:</strong> Long-running autonomous agents with memory and tool access</li>
+</ul>
+
+<p>This is just the beginning. We're building the infrastructure layer that makes sophisticated AI accessible to every developer.</p>
+
+<div class="post-footer" style="margin-top: var(--space-10);">
+    <p><strong>Questions? Want to chat?</strong></p>
+    <ul>
+        <li>Email: <a href="mailto:blake@facilitair.ai">blake@facilitair.ai</a></li>
+        <li>Twitter/X: <a href="https://x.com/blakeledden" target="_blank">@blakeledden</a></li>
+        <li>GitHub: <a href="https://github.com/bledden" target="_blank">@bledden</a></li>
+        <li>Discord: <a href="https://discord.gg/facilitair" target="_blank">discord.gg/facilitair</a></li>
+    </ul>
+
+    <p style="margin-top: var(--space-6); font-style: italic; color: rgba(250, 250, 250, 0.6);">
+        Published: December 1, 2025 | Reading time: 15 minutes
+    </p>
+</div>

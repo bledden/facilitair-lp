@@ -85,8 +85,112 @@
         <!-- Blog Posts -->
         <section class="blog-posts">
             <div class="container-narrow">
+                <!-- Blog Post Card #0: Beta Preview (Featured) -->
+                <article class="blog-post-card glass-dark" style="border: 2px solid rgba(92, 225, 230, 0.4); background: linear-gradient(135deg, rgba(92, 225, 230, 0.08), rgba(16, 15, 13, 0.95));">
+                    <div class="post-meta">
+                        <span class="post-date">December 1, 2025</span>
+                        <span class="post-category-badge" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">BETA LAUNCH</span>
+                        <span class="post-category-badge">Platform Announcement</span>
+                    </div>
+                    <h2 class="post-title">Introducing Facilitair Beta: AI Orchestration for Every Developer</h2>
+                    <p class="post-subtitle">350+ Models, 200+ Tools, One Unified Interface - Plus We're Raising</p>
+                    <p class="post-author">By Blake Ledden</p>
+
+                    <div class="post-preview">
+                        <p><strong>TL;DR:</strong> Facilitair is an AI orchestration platform that gives you access to 350+ models from every major provider (OpenAI, Anthropic, Google, Mistral, DeepSeek, Grok, Llama, Qwen, and more), 200+ integrated MCP tools (Slack, Jira, Salesforce, Stripe, databases, cloud providers), intelligent routing that selects the optimal model for each task, and built-in fine-tuning capabilities. Everything is accessible via Dashboard, CLI, REST API, and Python SDK. <strong>We're raising pre-seed/seed to stress test at scale and bring infrastructure in-house.</strong></p>
+
+                        <h4>What Makes Facilitair Different:</h4>
+                        <ul>
+                            <li><strong>Intelligent Routing:</strong> Our V13 routing model (trained on 10,000+ tasks) selects the optimal model based on task type, quality requirements, cost constraints, and latency needs</li>
+                            <li><strong>200+ MCP Tools:</strong> Connect AI to real services - Slack, Jira, Salesforce, Stripe, GitHub, PostgreSQL, S3, and 150+ more</li>
+                            <li><strong>Four Access Methods:</strong> Dashboard, CLI (corch), REST API, and Python SDK - all with identical capabilities</li>
+                            <li><strong>Built-in Training:</strong> Fine-tune models on your data with automatic GPU provisioning</li>
+                            <li><strong>Cost Controls:</strong> Per-task budgets, monthly limits, real-time tracking, BYOK option</li>
+                        </ul>
+
+                        <h4>Key Numbers:</h4>
+                        <ul>
+                            <li><strong>350+ models</strong> ranked by HumanEval, MMLU, SWE-Bench, and 20+ benchmarks</li>
+                            <li><strong>200+ tools</strong> across 10 categories (Communication, PM, CRM, E-commerce, Code, Cloud, etc.)</li>
+                            <li><strong>54.1% quality improvement</strong> with intelligent routing vs single-model approaches</li>
+                            <li><strong>$10 free credits</strong> for beta users to explore the platform</li>
+                        </ul>
+                    </div>
+
+                    <div class="post-actions">
+                        <a href="https://beta.facilitair.ai" target="_blank" class="btn-primary" style="background: linear-gradient(135deg, var(--facilitair-teal) 0%, #2DD4BF 100%);">Try the Beta</a>
+                        <a href="mailto:blake@facilitair.ai" class="btn-secondary" style="border-color: #f59e0b; color: #f59e0b;">Investor Inquiries</a>
+                        <button class="btn-secondary read-more-btn" data-post="beta-preview">Read Full Post</button>
+                    </div>
+
+                    <!-- Full Content (Hidden by Default) -->
+                    <div class="post-full-content" id="post-beta-preview" style="display: none;">
+                        <hr style="border: 1px solid rgba(92, 225, 230, 0.2); margin: var(--space-8) 0;">
+
+                        <div id="beta-preview-full-content" style="color: rgba(250, 250, 250, 0.9); font-family: 'Montserrat', sans-serif;">
+                            <!-- Content will be loaded here -->
+                            <p style="text-align: center; padding: var(--space-8); color: rgba(250, 250, 250, 0.6);">
+                                <em>Loading full post content...</em>
+                            </p>
+                        </div>
+
+                        <script>
+                            // Load the full blog post content
+                            (function() {
+                                fetch('/blog_post_beta_preview_content.html')
+                                    .then(response => response.text())
+                                    .then(html => {
+                                        const container = document.getElementById('beta-preview-full-content');
+                                        container.innerHTML = html;
+
+                                        // Execute scripts manually since innerHTML doesn't run them
+                                        const scripts = container.querySelectorAll('script');
+                                        scripts.forEach(script => {
+                                            const newScript = document.createElement('script');
+                                            if (script.src) {
+                                                newScript.src = script.src;
+                                            } else {
+                                                newScript.textContent = script.textContent;
+                                            }
+                                            document.body.appendChild(newScript);
+                                            script.remove();
+                                        });
+                                    })
+                                    .catch(error => {
+                                        console.error('Error loading blog content:', error);
+                                        document.getElementById('beta-preview-full-content').innerHTML = `
+                                            <p style="color: rgba(250, 250, 250, 0.7); padding: var(--space-4);">
+                                                <strong>Full 15-minute read covering:</strong><br><br>
+                                                - What is Facilitair and how it works<br>
+                                                - Four ways to access: Dashboard, CLI, API, SDK<br>
+                                                - Complete tool catalog (200+ MCP integrations)<br>
+                                                - Model rankings and intelligent routing<br>
+                                                - Fine-tuning capabilities<br>
+                                                - Cost controls and BYOK<br>
+                                                - Why we're raising<br><br>
+                                                <a href="https://beta.facilitair.ai" target="_blank" style="color: var(--facilitair-teal); text-decoration: underline;">Try the Beta →</a>
+                                            </p>
+                                        `;
+                                    });
+                            })();
+                        </script>
+
+                        <div class="post-footer">
+                            <p><strong>Want to chat?</strong> Reach out:</p>
+                            <ul>
+                                <li>Email: blake@facilitair.ai</li>
+                                <li>Twitter/X: <a href="https://x.com/blakeledden" target="_blank">@blakeledden</a></li>
+                                <li>LinkedIn: <a href="https://linkedin.com/in/blakeledden" target="_blank">@blakeledden</a></li>
+                                <li>GitHub: <a href="https://github.com/bledden" target="_blank">@bledden</a></li>
+                            </ul>
+
+                            <p style="margin-top: var(--space-6); font-style: italic; color: rgba(250, 250, 250, 0.6);">Published: December 1, 2025 | Reading time: 15 minutes</p>
+                        </div>
+                    </div>
+                </article>
+
                 <!-- Blog Post Card #1: Weekly Update -->
-                <article class="blog-post-card glass-dark">
+                <article class="blog-post-card glass-dark" style="margin-top: var(--space-8);">
                     <div class="post-meta">
                         <span class="post-date">October 27, 2025</span>
                         <span class="post-category-badge">Research & Development</span>
